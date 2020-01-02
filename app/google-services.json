@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "703993460993",
+    "firebase_url": "https://trialsih.firebaseio.com",
+    "project_id": "trialsih",
+    "storage_bucket": "trialsih.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703993460993:android:2be1cb2c6499df363f8300",
+        "android_client_info": {
+          "package_name": "com.navin.trialsih"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "703993460993-fkn4uaqt1hfvlefimhrdgu6sldj6qase.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.navin.trialsih",
+            "certificate_hash": "0211b1d1cae066027312454a68f25797258912ee"
+          }
+        },
+        {
+          "client_id": "703993460993-o0vp8jocjp96615m945isr2ecbn0ubc1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjDZxs2TxlEuWX1nVnmLEf8FFfpKsCr44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "703993460993-o0vp8jocjp96615m945isr2ecbn0ubc1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

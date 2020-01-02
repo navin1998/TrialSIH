@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="3dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/profile_background"
+            android:gravity="center"
+            android:padding="15dp"
+            >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/man"
+                android:id="@+id/patient_pic"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorAccent"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textStyle="bold"
+                android:textSize="17sp"
+                android:textColor="#FFF"
+                android:id="@+id/patient_name_top"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="#FFF"
+                    android:id="@+id/patient_age_top"
+                    />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    android:layout_marginTop="4dp"
+                    android:background="#FFF"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="#FFF"
+                    android:id="@+id/patient_gender_top"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+<!--        White line just for space-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="#FFF"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            >
+
+
+        <!--    Layout for name-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/patient_name_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/patient_name"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+        <!--    Layout for age-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/patient_age_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Age"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/patient_age"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+        <!--    Layout for gender-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/patient_gender_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Gender"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/patient_gender"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+        <!--    Layout for Blood Group-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/patient_bg_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Blood Group"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/patient_bg"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+        <!--    Layout for weight-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/patient_weight_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Weight"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/patient_weight"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+        <!--    Layout for Phone-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/patient_phone_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Phone"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/patient_phone"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+        <!--    Layout for patient mail-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/patient_mail_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mail"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/patient_mail"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+
+<!--    Layout for button for editing profile-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="50dp"
+            >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EDIT"
+                android:textColor="#FFF"
+                android:textSize="20sp"
+                android:paddingLeft="35dp"
+                android:paddingRight="35dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="@drawable/btn_background"
+                android:id="@+id/profile_edit_btn"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

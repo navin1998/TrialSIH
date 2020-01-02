@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_patient_appointment"
+            android:icon="@drawable/ic_patient_appointment"
+            android:title="@string/menu_patient_appointment" />
+        <item
+            android:id="@+id/nav_patient_profile"
+            android:icon="@drawable/ic_patient_profile"
+            android:title="@string/menu_patient_profile" />
+        <item
+            android:id="@+id/nav_patient_previous_appointment"
+            android:icon="@drawable/ic_patient_previous_appointments"
+            android:title="@string/menu_patient_previous_appointments" />
+        <item
+            android:id="@+id/nav_patient_previous_transactions"
+            android:icon="@drawable/ic_patient_previous_transactions"
+            android:title="@string/menu_patient_previous_transactions" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_patient_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/menu_share" />
+            <item
+                android:id="@+id/nav_patient_feedback"
+                android:icon="@drawable/ic_patient_feedback"
+                android:title="@string/menu_feedback" />
+        </menu>
+    </item>
+
+</menu>

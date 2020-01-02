@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/loginvector"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="150dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/doctor_login_layout">
+
+            <TextView
+                android:id="@+id/tv_doctor_login_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="You are a doctor"
+                android:textColor="#838080"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                >
+
+
+                <Button
+                    android:id="@+id/signin_doctor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LOGIN"
+                    android:background="@drawable/google_login_button_shape"
+                    android:textColor="#FFF"
+                    android:layout_below="@id/tv_doctor_login_text"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="35dp"
+                    android:paddingRight="35dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OR"
+                    android:padding="20dp"
+                    android:textAlignment="center"
+                    />
+
+                <Button
+                    android:id="@+id/signup_doctor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_doctor_login_text"
+                    android:background="@drawable/google_login_button_shape"
+                    android:paddingLeft="35dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="35dp"
+                    android:paddingBottom="10dp"
+                    android:text="SIGNUP"
+                    android:textColor="#FFF" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/doctor_login_layout"
+            android:layout_marginTop="35dp"
+            >
+
+            <TextView
+                android:id="@+id/tv_patient_login_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="You are a patient"
+                android:textColor="#838080"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                >
+
+
+                <Button
+                    android:id="@+id/sign_in_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="LOGIN"
+                    android:background="@drawable/google_login_button_shape"
+                    android:textColor="#FFF"
+                    android:layout_below="@id/tv_doctor_login_text"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="25dp"
+                    android:paddingRight="25dp"
+                    android:drawableLeft="@drawable/ic_googleicon"
+                    android:drawablePadding="18dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:padding="20dp"
+                    android:textAlignment="center"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
