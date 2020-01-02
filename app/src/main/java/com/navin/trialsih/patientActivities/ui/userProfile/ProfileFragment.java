@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
+import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 import com.navin.trialsih.patientsClasses.PatientDetails;
 
 import java.util.ArrayList;
@@ -90,6 +91,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                              ViewGroup container, Bundle savedInstanceState) {
         profileViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
         v = inflater.inflate(R.layout.fragment_patient_profile, container, false);
+
+        ((PatientDashboardActivity) getActivity()).getSupportActionBar().setTitle("Profile");
+
 
         onEdit = false;
 

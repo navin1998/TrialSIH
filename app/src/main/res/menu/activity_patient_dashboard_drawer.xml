@@ -20,6 +20,12 @@
             android:id="@+id/nav_patient_previous_transactions"
             android:icon="@drawable/ic_patient_previous_transactions"
             android:title="@string/menu_patient_previous_transactions" />
+        <item
+            android:id="@+id/nav_patient_logout"
+            android:icon="@drawable/ic_patient_logout"
+            android:title="Logout"
+            android:checkable="false"
+            />
     </group>
 
     <item android:title="Communicate">

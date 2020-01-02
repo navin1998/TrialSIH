@@ -6,6 +6,7 @@
     app:startDestination="@+id/nav_patient_appointment">
 
     <fragment
+        android:tag="home_tag"
         android:id="@+id/nav_patient_appointment"
         android:name="com.navin.trialsih.patientActivities.ui.activeAppoint.HomeFragment"
         android:label="@string/menu_home"

@@ -24,6 +24,7 @@ public class FeedbackFragment extends Fragment {
         feedbackViewModel =
                 ViewModelProviders.of(this).get(FeedbackViewModel.class);
         View root = inflater.inflate(R.layout.fragment_feedback, container, false);
+
         final TextView textView = root.findViewById(R.id.text_send);
         feedbackViewModel.getText().observe(this, new Observer<String>() {
             @Override

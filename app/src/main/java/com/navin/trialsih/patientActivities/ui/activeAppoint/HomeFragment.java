@@ -33,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.patientActivities.AddAppointment;
+import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 import com.navin.trialsih.patientAdapters.AppointmentsAdapter;
 import com.navin.trialsih.patientsClasses.Appointments;
 
@@ -65,6 +66,9 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         v = inflater.inflate(R.layout.fragment_home, container, false);
+
+        ((PatientDashboardActivity) getActivity()).getSupportActionBar().setTitle("Home");
+
 
         list = new ArrayList<>();
 

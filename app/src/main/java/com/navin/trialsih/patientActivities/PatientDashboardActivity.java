@@ -1,14 +1,24 @@
 package com.navin.trialsih.patientActivities;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.GravityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -17,7 +27,13 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.navin.trialsih.MainActivity;
 import com.navin.trialsih.R;
+import com.navin.trialsih.SignInActivity;
+import com.navin.trialsih.patientActivities.ui.activeAppoint.HomeFragment;
+import com.navin.trialsih.patientActivities.ui.prevAppoint.PrevAppointmentsFragment;
+import com.navin.trialsih.patientActivities.ui.prevTransactions.PrevTransactionsFragment;
+import com.navin.trialsih.patientActivities.ui.userProfile.ProfileFragment;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -28,6 +44,8 @@ import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class PatientDashboardActivity extends AppCompatActivity {
 
@@ -40,17 +58,26 @@ public class PatientDashboardActivity extends AppCompatActivity {
     private Context mContext;
     private View v;
 
+    private boolean isHomeShowing = false;
+
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInOptions gso;
+
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_dashboard);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
 
         mContext = this;
         v = getWindow().getDecorView().getRootView();
+
+        isHomeShowing = true;
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -69,6 +96,23 @@ public class PatientDashboardActivity extends AppCompatActivity {
         name = findViewById(R.id.patient_name);
         email = findViewById(R.id.patient_email);
 
+
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(mContext, gso);
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+                displaySelectedScreen(menuItem.getItemId());
+
+                return true;
+            }
+        });
+
     }
 
 //    @Override
@@ -77,6 +121,9 @@ public class PatientDashboardActivity extends AppCompatActivity {
 //        getMenuInflater().inflate(R.menu.patient_dashboard, menu);
 //        return true;
 //    }
+
+
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -106,4 +153,103 @@ public class PatientDashboardActivity extends AppCompatActivity {
         userMail.setText(user.getEmail());
 
     }
+
+    private void showLogoutDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage("Sure to logout?");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("LOGOUT", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseAuth.getInstance().signOut();
+                mGoogleSignInClient.signOut();
+
+                Toast.makeText(mContext, "Successfully signed out", Toast.LENGTH_SHORT).show();
+
+                startActivity(new Intent(mContext, SignInActivity.class));
+                finish();
+
+                dialog.cancel();
+            }
+        });
+
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+
+    private void displaySelectedScreen(int itemId) {
+
+        //creating fragment object
+        Fragment fragment = null;
+
+        //initializing the fragment object which is selected
+        switch (itemId) {
+            case R.id.nav_patient_appointment:
+                isHomeShowing = true;
+                fragment = new HomeFragment();
+                break;
+
+            case R.id.nav_patient_profile:
+                isHomeShowing = false;
+                fragment = new ProfileFragment();
+                break;
+
+            case R.id.nav_patient_previous_appointment:
+                isHomeShowing = false;
+                fragment = new PrevAppointmentsFragment();
+                break;
+
+            case R.id.nav_patient_previous_transactions:
+                isHomeShowing = false;
+                fragment = new PrevTransactionsFragment();
+                break;
+
+            case R.id.nav_patient_logout:
+                showLogoutDialog();
+                break;
+        }
+
+        //replacing the fragment
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, fragment);
+            ft.commit();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (!isHomeShowing) {
+
+            Fragment fragment = new HomeFragment();
+
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, fragment);
+            ft.commit();
+
+            isHomeShowing = true;
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+
+    }
+
+
 }

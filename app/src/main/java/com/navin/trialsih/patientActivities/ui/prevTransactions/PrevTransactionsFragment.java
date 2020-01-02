@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.navin.trialsih.R;
+import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 
 public class PrevTransactionsFragment extends Fragment {
 
@@ -23,6 +24,10 @@ public class PrevTransactionsFragment extends Fragment {
         prevTransactionsViewModel =
                 ViewModelProviders.of(this).get(PrevTransactionsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_patient_prev_transactions, container, false);
+
+        ((PatientDashboardActivity) getActivity()).getSupportActionBar().setTitle("Previous Transactions");
+
+
         final TextView textView = root.findViewById(R.id.text_tools);
         prevTransactionsViewModel.getText().observe(this, new Observer<String>() {
             @Override

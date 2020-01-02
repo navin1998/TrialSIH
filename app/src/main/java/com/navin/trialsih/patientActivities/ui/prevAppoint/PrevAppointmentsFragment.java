@@ -1,5 +1,6 @@
 package com.navin.trialsih.patientActivities.ui.prevAppoint;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.navin.trialsih.R;
+import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 
 public class PrevAppointmentsFragment extends Fragment {
 
@@ -23,6 +25,9 @@ public class PrevAppointmentsFragment extends Fragment {
         prevAppointmentsViewModel =
                 ViewModelProviders.of(this).get(PrevAppointmentsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_patient_prev_appointments, container, false);
+
+        ((PatientDashboardActivity) getActivity()).getSupportActionBar().setTitle("Previous Appointments");
+
         final TextView textView = root.findViewById(R.id.text_slideshow);
         prevAppointmentsViewModel.getText().observe(this, new Observer<String>() {
             @Override
