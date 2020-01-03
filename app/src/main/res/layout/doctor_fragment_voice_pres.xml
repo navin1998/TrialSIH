@@ -1,190 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?android:windowBackground">
 
+
+    <include
+        layout="@layout/layout_voice_pres"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/background_voice_pres_layout"
-        android:gravity="start"
+        android:gravity="bottom"
         >
 
 
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/ic_voice_pres"
+        <ImageButton
+            android:id="@+id/patientMicBtn"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:src="@drawable/ic_tap_to_speak"
+            android:background="@drawable/background_tap_to_speak"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="70dp"
             />
-
-
-
-<!--        Layout for Name-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="start"
-            >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="15sp"
-                android:paddingRight="15sp"
-                android:paddingTop="20sp"
-                android:paddingBottom="20sp"
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Name: "
-                    android:textSize="17sp"
-                    />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:textSize="17sp"
-                    android:text="Your name here"
-                    android:id="@+id/patientName"
-                    />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#968B8B"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="15sp"
-                android:layout_marginRight="15sp"
-                />
-
-        </LinearLayout>
-
-
-
-
-        <!--        Layout for Age/Gender-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="start"
-            >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="15sp"
-                android:paddingRight="15sp"
-                android:paddingTop="20sp"
-                android:paddingBottom="20sp"
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Age/Gender: "
-                    android:textSize="17sp"
-                    />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:textSize="17sp"
-                    android:text="Your age/gender"
-                    android:id="@+id/patientAgeAndGender"
-                    android:layout_gravity="center_vertical"
-                    />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#968B8B"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="15sp"
-                android:layout_marginRight="15sp"
-                />
-
-        </LinearLayout>
-
-
-
-
-
-
-        <!--        Layout for Date-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="start"
-            >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="15sp"
-                android:paddingRight="15sp"
-                android:paddingTop="20sp"
-                android:paddingBottom="20sp"
-                >
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Date: "
-                    android:textSize="17sp"
-                    />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:textSize="17sp"
-                    android:text="Today date"
-                    android:id="@+id/patientDate"
-                    android:layout_gravity="center_vertical"
-                    />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#968B8B"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="15sp"
-                android:layout_marginRight="15sp"
-                />
-
-        </LinearLayout>
-
-
-
 
     </LinearLayout>
 
 
-</androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
