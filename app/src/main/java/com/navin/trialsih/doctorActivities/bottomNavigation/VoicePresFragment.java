@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -37,6 +38,8 @@ public class VoicePresFragment extends Fragment {
     private ListView prescriptions;
     private ListView advices;
 
+    private ImageButton btn;
+
     private ListView[] listViewArr;
 
 
@@ -53,6 +56,8 @@ public class VoicePresFragment extends Fragment {
         diagnosis = v.findViewById(R.id.patientDiagnosis);
         prescriptions = v.findViewById(R.id.patientPrescriptions);
         advices = v.findViewById(R.id.patientAdvices);
+
+        btn = v.findViewById(R.id.patientMicBtn);
 
         listViewArr = new ListView[]{symptoms, diagnosis, prescriptions, advices};
 
