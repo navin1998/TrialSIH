@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/doctor_appointments"
+        android:icon="@drawable/ic_doctor_appointments"
+        android:title="Appointments" />
+
+    <item
+        android:id="@+id/doctor_mic"
+        android:icon="@drawable/ic_doctor_mic"
+        android:title="Voice Pres"/>
+
+    <item
+        android:id="@+id/doctor_profile"
+        android:icon="@drawable/ic_doctor_profile"
+        android:title="Profile"/>
+
+</menu>
