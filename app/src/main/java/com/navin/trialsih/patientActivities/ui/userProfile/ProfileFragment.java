@@ -638,9 +638,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                weight.setText(10 + " kg");
-                patientUploadDetails.setPatientWeight(10 + " kg");
-
                 dialog.cancel();
 
             }
