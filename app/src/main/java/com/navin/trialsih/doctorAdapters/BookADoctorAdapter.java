@@ -41,8 +41,11 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     public void onBindViewHolder(@NonNull BookADoctorAdapter.ImageViewHolder holder, int position) {
 
         final DoctorDetails doctorDetails = mUploads.get(position);
-        holder.textViewName.setText(doctorDetails.getDoctorName());
-        holder.textViewType.setText(doctorDetails.getDoctorBookingPhone());
+        try {
+            holder.textViewName.setText(doctorDetails.getDoctorName());
+            holder.textViewType.setText(doctorDetails.getDoctorBookingPhone());
+        }
+        catch (Exception e) {}
 
     }
 

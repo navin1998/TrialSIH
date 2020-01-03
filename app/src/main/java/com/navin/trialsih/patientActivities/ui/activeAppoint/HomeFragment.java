@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
+import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
 import com.navin.trialsih.patientActivities.AddAppointment;
 import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 import com.navin.trialsih.patientAdapters.AppointmentsAdapter;
@@ -46,6 +47,7 @@ public class HomeFragment extends Fragment {
     private View v;
 
     private ImageView cannotFind;
+    private TextView cannotFindText;
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressCircle;
@@ -77,6 +79,7 @@ public class HomeFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mProgressCircle = v.findViewById(R.id.progress_circle);
         cannotFind = v.findViewById(R.id.cannotfind);
+        cannotFindText = v.findViewById(R.id.cannotfind_text);
 
         floatingActionButton = v.findViewById(R.id.add_appointments);
 
@@ -124,7 +127,7 @@ public class HomeFragment extends Fragment {
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE).child(UID).child(PROFILE);
 
-        mRef.addValueEventListener(new ValueEventListener() {
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists())
@@ -133,6 +136,7 @@ public class HomeFragment extends Fragment {
                     {
                         Intent intent = new Intent(getContext(), AddAppointment.class);
                         startActivity(intent);
+                        return;
                     }
                     else
                     {
@@ -167,6 +171,7 @@ public class HomeFragment extends Fragment {
                 if (!dataSnapshot.exists())
                 {
                     cannotFind.setVisibility(View.VISIBLE);
+                    cannotFindText.setVisibility(View.VISIBLE);
                     mProgressCircle.setVisibility(View.INVISIBLE);
                 }
                 else
@@ -188,6 +193,7 @@ public class HomeFragment extends Fragment {
 
                     cannotFind.setVisibility(View.INVISIBLE);
                     mProgressCircle.setVisibility(View.GONE);
+                    cannotFindText.setVisibility(View.INVISIBLE);
 
                 }
             }
@@ -203,6 +209,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        ((PatientDashboardActivity) getActivity()).getSupportActionBar().setTitle("Home");
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         UID = user.getUid();

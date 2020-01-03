@@ -13,7 +13,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".patientActivities.AddAppointment"></activity>
+        <activity android:name=".doctorActivities.DoctorDashboardActivity"></activity>
+        <activity android:name=".doctorActivities.DoctorSignInActivity" />
+        <activity android:name=".doctorActivities.DoctorSignupActivity" />
+        <activity android:name=".patientActivities.AddAppointment" />
         <activity
             android:name=".patientActivities.PatientDashboardActivity"
             android:label="@string/title_activity_patient_dashboard"

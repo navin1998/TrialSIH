@@ -6,11 +6,27 @@
     android:orientation="vertical"
     android:background="?android:windowBackground">
 
+
     <ImageView
         android:id="@+id/cannotfind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/cannotfind"
+
+        android:layout_alignParentTop="true"
+
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No active appointments"
+        android:textSize="22sp"
+        android:textAlignment="center"
+        android:layout_alignBottom="@+id/cannotfind"
+        android:layout_marginBottom="150dp"
+        android:id="@+id/cannotfind_text"
 
         android:visibility="gone"
         />

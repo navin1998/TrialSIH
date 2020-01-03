@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
+import com.navin.trialsih.doctorActivities.DoctorSignInActivity;
+import com.navin.trialsih.doctorActivities.DoctorSignupActivity;
 import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener{
@@ -40,7 +46,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private final static int RC_SIGN_IN = 100;
     private GoogleSignInClient mGoogleSignInClient;
 
-    FirebaseAuth.AuthStateListener mAuthListener;
+    private final static String USER_TYPE_DOCTOR = "doctors";
+    private final static String USER_TYPE_PATIENT = "patients";
+    private final static String ACTIVE_APPOINTMENTS = "appointments";
+    private final static String PROFILE = "profile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +101,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Toast.makeText(SignInActivity.this,"Something Went Wrong",Toast.LENGTH_LONG).show();
+                Toast.makeText(SignInActivity.this,"Something went wrong",Toast.LENGTH_LONG).show();
                 Log.w("TAG", "Google sign in failed", e);
                 // ...
             }
@@ -134,13 +143,23 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 break;
 
             case R.id.signin_doctor:
-
+                startDoctorSignin();
                 break;
 
             case R.id.signup_doctor:
-
+                startDoctorSignup();
                 break;
         }
+    }
+
+    private void startDoctorSignup()
+    {
+        startActivity(new Intent(mContext, DoctorSignupActivity.class));
+    }
+
+    private void startDoctorSignin()
+    {
+        startActivity(new Intent(mContext, DoctorSignInActivity.class));
     }
 
     @Override
@@ -154,7 +173,22 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             startActivity(new Intent(mContext, PatientDashboardActivity.class));
             finish();
         }
-
+        else if (startDoctorProfileAndSavePreferences())
+        {
+            startActivity(new Intent(mContext, DoctorDashboardActivity.class));
+            finish();
+        }
 
     }
+
+    private boolean startDoctorProfileAndSavePreferences()
+    {
+
+        SharedPreferences doctorSignInPref = mContext.getSharedPreferences("doctorSingInPref",MODE_PRIVATE);
+        boolean isSignedIn = doctorSignInPref.getBoolean("isDoctorSignedIn", false);
+
+        return isSignedIn;
+
+    }
+
 }

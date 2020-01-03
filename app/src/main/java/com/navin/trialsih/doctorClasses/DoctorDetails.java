@@ -5,39 +5,77 @@ public class DoctorDetails
 
     private String doctorName;
     private String doctorRegNumber;
+    private String doctorGender;
     private String doctorPhone;
     private String doctorBookingPhone;
     private String doctorExperience;
     private String doctorQualifications;
     private String doctorClinicAddress;
     private String doctorSatisfiedPatientsNumber;
-    private String doctorProfileCompleted;
+    private String doctorMedicalCouncil;
+    private String doctorYearOfReg;
+    private String doctorPhotoUri;
+    private String doctorMail;
 
 
-    public DoctorDetails(String doctorName, String doctorRegNumber, String doctorPhone, String doctorBookingPhone, String doctorExperience, String doctorQualifications, String doctorClinicAddress, String doctorSatisfiedPatientsNumber, String doctorProfileCompleted) {
+    public DoctorDetails(String doctorName, String doctorRegNumber, String doctorGender, String doctorPhone, String doctorBookingPhone, String doctorExperience, String doctorQualifications, String doctorClinicAddress, String doctorSatisfiedPatientsNumber, String doctorMedicalCouncil, String doctorYearOfReg, String doctorPhotoUri, String doctorMail) {
         this.doctorName = doctorName;
         this.doctorRegNumber = doctorRegNumber;
+        this.doctorGender = doctorGender;
         this.doctorPhone = doctorPhone;
         this.doctorBookingPhone = doctorBookingPhone;
         this.doctorExperience = doctorExperience;
         this.doctorQualifications = doctorQualifications;
         this.doctorClinicAddress = doctorClinicAddress;
         this.doctorSatisfiedPatientsNumber = doctorSatisfiedPatientsNumber;
-        this.doctorProfileCompleted = doctorProfileCompleted;
+        this.doctorMedicalCouncil = doctorMedicalCouncil;
+        this.doctorYearOfReg = doctorYearOfReg;
+        this.doctorPhotoUri = doctorPhotoUri;
+        this.doctorMail = doctorMail;
     }
-
-
-
 
     public DoctorDetails() {
     }
 
-    public String getDoctorProfileCompleted() {
-        return doctorProfileCompleted;
+
+    public String getDoctorGender() {
+        return doctorGender;
     }
 
-    public void setDoctorProfileCompleted(String doctorProfileCompleted) {
-        this.doctorProfileCompleted = doctorProfileCompleted;
+    public void setDoctorGender(String doctorGender) {
+        this.doctorGender = doctorGender;
+    }
+
+    public String getDoctorMail() {
+        return doctorMail;
+    }
+
+    public void setDoctorMail(String doctorMail) {
+        this.doctorMail = doctorMail;
+    }
+
+    public String getDoctorPhotoUri() {
+        return doctorPhotoUri;
+    }
+
+    public void setDoctorPhotoUri(String doctorPhotoUri) {
+        this.doctorPhotoUri = doctorPhotoUri;
+    }
+
+    public String getDoctorMedicalCouncil() {
+        return doctorMedicalCouncil;
+    }
+
+    public void setDoctorMedicalCouncil(String doctorMedicalCouncil) {
+        this.doctorMedicalCouncil = doctorMedicalCouncil;
+    }
+
+    public String getDoctorYearOfReg() {
+        return doctorYearOfReg;
+    }
+
+    public void setDoctorYearOfReg(String doctorYearOfReg) {
+        this.doctorYearOfReg = doctorYearOfReg;
     }
 
     public String getDoctorName() {

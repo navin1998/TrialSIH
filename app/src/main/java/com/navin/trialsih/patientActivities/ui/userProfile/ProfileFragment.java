@@ -1,6 +1,7 @@
 package com.navin.trialsih.patientActivities.ui.userProfile;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +39,8 @@ import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 import com.navin.trialsih.patientsClasses.PatientDetails;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.activation.CommandObject;
@@ -86,6 +90,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
     private PatientDetails patientUploadDetails;
 
+    private Calendar calendar;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -98,6 +104,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         onEdit = false;
 
         list = new ArrayList<>();
+
+        calendar = Calendar.getInstance();
 
         nameTop = v.findViewById(R.id.patient_name_top);
         ageTop = v.findViewById(R.id.patient_age_top);
@@ -363,60 +371,120 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private void askForAge()
     {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Choose age (in years)");
-
-        builder.setCancelable(false);
-
-        final NumberPicker numberPicker = new NumberPicker(getContext());
-        numberPicker.setMaxValue(100);
-        numberPicker.setMinValue(10);
-        numberPicker.setWrapSelectorWheel(false);
-
-        String selectedAge = "";
-
-        for (int i = 0; i < age.getText().toString().length(); i++)
-        {
-            if ((age.getText().toString().charAt(i) >= '0') && (age.getText().toString().charAt(i) <= '9'))
-            {
-                selectedAge += age.getText().toString().charAt(i);
-            }
-        }
-
-        try {
-            numberPicker.setValue(Integer.parseInt(selectedAge));
-        }
-        catch (Exception e){}
-
-        builder.setView(numberPicker);
-
-        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                ageTop.setText(newVal + " years");
-                age.setText(newVal + " years");
-                patientUploadDetails.setPatientAge(newVal + " years");
-            }
-        });
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.cancel();
-
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
+        showAgePicker();
 
     }
+
+    private void showAgePicker()
+    {
+
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, monthOfYear);
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                updateAge(year, monthOfYear, dayOfMonth);
+            }
+
+        };
+
+        new DatePickerDialog(getContext(), date, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+
+    }
+
+    private void updateAge(int y, int m, int d)
+    {
+        int year = 0;
+        int month = 0;
+        int day = 0;
+
+        Calendar testCalendar = Calendar.getInstance();
+        testCalendar.set(y, m, d);
+
+        long msDiff = Calendar.getInstance().getTimeInMillis() - testCalendar.getTimeInMillis();
+        long daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff);
+
+        if (daysDiff < 0)
+        {
+            Snackbar.make(v, "Select valid date", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        if (daysDiff < 30)
+        {
+            Snackbar.make(v, "Minimum 1 month age required to register", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        year = Math.round(daysDiff / 365);
+        daysDiff -= (365 * year);
+        month = Math.round(daysDiff / 30);
+        daysDiff -= (30 * month);
+
+        if (year > 110)
+        {
+            Snackbar.make(v, "Maximum age limit is 110 years", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
+        if ((year > 0) && (month > 6))
+        {
+            year++;
+            month = 0;
+
+            age.setText(year + " years");
+            ageTop.setText(year + " years");
+            patientUploadDetails.setPatientAge(year + " years");
+
+        }
+        else if (year > 0)
+        {
+            if (year == 1)
+            {
+                age.setText(year + " year");
+                ageTop.setText(year + " year");
+                patientUploadDetails.setPatientAge(year + " year");
+            }
+            else {
+                age.setText(year + " years");
+                ageTop.setText(year + " years");
+                patientUploadDetails.setPatientAge(year + " years");
+            }
+        }
+        else if ((year == 0) && (month > 0) && (daysDiff > 15))
+        {
+            year = 0;
+            month++;
+            daysDiff = 0;
+
+            age.setText(month + " months");
+            ageTop.setText(month + " months");
+            patientUploadDetails.setPatientAge(month + " months");
+        }
+        else
+        {
+
+            if (month == 1)
+            {
+                age.setText(month + " month");
+                ageTop.setText(month + " month");
+                patientUploadDetails.setPatientAge(month + " month");
+            }
+            else {
+                age.setText(month + " months");
+                ageTop.setText(month + " months");
+                patientUploadDetails.setPatientAge(month + " months");
+            }
+        }
+
+        //Toast.makeText(getContext(), "Year: "+ year + " Month: " + month + " Days: " + daysDiff, Toast.LENGTH_SHORT).show();
+
+    }
+
 
     private void askForGender()
     {
@@ -455,6 +523,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                gender.setText(genderArr[0]);
+                genderTop.setText(genderArr[0]);
+                patientUploadDetails.setPatientGender(genderArr[0]);
 
                 dialog.cancel();
 
@@ -506,6 +578,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                bloodGroup.setText(bgArr[0]);
+                patientUploadDetails.setPatientBloodGroup(bgArr[0]);
 
                 dialog.cancel();
 
@@ -562,6 +637,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                weight.setText(10 + " kg");
+                patientUploadDetails.setPatientWeight(10 + " kg");
 
                 dialog.cancel();
 
@@ -721,6 +799,5 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         return true;
     }
-
 
 }

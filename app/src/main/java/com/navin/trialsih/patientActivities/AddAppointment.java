@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,6 +34,7 @@ public class AddAppointment extends AppCompatActivity {
     private View v;
 
     private ImageView cannotFind;
+    private TextView cannotFindText;
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressCircle;
@@ -56,6 +58,7 @@ public class AddAppointment extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         mProgressCircle = v.findViewById(R.id.progress_circle);
         cannotFind = v.findViewById(R.id.cannotfind);
+        cannotFindText = v.findViewById(R.id.cannotfind_text);
 
         loadDoctorsList();
 
@@ -74,6 +77,8 @@ public class AddAppointment extends AppCompatActivity {
 
     private void loadDoctorsList()
     {
+        list = new ArrayList<>();
+
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("doctors");
 
         mRef.addValueEventListener(new ValueEventListener() {
@@ -82,11 +87,12 @@ public class AddAppointment extends AppCompatActivity {
                 if (!dataSnapshot.exists())
                 {
                     cannotFind.setVisibility(View.VISIBLE);
+                    cannotFindText.setVisibility(View.VISIBLE);
                     mProgressCircle.setVisibility(View.INVISIBLE);
                 }
                 else
                 {
-                    ArrayList<String> listOfRegNumber = new ArrayList<>();
+                    final ArrayList<String> listOfRegNumber = new ArrayList<>();
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
@@ -119,8 +125,16 @@ public class AddAppointment extends AppCompatActivity {
                                     mRecyclerView.setAdapter(bookADoctorAdapter);
 
                                     cannotFind.setVisibility(View.INVISIBLE);
+                                    cannotFindText.setVisibility(View.INVISIBLE);
                                     mProgressCircle.setVisibility(View.GONE);
 
+                                }
+                                else
+                                {
+
+                                    cannotFind.setVisibility(View.VISIBLE);
+                                    cannotFindText.setVisibility(View.VISIBLE);
+                                    mProgressCircle.setVisibility(View.GONE);
                                 }
 
                             }
@@ -143,6 +157,7 @@ public class AddAppointment extends AppCompatActivity {
                     mRecyclerView.setAdapter(bookADoctorAdapter);
 
                     cannotFind.setVisibility(View.INVISIBLE);
+                    cannotFindText.setVisibility(View.INVISIBLE);
                     mProgressCircle.setVisibility(View.GONE);
 
                 }

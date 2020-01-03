@@ -63,13 +63,15 @@ public class PatientDashboardActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleSignInOptions gso;
 
+    private Toolbar toolbar;
+
     private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_dashboard);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -197,21 +199,25 @@ public class PatientDashboardActivity extends AppCompatActivity {
         switch (itemId) {
             case R.id.nav_patient_appointment:
                 isHomeShowing = true;
+                navigationView.getMenu().getItem(0).setChecked(true);
                 fragment = new HomeFragment();
                 break;
 
             case R.id.nav_patient_profile:
                 isHomeShowing = false;
+                navigationView.getMenu().getItem(1).setChecked(true);
                 fragment = new ProfileFragment();
                 break;
 
             case R.id.nav_patient_previous_appointment:
                 isHomeShowing = false;
+                navigationView.getMenu().getItem(2).setChecked(true);
                 fragment = new PrevAppointmentsFragment();
                 break;
 
             case R.id.nav_patient_previous_transactions:
                 isHomeShowing = false;
+                navigationView.getMenu().getItem(3).setChecked(true);
                 fragment = new PrevTransactionsFragment();
                 break;
 
@@ -241,6 +247,8 @@ public class PatientDashboardActivity extends AppCompatActivity {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, fragment);
             ft.commit();
+
+            navigationView.getMenu().getItem(0).setChecked(true);
 
             isHomeShowing = true;
         }
