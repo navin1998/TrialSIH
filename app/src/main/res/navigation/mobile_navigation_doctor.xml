@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/doctor_mobile_navigation"
+    app:startDestination="@+id/nav_doctor_appointment">
+
+    <fragment
+        android:tag="home_tag"
+        android:id="@+id/nav_doctor_appointment"
+        android:name="com.navin.trialsih.doctorActivities.bottomNavigation.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/doctor_fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_doctor_profile"
+        android:name="com.navin.trialsih.doctorActivities.bottomNavigation.ProfileFragment"
+        android:label="@string/menu_doctor_profile"
+        tools:layout="@layout/doctor_fragment_profile" />
+
+    <fragment
+        android:id="@+id/nav_doctor_history"
+        android:name="com.navin.trialsih.doctorActivities.navigationDrawer.HistoryFragment"
+        android:label="@string/menu_doctor_history"
+        tools:layout="@layout/doctor_fragment_history" />
+
+    <fragment
+        android:id="@+id/nav_doctor_settings"
+        android:name="com.navin.trialsih.doctorActivities.navigationDrawer.SettingsFragment"
+        android:label="@string/menu_doctor_settings"
+        tools:layout="@layout/doctor_fragment_settings" />
+
+</navigation>
