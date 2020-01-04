@@ -1,6 +1,5 @@
-package com.navin.trialsih.doctorActivities.bottomNavigation;
+package com.navin.trialsih.doctorActivities.navigationDrawer;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,15 +22,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
+import com.navin.trialsih.doctorActivities.bottomNavigation.HomeViewModel;
 import com.navin.trialsih.doctorAdapters.AppointmentsAdapter;
 import com.navin.trialsih.doctorClasses.Appointments;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.content.Context.MODE_PRIVATE;
-
-public class HomeFragment extends Fragment {
+public class SettingsFragment extends Fragment {
 
     private static String REG_NUMBER;
 
@@ -63,15 +62,8 @@ public class HomeFragment extends Fragment {
 
         list = new ArrayList<>();
 
-        try {
-
-            Bundle bundle = getArguments();
-            REG_NUMBER = bundle.getString("regNumber");
-        }
-        catch (Exception e) {
-
-            REG_NUMBER = getRegNumber();
-        }
+        Bundle bundle = getArguments();
+        REG_NUMBER = bundle.getString("regNumber");
 
         mRecyclerView = v.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -136,26 +128,7 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        try {
-
-            Bundle bundle = getArguments();
-            REG_NUMBER = bundle.getString("regNumber");
-        }
-        catch (Exception e) {
-
-            REG_NUMBER = getRegNumber();
-        }
-
+        Bundle bundle = getArguments();
+        REG_NUMBER = bundle.getString("regNumber");
     }
-
-    private String getRegNumber()
-    {
-        SharedPreferences doctorRegNumberPref = getContext().getSharedPreferences("doctorRegNumberPref",MODE_PRIVATE);
-
-        String reg = doctorRegNumberPref.getString("regNumber", null);
-
-        return reg;
-
-    }
-
 }

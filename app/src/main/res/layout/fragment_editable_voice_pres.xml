@@ -408,11 +408,16 @@
                 />
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/pdfgenerate"
-                android:text="GeneratePdf"
-                ></Button>
+                android:id="@+id/generatepdf"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:textColor="#FFF"
+                android:background="@drawable/background_tap_to_speak"
+                android:text="next"
+                android:layout_gravity="center_horizontal"
+
+
+                />
         </LinearLayout>
 
     </LinearLayout>

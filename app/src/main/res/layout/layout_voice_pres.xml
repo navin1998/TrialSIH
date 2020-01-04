@@ -402,14 +402,24 @@
                 android:layout_height="wrap_content"
                 android:text="Copyright &#169; | PRANKS"
                 android:layout_gravity="bottom"
-                android:paddingBottom="200dp"
                 android:textAlignment="center"
+                android:layout_marginTop="25dp"
+                />
+
+            <Button
+                android:id="@+id/edit_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:textColor="#FFF"
+                android:background="@drawable/background_tap_to_speak"
+                android:text="next"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="170dp"
                 android:layout_marginTop="25dp"
                 />
 
 
         </LinearLayout>
-
 
 
     </LinearLayout>

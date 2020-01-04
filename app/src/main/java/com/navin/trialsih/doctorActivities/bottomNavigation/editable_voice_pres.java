@@ -83,7 +83,7 @@ public class editable_voice_pres extends Fragment {
         Diagnose=bundle.getStringArrayList ("listdiagnose");
         Prescription=bundle.getStringArrayList ("listPrescription");
         Advice=bundle.getStringArrayList ("listAdvice");
-        pdfgen=voiceedit.findViewById(R.id.pdfgenerate);
+        pdfgen=voiceedit.findViewById(R.id.generatepdf);
         nameofPerson_edit=voiceedit.findViewById(R.id.patient_name_dis);
         nameofPerson_edit.setText(nameofpat);
         agesex_edit=voiceedit.findViewById(R.id.patient_age_dis);
