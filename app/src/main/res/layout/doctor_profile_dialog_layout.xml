@@ -319,6 +319,7 @@
             android:paddingRight="25dp"
             android:layout_marginTop="35dp"
             android:id="@+id/dialogDoctorBookAppointmentBtn"
+            android:layout_marginBottom="20dp"
             />
 
 

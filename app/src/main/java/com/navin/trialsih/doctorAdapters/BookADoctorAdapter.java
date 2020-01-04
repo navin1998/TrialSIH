@@ -40,6 +40,8 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
     private final static String USER_TYPE_DOCTOR = "doctors";
     private final static String PROFILE = "profile";
+    private final static String DOCTOR_UPI_NAME = "doctorUpiName";
+    private final static String DOCTOR_UPI_ID = "doctorUpiID";
     private static String REG_NUMBER;
 
     public BookADoctorAdapter(Context context, List<DoctorDetails> uploads) {
@@ -114,7 +116,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     }
 
 
-    private void showBookingDialog(String regNumber)
+    private void showBookingDialog(final String regNumber)
     {
 
         REG_NUMBER = regNumber;
@@ -186,11 +188,111 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(mContext, "Available soon", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "Available soon", Toast.LENGTH_SHORT).show();
+
+                proceedForAppointment(regNumber);
                 
                 dialog.dismiss();
             }
         });
+
+    }
+
+
+    private void proceedForAppointment(String regNumber)
+    {
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(regNumber).child(PROFILE);
+
+
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists())
+                {
+
+                    boolean isOnline = false;
+
+                    try {
+                        // it means that doctor is accepting online payments...
+                        if (dataSnapshot.child(DOCTOR_UPI_NAME).getValue().toString().length() > 0) {
+                            if (dataSnapshot.child(DOCTOR_UPI_ID).getValue().toString().length() > 0) {
+                                isOnline = true;
+                                confirmBookingForOnlinePay();
+                            }
+                        }
+                    }
+                    catch (Exception e){}
+
+
+                    //it means doctor is accepting cash only...
+                    if (!isOnline)
+                    {
+
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+
+
+    private void confirmBookingForOnlinePay()
+    {
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_book_online, null);
+        final Button onlineBtn = alertLayout.findViewById(R.id.btn_online);
+        final Button offlineBtn = alertLayout.findViewById(R.id.btn_offline);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        onlineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(mContext, "Online clicked", Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+            }
+        });
+
+        offlineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(mContext, "Offline clicked", Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+
+            }
+        });
+
+    }
+
+    private void confirmBookingForCashPay()
+    {
 
     }
 
