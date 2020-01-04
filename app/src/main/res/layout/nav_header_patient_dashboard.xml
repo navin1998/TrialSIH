@@ -16,12 +16,13 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/patient_profile_pic"
         android:src="@drawable/man"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         app:civ_border_width="1dp"
         app:civ_border_color="#7A7676"/>
 
     <TextView
+        android:layout_marginTop="5dp"
         android:id="@+id/patient_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

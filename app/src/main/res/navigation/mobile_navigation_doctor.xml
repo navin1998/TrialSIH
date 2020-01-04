@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/doctor_mobile_navigation"
+    android:id="@+id/mobile_navigation_doctor"
     app:startDestination="@+id/nav_doctor_appointment">
 
     <fragment

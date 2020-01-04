@@ -33,9 +33,4 @@
         app:menu="@menu/activity_doctor_dashboard_drawer" />
 
 
-    <include
-        layout="@layout/layout_doctor_bottom_navigation"
-        />
-
-
 </androidx.drawerlayout.widget.DrawerLayout>

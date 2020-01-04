@@ -109,13 +109,15 @@ public class AddAppointment extends AppCompatActivity {
 
                                 if (dataSnapshot.getChildrenCount() >= 3)
                                 {
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                                    {
-                                        DoctorDetails doctorDetails = snapshot.getValue(DoctorDetails.class);
-                                        list.add(doctorDetails);
-                                    }
+
+                                    list.clear();
+
+                                    DoctorDetails doctorDetails = dataSnapshot.getValue(DoctorDetails.class);
+                                    list.add(doctorDetails);
 
                                     bookADoctorAdapter = new BookADoctorAdapter(mContext, list);
+
+                                    bookADoctorAdapter.notifyDataSetChanged();
 
                                     mRecyclerView.setHasFixedSize(true);
                                     mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -171,4 +173,11 @@ public class AddAppointment extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loadDoctorsList();
+
+    }
 }
