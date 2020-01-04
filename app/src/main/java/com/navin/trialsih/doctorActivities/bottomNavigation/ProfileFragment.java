@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,6 +88,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private TextView medicalCouncil;
     private TextView mail;
     private TextView satisfiedPatients;
+    private TextView upiName;
+    private TextView upiID;
+    private TextView appointmentFee;
 
 
     private LinearLayout nameLayout;
@@ -101,6 +105,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private LinearLayout medicalCouncilLayout;
     private LinearLayout mailLayout;
     private LinearLayout satisfiedPatientsLayout;
+    private LinearLayout upiNameLayout;
+    private LinearLayout upiIDLayout;
+    private LinearLayout appointmentFeeLayout;
 
 
     private Button editBtn;
@@ -114,6 +121,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private DoctorDetails doctorUploadDetails;
 
     private Calendar calendar;
+
+    private boolean isImagePresent = false;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -150,6 +159,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         medicalCouncil = v.findViewById(R.id.doctor_council);
         mail = v.findViewById(R.id.doctor_mail);
         satisfiedPatients = v.findViewById(R.id.doctor_satisfied_patients);
+        upiName = v.findViewById(R.id.doctor_upi_name);
+        upiID = v.findViewById(R.id.doctor_upi_id);
+        appointmentFee = v.findViewById(R.id.doctor_fee);
 
 
         nameLayout = v.findViewById(R.id.doctor_name_layout);
@@ -164,13 +176,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         medicalCouncilLayout = v.findViewById(R.id.doctor_council_layout);
         mailLayout = v.findViewById(R.id.doctor_mail_layout);
         satisfiedPatientsLayout = v.findViewById(R.id.doctor_satisfied_patients_layout);
+        upiNameLayout = v.findViewById(R.id.doctor_upi_name_layout);
+        upiIDLayout = v.findViewById(R.id.doctor_upi_id_layout);
+        appointmentFeeLayout = v.findViewById(R.id.doctor_fee_layout);
 
 
         editBtn = v.findViewById(R.id.doctor_profile_edit_btn);
         doctorPic = v.findViewById(R.id.doctor_pic);
 
 
-        layoutArr = new LinearLayout[]{nameLayout, regNumberLayout, genderLayout, phoneLayout, bookingPhoneLayout, yearOfExperienceLayout, yearOfRegLayout, lastDegreeLayout, addressLayout, medicalCouncilLayout, mailLayout, satisfiedPatientsLayout};
+        layoutArr = new LinearLayout[]{nameLayout, regNumberLayout, genderLayout, phoneLayout, bookingPhoneLayout, yearOfExperienceLayout, yearOfRegLayout, lastDegreeLayout, addressLayout, medicalCouncilLayout, mailLayout, satisfiedPatientsLayout, upiNameLayout, upiIDLayout, appointmentFeeLayout};
 
         for (LinearLayout ll : layoutArr)
         {
@@ -204,6 +219,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             case R.id.doctor_mail_layout:
             case R.id.doctor_satisfied_patients_layout:
             case R.id.doctor_pic:
+            case R.id.doctor_upi_name_layout:
+            case R.id.doctor_upi_id_layout:
+            case R.id.doctor_fee_layout:
                 if (!onEdit)
                 {
                     Snackbar.make(v, "Turn on edit mode by pressing button below", Snackbar.LENGTH_SHORT).show();
@@ -265,6 +283,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             Snackbar.make(v, "This field is non-editable", Snackbar.LENGTH_SHORT).show();
                             break;
 
+                        case R.id.doctor_upi_name_layout:
+                            askForUpiName();
+                            break;
+
+                        case R.id.doctor_upi_id_layout:
+                            askForUpiID();
+                            break;
+
+                        case R.id.doctor_fee_layout:
+                            askForFee();
+                            break;
+
                     }
                 }
                 break;
@@ -288,7 +318,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 else
                 {
 
-                    doctorUploadDetails = new DoctorDetails(name.getText().toString(), regNumber.getText().toString(), gender.getText().toString(), phone.getText().toString(), bookingPhone.getText().toString(), yearOfExperience.getText().toString(), lastDegree.getText().toString(), address.getText().toString(), satisfiedPatients.getText().toString(), medicalCouncil.getText().toString(), yearOfReg.getText().toString(), null, mail.getText().toString());
+                    doctorUploadDetails = new DoctorDetails(name.getText().toString(), regNumber.getText().toString(), gender.getText().toString(), phone.getText().toString(), bookingPhone.getText().toString(), yearOfExperience.getText().toString(), lastDegree.getText().toString(), address.getText().toString(), satisfiedPatients.getText().toString(), medicalCouncil.getText().toString(), yearOfReg.getText().toString(), null, mail.getText().toString(), upiName.getText().toString(), upiID.getText().toString(), appointmentFee.getText().toString());
 
                     onEdit = true;
                     editBtn.setText("SAVE");
@@ -1198,6 +1228,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
         {
+
+            isImagePresent = true;
+
             imagePath = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), imagePath);
@@ -1249,12 +1282,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void onSuccess(Uri uri) {
 
-                    if (imagePath != null) {
-                        downloadUrl = uri.toString();
-                    }
-                    else {
-                        downloadUrl = downloadUrl;
-                    }
+                    downloadUrl = uri.toString();
 
                     //Toast.makeText(getContext(), "Url: " + downloadUrl, Toast.LENGTH_SHORT).show();
 
@@ -1271,7 +1299,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }
         else
         {
-            uploadToDatabase(downloadUrl);
+            if (doctorPic.getDrawable() != null) {
+                uploadToDatabase(downloadUrl);
+            }
+            else
+            {
+                Snackbar.make(v, "Please select your profile picture", Snackbar.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -1311,6 +1345,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         String doctorMail = mail.getText().toString().trim();
         doctorMail = doctorMail.replaceAll(" ", "");
+
+        String doctorUpiName = upiName.getText().toString().trim();
+        doctorUpiName = doctorUpiName.replaceAll(" ", "");
+
+        String doctorUpiID = upiID.getText().toString().trim();
+        doctorUpiID = doctorUpiID.replaceAll(" ", "");
+
+        String doctorFee = appointmentFee.getText().toString().trim();
+        doctorFee = doctorFee.replaceAll(" ", "");
+
 
         if (imagePath == null && downloadUrl == null)
         {
@@ -1373,6 +1417,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             Snackbar.make(v, "Please enter your mail-ID", Snackbar.LENGTH_SHORT).show();
             return false;
         }
+        if (!Patterns.EMAIL_ADDRESS.matcher(mail.getText().toString()).matches())
+        {
+            Snackbar.make(v, "Please enter valid mail-ID", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        if (doctorFee.isEmpty())
+        {
+            Snackbar.make(v, "Please enter your appointment fee", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        if ((doctorUpiName.length() == 0) && (doctorUpiID.length() > 0))
+        {
+            Snackbar.make(v, "Please enter both UPI name and ID or none", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
+        if ((doctorUpiID.length() == 0) && (doctorUpiName.length() > 0))
+        {
+            Snackbar.make(v, "Please enter both UPI name and ID or none", Snackbar.LENGTH_SHORT).show();
+            return false;
+        }
 
 
         return true;
@@ -1404,6 +1468,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         doctorDetails.setDoctorMail(mail.getText().toString());
         doctorDetails.setDoctorPhotoUri(imageUrl);
         doctorDetails.setDoctorSatisfiedPatientsNumber(String.valueOf(0));
+        doctorDetails.setDoctorUpiName(upiName.getText().toString());
+        doctorDetails.setDoctorUpiID(upiID.getText().toString());
+        doctorDetails.setDoctorFee(appointmentFee.getText().toString());
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
@@ -1502,6 +1569,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     medicalCouncil.setText(list.get(0).getDoctorMedicalCouncil());
                     mail.setText(list.get(0).getDoctorMail());
                     satisfiedPatients.setText(list.get(0).getDoctorSatisfiedPatientsNumber());
+                    if (list.get(0).getDoctorUpiName().trim() != null) {
+                        upiName.setText(list.get(0).getDoctorUpiName());
+                    }
+                    if (list.get(0).getDoctorUpiID().trim() != null) {
+                        upiID.setText(list.get(0).getDoctorUpiID());
+                    }
+                    appointmentFee.setText(list.get(0).getDoctorFee());
 
                     downloadUrl = list.get(0).getDoctorPhotoUri();
 
@@ -1539,6 +1613,195 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
             }
         });
+
+    }
+
+
+
+    private void askForUpiName()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Enter your name registered in UPI App");
+
+        builder.setCancelable(false);
+
+        final EditText input = new EditText(getContext());
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
+                for (int i = start; i < end; ++i)
+                {
+                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(50)});
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+
+        input.setText(doctorUploadDetails.getDoctorUpiName());
+
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String testName = input.getText().toString().trim();
+                testName = testName.replaceAll(" ", "");
+
+                if (!(testName.length() > 0))
+                {
+                    Snackbar.make(v, "You will not be able to accept UPI Payments", Snackbar.LENGTH_SHORT).show();
+                }
+                else {
+
+                    doctorUploadDetails.setDoctorUpiName(input.getText().toString().toUpperCase());
+                    upiName.setText(input.getText().toString());
+                }
+
+                dialog.cancel();
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+
+    private void askForUpiID()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Enter your UPI ID");
+
+        builder.setCancelable(false);
+
+        final EditText input = new EditText(getContext());
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
+                for (int i = start; i < end; ++i)
+                {
+                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyz@1234567890_.]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(50)});
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+
+        input.setText(doctorUploadDetails.getDoctorUpiID());
+
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String testName = input.getText().toString().trim();
+                testName = testName.replaceAll(" ", "");
+
+                if (!(testName.length() > 0))
+                {
+                    Snackbar.make(v, "You will not be able to accept UPI Payments", Snackbar.LENGTH_SHORT).show();
+                }
+                else {
+
+                    doctorUploadDetails.setDoctorUpiID(input.getText().toString());
+                    upiID.setText(input.getText().toString());
+                }
+
+                dialog.cancel();
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+
+
+    private void askForFee()
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Enter your appointment fee");
+
+        builder.setCancelable(false);
+
+        final EditText input = new EditText(getContext());
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
+                for (int i = start; i < end; ++i)
+                {
+                    if (!Pattern.compile("[1234567890]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        input.setText(appointmentFee.getText().toString());
+
+        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(4)});
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (Integer.parseInt(input.getText().toString()) == 0)
+                {
+                    Snackbar.make(v, "Minimum fee allowed is Re. 1", Snackbar.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    appointmentFee.setText("Rs. " + input.getText().toString());
+                    doctorUploadDetails.setDoctorFee("Rs. " + input.getText().toString());
+                }
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
 
     }
 
