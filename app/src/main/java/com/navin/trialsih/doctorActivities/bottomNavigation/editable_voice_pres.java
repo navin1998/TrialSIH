@@ -1,12 +1,14 @@
 package com.navin.trialsih.doctorActivities.bottomNavigation;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -26,8 +28,18 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
@@ -36,6 +48,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.navin.trialsih.R;
+import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -68,6 +81,9 @@ public class editable_voice_pres extends Fragment {
     private File dir;
     private File file;
     Button pdfgen;
+    public String pathtoupload;
+    public StorageReference storageReference;
+    public DatabaseReference myReference;
 
     //use to set background color
     BaseColor myColor = WebColors.getRGBColor("#9E9E9E");
@@ -83,6 +99,10 @@ public class editable_voice_pres extends Fragment {
         Diagnose=bundle.getStringArrayList ("listdiagnose");
         Prescription=bundle.getStringArrayList ("listPrescription");
         Advice=bundle.getStringArrayList ("listAdvice");
+        //firebase variables
+        storageReference=FirebaseStorage.getInstance().getReference();
+        myReference=FirebaseDatabase.getInstance().getReference();
+
         pdfgen=voiceedit.findViewById(R.id.generatepdf);
         nameofPerson_edit=voiceedit.findViewById(R.id.patient_name_dis);
         nameofPerson_edit.setText(nameofpat);
@@ -146,7 +166,8 @@ public class editable_voice_pres extends Fragment {
 
             Log.e("PDFCreator", "PDF Path: " + path);
             SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-            file = new File(dir, sdf.format(Calendar.getInstance().getTime()) + "" + Calendar.getInstance().getTimeInMillis() + ".pdf");
+            pathtoupload=sdf.format(Calendar.getInstance().getTime()) + "" + nameofpat+ ".pdf";
+            file = new File(dir, pathtoupload);
             FileOutputStream fOut = new FileOutputStream(file);
             PdfWriter writer = PdfWriter.getInstance(doc, fOut);
 
@@ -167,9 +188,9 @@ public class editable_voice_pres extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] bitmapdata = stream.toByteArray();
             try {
-                //bgImage = Image.getInstance(bitmapdata);
-                //bgImage.setAbsolutePosition(330f, 642f);
-                //cell.addElement(bgImage);
+                bgImage = com.itextpdf.text.Image.getInstance(bitmapdata);
+                bgImage.setAbsolutePosition(330f, 642f);
+                cell.addElement(bgImage);
                 pt.addCell(cell);
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
@@ -282,7 +303,38 @@ public class editable_voice_pres extends Fragment {
                 cell.addElement(ftable);
                 table.addCell(cell);
                 doc.add(table);
-                Toast.makeText(getContext(), "created PDF", Toast.LENGTH_LONG).show();
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                // Setting Alert Dialog Title
+                alertDialogBuilder.setTitle("Pdf Generated");
+                // Icon Of Alert Dialog
+                alertDialogBuilder.setIcon(R.drawable.ic_check_black_24dp);
+                // Setting Alert Dialog Message
+                alertDialogBuilder.setMessage("Pdf Generated");
+                alertDialogBuilder.setCancelable(false);
+
+                alertDialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                @Override
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            Uri pathtoupload1=Uri.fromFile(new File(path+pathtoupload));
+                            uploadFile(pathtoupload1);
+                        }
+                    });
+
+                    alertDialogBuilder.setNegativeButton("Preview", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getContext(),"You clicked on Preview",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    alertDialogBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getContext(),"Canceled",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
             } catch (Exception e) {
                 Log.e("PDFCreator", "ioException:" + e);
                 Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
@@ -292,6 +344,60 @@ public class editable_voice_pres extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //upload File
+    private void uploadFile(Uri filePath) {
+        //final DoctorDashboardActivity doctoracti=new DoctorDashboardActivity();
+        Toast.makeText(getContext(), filePath.toString(), Toast.LENGTH_SHORT).show();
+        //checking if file is available
+        if (filePath != null) {
+            //displaying progress dialog while image is uploading
+            final ProgressDialog progressDialog = new ProgressDialog(getContext());
+            progressDialog.setTitle("Uploading");
+            progressDialog.show();
+
+            //getting the storage reference
+            final StorageReference sRef = storageReference.child("1806012"+ "/" + System.currentTimeMillis() + "." + filePath.toString());
+
+            //adding the file to reference
+            sRef.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+
+                            //displaying success toast
+//                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+
+                            //creating the upload object to store uploaded image details
+                            sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    myReference.child("doctors").child("1806012").child("PatientPres").setValue(uri.toString());
+                                }
+                            });
+                        }
+                    })
+
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            progressDialog.dismiss();
+                            Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            //displaying the upload progress
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                            progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                        }
+                    });
+        } else {
+            Toast.makeText(getContext(), "Please select a file", Toast.LENGTH_SHORT).show();
         }
     }
 }

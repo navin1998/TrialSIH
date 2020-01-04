@@ -24,6 +24,13 @@
     <string name="menu_patient_settings">Settings</string>
     <string name="menu_patient_app_info">About</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="menu_doctor_appointment">Active appointments</string>
+    <string name="menu_doctor_profile">Your Profile</string>
+    <string name="menu_doctor_history">History</string>
+    <string name="menu_doctor_logout">Logout</string>
+    <string name="menu_doctor_settings">Settings</string>
+
+
 </resources>
