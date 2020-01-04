@@ -67,7 +67,7 @@
                         android:layout_weight="3"
                         android:textSize="17sp"
                         android:text="Your name here"
-                        android:id="@+id/patientName"
+                        android:id="@+id/patient_name_dis"
                         />
 
                 </LinearLayout>
@@ -118,7 +118,7 @@
                         android:layout_weight="3"
                         android:textSize="17sp"
                         android:text="Your age/gender"
-                        android:id="@+id/patientAgeAndGender"
+                        android:id="@+id/patient_age_dis"
                         android:layout_gravity="center_vertical"
                         />
 
@@ -172,7 +172,7 @@
                         android:layout_weight="3"
                         android:textSize="17sp"
                         android:text="Today date"
-                        android:id="@+id/patientDate"
+                        android:id="@+id/patient_date_dis"
                         android:layout_gravity="center_vertical"
                         />
 
@@ -225,7 +225,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        android:id="@+id/patientSymptoms"
+                        android:id="@+id/list_symptoms"
                         />
 
                 </LinearLayout>
@@ -277,7 +277,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        android:id="@+id/patientDiagnosis"
+                        android:id="@+id/list_diagnose"
                         />
 
                 </LinearLayout>
@@ -328,7 +328,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        android:id="@+id/patientPrescriptions"
+                        android:id="@+id/list_prescriptions"
                         />
 
                 </LinearLayout>
@@ -380,7 +380,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="3"
-                        android:id="@+id/patientAdvices"
+                        android:id="@+id/list_advice"
                         android:nestedScrollingEnabled="true"
                         />
 
