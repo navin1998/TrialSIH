@@ -1,5 +1,6 @@
 package com.navin.trialsih.doctorActivities.bottomNavigation;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ import com.navin.trialsih.doctorClasses.Appointments;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment {
 
@@ -60,8 +63,15 @@ public class HomeFragment extends Fragment {
 
         list = new ArrayList<>();
 
-        Bundle bundle = getArguments();
-        REG_NUMBER = bundle.getString("regNumber");
+        try {
+
+            Bundle bundle = getArguments();
+            REG_NUMBER = bundle.getString("regNumber");
+        }
+        catch (Exception e) {
+
+            REG_NUMBER = getRegNumber();
+        }
 
         mRecyclerView = v.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -126,7 +136,26 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        Bundle bundle = getArguments();
-        REG_NUMBER = bundle.getString("regNumber");
+        try {
+
+            Bundle bundle = getArguments();
+            REG_NUMBER = bundle.getString("regNumber");
+        }
+        catch (Exception e) {
+
+            REG_NUMBER = getRegNumber();
+        }
+
     }
+
+    private String getRegNumber()
+    {
+        SharedPreferences doctorRegNumberPref = getContext().getSharedPreferences("doctorRegNumberPref",MODE_PRIVATE);
+
+        String reg = doctorRegNumberPref.getString("regNumber", null);
+
+        return reg;
+
+    }
+
 }

@@ -28,6 +28,7 @@
             android:background="@drawable/background_tap_to_speak"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="70dp"
+            android:elevation="@dimen/fab_margin"
             />
 
     </LinearLayout>

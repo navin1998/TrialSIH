@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_doctor_appointment_icon"
+            android:icon="@drawable/ic_doctor_appointments"
+            android:title="@string/menu_doctor_appointment" />
+        <item
+            android:id="@+id/nav_doctor_profile_icon"
+            android:icon="@drawable/ic_doctor_profile"
+            android:title="@string/menu_doctor_profile" />
+        <item
+            android:id="@+id/nav_doctor_history_icon"
+            android:icon="@drawable/ic_doctor_history"
+            android:title="@string/menu_doctor_history" />
+        <item
+            android:id="@+id/nav_doctor_settings_icon"
+            android:icon="@drawable/ic_doctor_settings"
+            android:title="@string/menu_doctor_settings" />
+        <item
+            android:id="@+id/nav_doctor_logout_icon"
+            android:icon="@drawable/ic_doctor_logout"
+            android:title="Logout"
+            android:checkable="false"
+            />
+    </group>
+
+<!--    <item android:title="Communicate">-->
+<!--        <menu>-->
+<!--            <item-->
+<!--                android:id="@+id/nav_patient_share"-->
+<!--                android:icon="@drawable/ic_menu_share"-->
+<!--                android:title="@string/menu_share" />-->
+<!--            <item-->
+<!--                android:id="@+id/nav_patient_feedback"-->
+<!--                android:icon="@drawable/ic_patient_feedback"-->
+<!--                android:title="@string/menu_feedback" />-->
+<!--        </menu>-->
+<!--    </item>-->
+
+</menu>
