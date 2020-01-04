@@ -39,6 +39,8 @@ import com.navin.trialsih.SignInActivity;
 import com.navin.trialsih.doctorActivities.bottomNavigation.HomeFragment;
 import com.navin.trialsih.doctorActivities.bottomNavigation.ProfileFragment;
 import com.navin.trialsih.doctorActivities.bottomNavigation.VoicePresFragment;
+import com.navin.trialsih.doctorActivities.navigationDrawer.HistoryFragment;
+import com.navin.trialsih.doctorActivities.navigationDrawer.SettingsFragment;
 
 public class DoctorDashboardActivity extends AppCompatActivity {
 
@@ -175,11 +177,15 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 break;
 
             case R.id.nav_doctor_history_icon:
-
+                isHomeShowing = false;
+                navigationView.getMenu().getItem(2).setChecked(true);
+                fragment = new HistoryFragment();
                 break;
 
             case R.id.nav_doctor_settings_icon:
-
+                isHomeShowing = false;
+                navigationView.getMenu().getItem(3).setChecked(true);
+                fragment = new SettingsFragment();
                 break;
 
             case R.id.nav_doctor_logout_icon:
@@ -376,7 +382,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         regEditor.commit();
 
         Intent intent = new Intent(mContext, SignInActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         startActivity(intent);
         finish();

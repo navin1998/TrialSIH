@@ -69,6 +69,9 @@ public class VoicePresFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.RECORD_AUDIO},8865);
         }
         voice = inflater.inflate(R.layout.doctor_fragment_voice_pres, container, false);
+
+        ((DoctorDashboardActivity) getActivity()).getSupportActionBar().setTitle("Voice Pres");
+
         nameofperson = voice.findViewById(R.id.patient_name_dis);
         date=voice.findViewById(R.id.patient_date_dis);
         symptomList=voice.findViewById(R.id.list_symptoms);
@@ -261,6 +264,7 @@ public class VoicePresFragment extends Fragment {
 
             }
         });
+
         button.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
