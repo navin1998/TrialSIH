@@ -136,6 +136,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
         final TextView doctorExperience = alertLayout.findViewById(R.id.dialogDoctorExpYear);
         final TextView doctorLastDegree = alertLayout.findViewById(R.id.dialogDoctorLastDegree);
         final TextView doctorAddress = alertLayout.findViewById(R.id.dialogDoctorAddress);
+        final TextView doctorFee = alertLayout.findViewById(R.id.dialogDoctorFee);
         final TextView doctorSatisfiedPatients = alertLayout.findViewById(R.id.dialogDoctorSatisfiedPatients);
 
 
@@ -162,6 +163,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                 doctorExperience.setText(dataSnapshot.child("doctorExperience").getValue().toString());
                 doctorLastDegree.setText(dataSnapshot.child("doctorQualifications").getValue().toString());
                 doctorAddress.setText(dataSnapshot.child("doctorClinicAddress").getValue().toString());
+                doctorFee.setText(dataSnapshot.child("doctorFee").getValue().toString());
                 doctorSatisfiedPatients.setText(dataSnapshot.child("doctorSatisfiedPatientsNumber").getValue().toString());
 
 

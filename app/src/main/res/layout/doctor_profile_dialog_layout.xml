@@ -306,7 +306,79 @@
 
 
 
-<!--        Layout for appointment button-->
+
+        <!--        Layout for fee-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Appointment fee: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Doctor fee"
+                android:textSize="15sp"
+                android:id="@+id/dialogDoctorFee"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+        <!--        Layout for satisfied patients-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Satisfied patients: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Number of patients"
+                android:textSize="15sp"
+                android:id="@+id/dialogDoctorSatisfiedPatients"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+
+        <!--        Layout for appointment button-->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
