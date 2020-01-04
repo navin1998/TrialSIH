@@ -1256,6 +1256,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                         downloadUrl = downloadUrl;
                     }
 
+                    //Toast.makeText(getContext(), "Url: " + downloadUrl, Toast.LENGTH_SHORT).show();
+
                     uploadToDatabase(downloadUrl);
                     //uploading to firebase database...
 
@@ -1267,7 +1269,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 }
             });
         }
-        else if (downloadUrl != null)
+        else
         {
             uploadToDatabase(downloadUrl);
         }
