@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorClasses.DoctorDetails;
 import com.navin.trialsih.patientAdapters.AppointmentsAdapter;
@@ -44,6 +45,18 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
         try {
             holder.textViewName.setText(doctorDetails.getDoctorName());
             holder.textViewType.setText(doctorDetails.getDoctorBookingPhone());
+
+            try
+            {
+
+                Glide.with(mContext)
+                        .load(doctorDetails.getDoctorPhotoUri())
+                        .placeholder(R.drawable.man)
+                        .into(holder.imageView);
+
+
+            }catch (Exception e) {}
+
         }
         catch (Exception e) {}
 

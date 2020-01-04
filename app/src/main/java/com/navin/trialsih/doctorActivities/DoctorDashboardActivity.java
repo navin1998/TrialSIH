@@ -295,44 +295,56 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PROFILE);
+
+        try {
+
+            final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PROFILE);
 
 
-        mRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            mRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+
+                        NavigationView navigationView = (NavigationView) findViewById(R.id.doctor_nav_view);
+                        View hView = navigationView.getHeaderView(0);
+
+                        ImageView userPic = (ImageView) hView.findViewById(R.id.doctor_nav_profile_pic);
+                        TextView userName = (TextView) hView.findViewById(R.id.doctor_nav_name);
+                        TextView userReg = (TextView) hView.findViewById(R.id.doctor_nav_reg);
+
+                        String doctorName = dataSnapshot.child("doctorName").getValue().toString();
+                        String doctorRegNumber = dataSnapshot.child("doctorRegNumber").getValue().toString();
+                        String doctorPhotoUri = dataSnapshot.child("doctorPhotoUri").getValue().toString();
+
+                        try {
+                            Glide.with(mContext)
+                                    .load(doctorPhotoUri)
+                                    .placeholder(R.drawable.man)
+                                    .into(userPic);
+                        } catch (Exception e) {
+                        }
+
+                        userName.setText(doctorName);
+                        userReg.setText(doctorRegNumber);
+                    } else {
+                        Toast.makeText(mContext, "Application malfunctioned", Toast.LENGTH_SHORT).show();
+
+                        startActivity(new Intent(mContext, SignInActivity.class));
+                        finish();
+                    }
 
 
-                NavigationView navigationView = (NavigationView) findViewById(R.id.doctor_nav_view);
-                View hView =  navigationView.getHeaderView(0);
-
-                ImageView userPic = (ImageView) hView.findViewById(R.id.doctor_nav_profile_pic);
-                TextView userName = (TextView)hView.findViewById(R.id.doctor_nav_name);
-                TextView userReg = (TextView)hView.findViewById(R.id.doctor_nav_reg);
-
-                String doctorName = dataSnapshot.child("doctorName").getValue().toString();
-                String doctorRegNumber = dataSnapshot.child("doctorRegNumber").getValue().toString();
-                String doctorPhotoUri = dataSnapshot.child("doctorPhotoUri").getValue().toString();
-
-                try {
-                    Glide.with(mContext)
-                            .load(doctorPhotoUri)
-                            .placeholder(R.drawable.man)
-                            .into(userPic);
                 }
-                catch (Exception e){}
 
-                userName.setText(doctorName);
-                userReg.setText(doctorRegNumber);
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+                }
+            });
+        }
+        catch (Exception e){}
 
     }
 
