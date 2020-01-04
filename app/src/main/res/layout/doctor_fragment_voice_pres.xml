@@ -21,7 +21,7 @@
 
 
         <ImageButton
-            android:id="@+id/patientMicBtn"
+            android:id="@+id/speach_button"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:src="@drawable/ic_tap_to_speak"
