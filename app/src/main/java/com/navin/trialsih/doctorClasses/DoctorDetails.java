@@ -16,9 +16,12 @@ public class DoctorDetails
     private String doctorYearOfReg;
     private String doctorPhotoUri;
     private String doctorMail;
+    private String doctorUpiName;
+    private String doctorUpiID;
+    private String doctorFee;
 
 
-    public DoctorDetails(String doctorName, String doctorRegNumber, String doctorGender, String doctorPhone, String doctorBookingPhone, String doctorExperience, String doctorQualifications, String doctorClinicAddress, String doctorSatisfiedPatientsNumber, String doctorMedicalCouncil, String doctorYearOfReg, String doctorPhotoUri, String doctorMail) {
+    public DoctorDetails(String doctorName, String doctorRegNumber, String doctorGender, String doctorPhone, String doctorBookingPhone, String doctorExperience, String doctorQualifications, String doctorClinicAddress, String doctorSatisfiedPatientsNumber, String doctorMedicalCouncil, String doctorYearOfReg, String doctorPhotoUri, String doctorMail, String doctorUpiName, String doctorUpiID, String doctorFee) {
         this.doctorName = doctorName;
         this.doctorRegNumber = doctorRegNumber;
         this.doctorGender = doctorGender;
@@ -32,11 +35,56 @@ public class DoctorDetails
         this.doctorYearOfReg = doctorYearOfReg;
         this.doctorPhotoUri = doctorPhotoUri;
         this.doctorMail = doctorMail;
+        this.doctorUpiName = doctorUpiName;
+        this.doctorUpiID = doctorUpiID;
+        this.doctorFee = doctorFee;
     }
+
+
+//    public DoctorDetails(String doctorName, String doctorRegNumber, String doctorGender, String doctorPhone, String doctorBookingPhone, String doctorExperience, String doctorQualifications, String doctorClinicAddress, String doctorSatisfiedPatientsNumber, String doctorMedicalCouncil, String doctorYearOfReg, String doctorPhotoUri, String doctorMail, String doctorFee) {
+//        this.doctorName = doctorName;
+//        this.doctorRegNumber = doctorRegNumber;
+//        this.doctorGender = doctorGender;
+//        this.doctorPhone = doctorPhone;
+//        this.doctorBookingPhone = doctorBookingPhone;
+//        this.doctorExperience = doctorExperience;
+//        this.doctorQualifications = doctorQualifications;
+//        this.doctorClinicAddress = doctorClinicAddress;
+//        this.doctorSatisfiedPatientsNumber = doctorSatisfiedPatientsNumber;
+//        this.doctorMedicalCouncil = doctorMedicalCouncil;
+//        this.doctorYearOfReg = doctorYearOfReg;
+//        this.doctorPhotoUri = doctorPhotoUri;
+//        this.doctorMail = doctorMail;
+//        this.doctorFee = doctorFee;
+//    }
 
     public DoctorDetails() {
     }
 
+
+    public String getDoctorUpiName() {
+        return doctorUpiName;
+    }
+
+    public void setDoctorUpiName(String doctorUpiName) {
+        this.doctorUpiName = doctorUpiName;
+    }
+
+    public String getDoctorUpiID() {
+        return doctorUpiID;
+    }
+
+    public void setDoctorUpiID(String doctorUpiID) {
+        this.doctorUpiID = doctorUpiID;
+    }
+
+    public String getDoctorFee() {
+        return doctorFee;
+    }
+
+    public void setDoctorFee(String doctorFee) {
+        this.doctorFee = doctorFee;
+    }
 
     public String getDoctorGender() {
         return doctorGender;

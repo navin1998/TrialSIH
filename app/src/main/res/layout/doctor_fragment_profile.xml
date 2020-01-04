@@ -685,7 +685,188 @@
 
             </LinearLayout>
 
+
+
+
+
+            <!--        Banking related credentials-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Payment credentials"
+                android:textSize="15sp"
+                android:layout_marginTop="45dp"
+                />
+
+
+
+
+
+
+
+            <!--            Added at last-->
+            <!--    Layout for doctor upi name-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/doctor_upi_name_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Name (as in UPI app):"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/doctor_upi_name"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+
+            <!--    Layout for doctor upi id-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/doctor_upi_id_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="UPI ID (as in UPI app):"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/doctor_upi_id"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+
+            <!--    Layout for doctor fee-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="start"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="start"
+                    android:id="@+id/doctor_fee_layout"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Appointment charge:"
+                        android:textSize="20sp"
+                        android:textColor="#272626"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="15sp"
+                        android:id="@+id/doctor_fee"
+                        />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#272626"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+
+
         </LinearLayout>
+
+
+
+
 
 
 

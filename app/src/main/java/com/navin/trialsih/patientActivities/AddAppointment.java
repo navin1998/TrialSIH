@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +42,9 @@ public class AddAppointment extends AppCompatActivity {
     private List<DoctorDetails> list;
     private BookADoctorAdapter bookADoctorAdapter;
 
+    private final static String PROFILE = "profile";
+    private final static String USER_TYPE_DOCTOR = "doctors";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +66,7 @@ public class AddAppointment extends AppCompatActivity {
 
         loadDoctorsList();
 
+
     }
 
     @Override
@@ -78,8 +83,11 @@ public class AddAppointment extends AppCompatActivity {
     private void loadDoctorsList()
     {
         list = new ArrayList<>();
+        list.clear();
 
-        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("doctors");
+        bookADoctorAdapter = new BookADoctorAdapter(mContext, list);
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR);
 
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -96,60 +104,32 @@ public class AddAppointment extends AppCompatActivity {
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
-                        listOfRegNumber.add(snapshot.getKey());
+                        if (snapshot.child(PROFILE).getChildrenCount() > 3)
+                        {
+                            listOfRegNumber.add(snapshot.getKey());
+
+                            list.add(snapshot.child(PROFILE).getValue(DoctorDetails.class));
+
+                        }
                     }
 
-                    for (String reg : listOfRegNumber)
+                    ArrayList<DoctorDetails> newList = new ArrayList<>();
+
+                    for (int i = 0; i < listOfRegNumber.size(); i++)
                     {
-                        final DatabaseReference innerRef = mRef.child(reg).child("profile");
 
-                        innerRef.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                if (dataSnapshot.getChildrenCount() >= 3)
-                                {
-
-                                    list.clear();
-
-                                    DoctorDetails doctorDetails = dataSnapshot.getValue(DoctorDetails.class);
-                                    list.add(doctorDetails);
-
-                                    bookADoctorAdapter = new BookADoctorAdapter(mContext, list);
-
-                                    bookADoctorAdapter.notifyDataSetChanged();
-
-                                    mRecyclerView.setHasFixedSize(true);
-                                    mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-
-                                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                                    mRecyclerView.setAdapter(bookADoctorAdapter);
-
-                                    cannotFind.setVisibility(View.INVISIBLE);
-                                    cannotFindText.setVisibility(View.INVISIBLE);
-                                    mProgressCircle.setVisibility(View.GONE);
-
-                                }
-                                else
-                                {
-
-                                    cannotFind.setVisibility(View.VISIBLE);
-                                    cannotFindText.setVisibility(View.VISIBLE);
-                                    mProgressCircle.setVisibility(View.GONE);
-                                }
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+                        newList.add(list.get(i));
 
                     }
 
-                    bookADoctorAdapter = new BookADoctorAdapter(mContext, list);
+                    if (listOfRegNumber.size() == 0) {
+                        cannotFind.setVisibility(View.VISIBLE);
+                        cannotFindText.setVisibility(View.VISIBLE);
+                        mProgressCircle.setVisibility(View.GONE);
+                    }
+
+
+                    bookADoctorAdapter = new BookADoctorAdapter(mContext, newList);
 
                     mRecyclerView.setHasFixedSize(true);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -162,6 +142,7 @@ public class AddAppointment extends AppCompatActivity {
                     cannotFindText.setVisibility(View.INVISIBLE);
                     mProgressCircle.setVisibility(View.GONE);
 
+
                 }
             }
 
@@ -172,6 +153,7 @@ public class AddAppointment extends AppCompatActivity {
         });
 
     }
+
 
     @Override
     protected void onResume() {
