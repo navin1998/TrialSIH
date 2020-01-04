@@ -305,7 +305,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    if (dataSnapshot.exists()) {
+                    if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 3) {
 
                         NavigationView navigationView = (NavigationView) findViewById(R.id.doctor_nav_view);
                         View hView = navigationView.getHeaderView(0);
