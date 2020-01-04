@@ -19,6 +19,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +38,11 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     private List<DoctorDetails> mUploads;
     private View root;
 
+    private final static String CONNECT_MODE_CHAT = "chat";
+    private final static String CONNECT_MODE_VISIT = "visit";
+    
+    private final static String PAY_MODE_ONLINE = "online";
+    private final static String PAY_MODE_CASH = "cash";
 
     private final static String USER_TYPE_DOCTOR = "doctors";
     private final static String PROFILE = "profile";
@@ -201,7 +207,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     }
 
 
-    private void proceedForAppointment(String regNumber)
+    private void proceedForAppointment(final String regNumber)
     {
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(regNumber).child(PROFILE);
@@ -221,7 +227,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                         if (dataSnapshot.child(DOCTOR_UPI_NAME).getValue().toString().length() > 0) {
                             if (dataSnapshot.child(DOCTOR_UPI_ID).getValue().toString().length() > 0) {
                                 isOnline = true;
-                                confirmBookingForOnlinePay();
+                                confirmBookingForOnlinePay(regNumber);
                             }
                         }
                     }
@@ -231,7 +237,8 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                     //it means doctor is accepting cash only...
                     if (!isOnline)
                     {
-
+                        isOnline = false;
+                        confirmBookingForCashPay(regNumber);
                     }
 
                 }
@@ -249,7 +256,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
 
 
-    private void confirmBookingForOnlinePay()
+    private void confirmBookingForOnlinePay(final String regNumber)
     {
 
         LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
@@ -274,7 +281,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(mContext, "Online clicked", Toast.LENGTH_SHORT).show();
+                showWayToConnectDialog(regNumber);
 
                 dialog.dismiss();
             }
@@ -284,7 +291,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(mContext, "Offline clicked", Toast.LENGTH_SHORT).show();
+                showBenefitsOfOnlinePaymentsDialog(regNumber);
 
                 dialog.dismiss();
 
@@ -293,10 +300,222 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
     }
 
-    private void confirmBookingForCashPay()
+    private void confirmBookingForCashPay(final String regNumber)
     {
 
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_book_offline, null);
+        final Button confirmBtn = alertLayout.findViewById(R.id.btn_confirm);
+        final Button declineBtn = alertLayout.findViewById(R.id.btn_decline);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showLastConfirmationDialog(regNumber);
+
+                dialog.dismiss();
+            }
+        });
+
+        declineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(mContext, "Cancelled by the user", Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+
+            }
+        });
+
     }
+
+
+    private void showWayToConnectDialog(final String regNumber)
+    {
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_book_online_contact_way, null);
+        final Button chatBtn = alertLayout.findViewById(R.id.btn_chat);
+        final Button visitBtn = alertLayout.findViewById(R.id.btn_visit);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        chatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showProceedToPayDialog(regNumber, CONNECT_MODE_CHAT);
+
+                dialog.dismiss();
+            }
+        });
+
+        visitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showProceedToPayDialog(regNumber, CONNECT_MODE_VISIT);
+
+                dialog.dismiss();
+
+            }
+        });
+
+
+    }
+
+
+    private void showProceedToPayDialog(final String regNumber, final String wayToConnect)
+    {
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_proceed_to_pay, null);
+        final Button payBtn = alertLayout.findViewById(R.id.btn_pay);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        payBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //start payment, user want to connect with method parameter 'String wayToConnect'...
+
+                Toast.makeText(mContext, "Payment will start. Connect method: " + wayToConnect + "    Reg Number: " + regNumber, Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+            }
+        });
+
+    }
+
+
+
+    private void showBenefitsOfOnlinePaymentsDialog(final String regNumber)
+    {
+
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_benefits_of_online_payment, null);
+        final Button cashBtn = alertLayout.findViewById(R.id.btn_cash);
+        final Button onlineBtn = alertLayout.findViewById(R.id.btn_online);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        cashBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showLastConfirmationDialog(regNumber);
+                
+                dialog.dismiss();
+            }
+        });
+
+        onlineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showWayToConnectDialog(regNumber);
+
+                dialog.dismiss();
+
+            }
+        });
+
+    }
+    
+    
+    
+    private void showLastConfirmationDialog(String regNumber)
+    {
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_confirm_booking, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button confirmBtn = alertLayout.findViewById(R.id.btn_confirm);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(mContext, "Operation cancelled by the user", Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+            }
+        });
+
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //  this is cash transaction...
+
+                dialog.dismiss();
+
+            }
+        });
+    }
+    
 
 
 }

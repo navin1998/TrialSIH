@@ -1660,6 +1660,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 if (!(testName.length() > 0))
                 {
                     Snackbar.make(v, "You will not be able to accept UPI Payments", Snackbar.LENGTH_SHORT).show();
+
+                    doctorUploadDetails.setDoctorUpiName("");
+                    upiName.setText("");
+
                 }
                 else {
 
@@ -1724,6 +1728,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 if (!(testName.length() > 0))
                 {
                     Snackbar.make(v, "You will not be able to accept UPI Payments", Snackbar.LENGTH_SHORT).show();
+
+                    doctorUploadDetails.setDoctorUpiID("");
+                    upiID.setText("");
+
                 }
                 else {
 

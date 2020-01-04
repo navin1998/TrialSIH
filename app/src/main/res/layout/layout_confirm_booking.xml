@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_book_appointment_dialog"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        >
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Confirm your appointment"
+            android:textColor="#272626"
+            android:textSize="18sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            />
+
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Are you sure to confirm this appointment?"
+            android:textColor="#272626"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            />
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            >
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFF"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                />
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            >
+
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="CANCEL"
+                android:background="@drawable/background_appointment_btn"
+                android:layout_gravity="start"
+                android:textColor="#6D8EF1"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="CONFIRM"
+                android:background="@drawable/background_appointment_btn"
+                android:layout_gravity="end"
+                android:textColor="#6D8EF1"
+                android:layout_marginLeft="30dp"
+                android:layout_marginBottom="20dp"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>
