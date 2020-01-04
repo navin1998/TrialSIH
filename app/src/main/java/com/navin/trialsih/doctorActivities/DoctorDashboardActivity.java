@@ -328,11 +328,6 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
                         userName.setText(doctorName);
                         userReg.setText(doctorRegNumber);
-                    } else {
-                        Toast.makeText(mContext, "Application malfunctioned", Toast.LENGTH_SHORT).show();
-
-                        startActivity(new Intent(mContext, SignInActivity.class));
-                        finish();
                     }
 
 

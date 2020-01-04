@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -16,9 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +62,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static android.app.Activity.RESULT_OK;
+import static androidx.core.content.FileProvider.getUriForFile;
+
 public class editable_voice_pres extends Fragment {
+    private static final int PICK_IMAGE_REQUEST = 234;
+    private static final int PICK_PDF_CODE =2342 ;
     public View voiceedit;
     ArrayList<String> Symptoms=new ArrayList<>();
     ArrayList<String> Diagnose=new ArrayList<>();
@@ -76,7 +84,7 @@ public class editable_voice_pres extends Fragment {
     ListviewAdapter adaptersymp,adapterdiag,adapterprescri,adapteradvice;
     private PdfPCell cell;
     private String textAnswer;
-    private Image bgImage;
+    Image bgImage;
     private String path;
     private File dir;
     private File file;
@@ -84,6 +92,7 @@ public class editable_voice_pres extends Fragment {
     public String pathtoupload;
     public StorageReference storageReference;
     public DatabaseReference myReference;
+    Uri filePath1;
 
     //use to set background color
     BaseColor myColor = WebColors.getRGBColor("#9E9E9E");
@@ -146,7 +155,9 @@ public class editable_voice_pres extends Fragment {
                     if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
                         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE },8865);
                     }
+
                     createPDF();
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (DocumentException e) {
@@ -159,15 +170,13 @@ public class editable_voice_pres extends Fragment {
     }
 
     public void createPDF() throws FileNotFoundException, DocumentException {
-
         //create document file
         com.itextpdf.text.Document doc = new com.itextpdf.text.Document();
         try {
 
             Log.e("PDFCreator", "PDF Path: " + path);
             SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-            pathtoupload=sdf.format(Calendar.getInstance().getTime()) + "" + nameofpat+ ".pdf";
-            file = new File(dir, pathtoupload);
+            file = new File(dir, sdf.format(Calendar.getInstance().getTime()) + "" + Calendar.getInstance().getTimeInMillis() + ".pdf");
             FileOutputStream fOut = new FileOutputStream(file);
             PdfWriter writer = PdfWriter.getInstance(doc, fOut);
 
@@ -188,13 +197,13 @@ public class editable_voice_pres extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] bitmapdata = stream.toByteArray();
             try {
-                bgImage = com.itextpdf.text.Image.getInstance(bitmapdata);
+                bgImage = Image.getInstance(bitmapdata);
                 bgImage.setAbsolutePosition(330f, 642f);
                 cell.addElement(bgImage);
                 pt.addCell(cell);
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
-                cell.addElement(new Paragraph(nameofPerson_edit.getText().toString() + "\n" + agesex_edit.getText().toString()));
+                cell.addElement(new Paragraph(nameofPerson_edit.getText().toString()+"\n"+agesex_edit.getText().toString()));
 
                 cell.addElement(new Paragraph(""));
                 cell.addElement(new Paragraph(""));
@@ -246,33 +255,33 @@ public class editable_voice_pres extends Fragment {
 
                 table.addCell(String.valueOf(1));
                 table.addCell("Symptoms");
-                String symtomcell = "";
-                for (String s12 : Symptoms) {
-                    symtomcell += s12 + "\n";
+                String symtomcell="";
+                for(String s12:Symptoms){
+                    symtomcell+=s12+"\n";
                 }
                 table.addCell(symtomcell);
 
                 table.addCell(String.valueOf(2));
                 table.addCell("Diagnosis");
-                String diagnosecell = "";
-                for (String s12 : Diagnose) {
-                    diagnosecell += s12 + "\n";
+                String diagnosecell="";
+                for(String s12:Diagnose){
+                    diagnosecell+=s12+"\n";
                 }
                 table.addCell(diagnosecell);
 
                 table.addCell(String.valueOf(3));
                 table.addCell("Prescription");
-                String Prescell = "";
-                for (String s12 : Prescription) {
-                    Prescell += s12 + "\n";
+                String Prescell="";
+                for(String s12:Prescription){
+                    Prescell+=s12+"\n";
                 }
                 table.addCell(Prescell);
 
                 table.addCell(String.valueOf(2));
                 table.addCell("Advice");
-                String advicecell = "";
-                for (String s12 : Advice) {
-                    advicecell += s12 + "\n";
+                String advicecell="";
+                for(String s12:Advice){
+                    advicecell+=s12+"\n";
                 }
                 table.addCell(advicecell);
 
@@ -303,6 +312,7 @@ public class editable_voice_pres extends Fragment {
                 cell.addElement(ftable);
                 table.addCell(cell);
                 doc.add(table);
+                //uploadFile(filePath1);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                 // Setting Alert Dialog Title
                 alertDialogBuilder.setTitle("Pdf Generated");
@@ -315,8 +325,17 @@ public class editable_voice_pres extends Fragment {
                 alertDialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
                 @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Uri pathtoupload1=Uri.fromFile(new File(path+pathtoupload));
-                            uploadFile(pathtoupload1);
+                            /*ArrayList<String> FilesInFolder = GetFiles(path);
+                            Uri pathtoupload1=Uri.fromFile(new File(path+FilesInFolder.get(FilesInFolder.size()-1)));
+                            Toast.makeText(getContext(), pathtoupload1.toString(), Toast.LENGTH_SHORT).show();
+                            */
+
+                    File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
+                    File newFile = new File(imagePath, "05012020Aditya.pdf");
+                    Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+
+                            uploadFile(contentUri);
+
                         }
                     });
 
@@ -338,8 +357,6 @@ public class editable_voice_pres extends Fragment {
             } catch (Exception e) {
                 Log.e("PDFCreator", "ioException:" + e);
                 Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
-            } finally {
-                doc.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,16 +367,16 @@ public class editable_voice_pres extends Fragment {
     //upload File
     private void uploadFile(Uri filePath) {
         //final DoctorDashboardActivity doctoracti=new DoctorDashboardActivity();
-        Toast.makeText(getContext(), filePath.toString(), Toast.LENGTH_SHORT).show();
         //checking if file is available
+        Toast.makeText(getContext(), filePath.toString(), Toast.LENGTH_SHORT).show();
         if (filePath != null) {
             //displaying progress dialog while image is uploading
             final ProgressDialog progressDialog = new ProgressDialog(getContext());
-            progressDialog.setTitle("Uploading");
+            progressDialog.setTitle("Creating PDF");
             progressDialog.show();
 
             //getting the storage reference
-            final StorageReference sRef = storageReference.child("1806012"+ "/" + System.currentTimeMillis() + "." + filePath.toString());
+            final StorageReference sRef = storageReference.child("1806001"+ "/" + System.currentTimeMillis() + "." + nameofpat);
 
             //adding the file to reference
             sRef.putFile(filePath)
@@ -375,7 +392,8 @@ public class editable_voice_pres extends Fragment {
                             sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    myReference.child("doctors").child("1806012").child("PatientPres").setValue(uri.toString());
+                                    myReference.child("doctors").child("1806012").child("PatientPres").child(nameofpat).setValue(uri.toString());
+
                                 }
                             });
                         }
@@ -385,7 +403,7 @@ public class editable_voice_pres extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
                             progressDialog.dismiss();
-                            Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), /*exception.getMessage()*/"KKJ", Toast.LENGTH_LONG).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -393,7 +411,7 @@ public class editable_voice_pres extends Fragment {
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             //displaying the upload progress
                             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                            progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                            progressDialog.setMessage("Creating " + ((int) progress) + "%...");
                         }
                     });
         } else {
