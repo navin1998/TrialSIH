@@ -1,6 +1,7 @@
 package com.navin.trialsih.doctorActivities;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -13,6 +14,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -25,12 +28,14 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
+import com.navin.trialsih.SignInActivity;
 import com.navin.trialsih.doctorActivities.bottomNavigation.HomeFragment;
 import com.navin.trialsih.doctorActivities.bottomNavigation.ProfileFragment;
 import com.navin.trialsih.doctorActivities.bottomNavigation.VoicePresFragment;
@@ -85,6 +90,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
 
+
         bottomNavigationView = findViewById(R.id.doctor_bottom_navigationView);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -102,26 +108,36 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
-                //displaySelectedScreen(menuItem.getItemId());
-
-                Toast.makeText(mContext, "Clicked nav view", Toast.LENGTH_SHORT).show();
+                displaySelectedScreen(menuItem.getItemId());
 
                 return true;
             }
+
+
+
         });
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                drawer.openDrawer(GravityCompat.START);
-
-            }
-        });
         
         showHomeFragment();
         checkProfileCompletion();
 
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        NavController navController = Navigation.findNavController(this, R.id.doctor_nav_host_fragment);
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp()
+    {
+        NavController navController = Navigation.findNavController(this, R.id.doctor_nav_host_fragment);
+
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 
 
@@ -140,6 +156,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             case R.id.nav_doctor_appointment_icon:
                 isHomeShowing = true;
                 bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                navigationView.getMenu().getItem(0).setChecked(true);
                 fragment = new HomeFragment();
                 break;
 
@@ -153,7 +170,20 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             case R.id.nav_doctor_profile_icon:
                 isHomeShowing = false;
                 bottomNavigationView.getMenu().getItem(2).setChecked(true);
+                navigationView.getMenu().getItem(1).setChecked(true);
                 fragment = new ProfileFragment();
+                break;
+
+            case R.id.nav_doctor_history_icon:
+
+                break;
+
+            case R.id.nav_doctor_settings_icon:
+
+                break;
+
+            case R.id.nav_doctor_logout_icon:
+                showLogoutDialog();
                 break;
         }
 
@@ -213,6 +243,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         ft.commit();
 
         bottomNavigationView.getMenu().getItem(0).setChecked(true);
+        navigationView.getMenu().getItem(0).setChecked(true);
 
         isHomeShowing = true;
     }
@@ -252,6 +283,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         });
 
     }
+
 
     @Override
     protected void onStart() {
@@ -299,5 +331,56 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     }
 
 
+    private void showLogoutDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage("Sure to logout?");
+        builder.setCancelable(false);
+
+        builder.setPositiveButton("LOGOUT", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Toast.makeText(mContext, "Successfully signed out", Toast.LENGTH_SHORT).show();
+
+                updateSignedInPreferencesAndLogOut();
+
+                dialog.cancel();
+            }
+        });
+
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
+
+    private void updateSignedInPreferencesAndLogOut()
+    {
+
+        SharedPreferences doctorSignInPref = mContext.getSharedPreferences("doctorSingInPref",MODE_PRIVATE);
+        SharedPreferences.Editor editor = doctorSignInPref.edit();
+        editor.putBoolean("isDoctorSignedIn", false);
+        editor.commit();
+
+        SharedPreferences doctorRegNumberPref = mContext.getSharedPreferences("doctorRegNumberPref", MODE_PRIVATE);
+        SharedPreferences.Editor regEditor = doctorRegNumberPref.edit();
+        regEditor.putString("regNumber", null);
+        regEditor.commit();
+
+        Intent intent = new Intent(mContext, SignInActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        startActivity(intent);
+        finish();
+
+    }
 
 }

@@ -12,29 +12,37 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/doctor_nav_profile_pic"
-        android:src="@drawable/man"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        app:civ_border_width="1dp"
-        app:civ_border_color="#7A7676"
-        android:layout_gravity="center_horizontal"/>
-
-    <TextView
-        android:id="@+id/doctor_nav_name"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nav_header_title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:layout_gravity="center_horizontal"/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/doctor_nav_reg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/nav_header_subtitle"
-        android:layout_gravity="center_horizontal"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/doctor_nav_profile_pic"
+            android:src="@drawable/man"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#7A7676"
+            android:layout_gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/doctor_nav_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Doctor Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:id="@+id/doctor_nav_reg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Doctor reg number"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
 
 </LinearLayout>
