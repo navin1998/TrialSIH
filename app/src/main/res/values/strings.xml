@@ -23,4 +23,7 @@
     <string name="menu_patient_previous_appointments">Previous appointments</string>
     <string name="menu_patient_settings">Settings</string>
     <string name="menu_patient_app_info">About</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
