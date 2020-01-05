@@ -46,6 +46,7 @@ import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
 import com.navin.trialsih.doctorClasses.DoctorDetails;
 import com.navin.trialsih.doctorClasses.MonthYearPickerDialog;
+import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -131,8 +132,23 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 ViewModelProviders.of(this).get(ProfileViewModel.class);
         v = inflater.inflate(R.layout.doctor_fragment_profile, container, false);
 
-        Bundle bundle = getArguments();
-        REG_NUMBER = bundle.getString("regNumber");
+        try {
+
+            Bundle bundle = getArguments();
+            REG_NUMBER = bundle.getString("regNumber");
+        }
+        catch (Exception e) {
+
+            try {
+
+                Bundle bundle = getArguments();
+                REG_NUMBER = bundle.getString("regNumber");
+
+            }
+            catch (Exception ex) {
+                REG_NUMBER = getRegNumber();
+            }
+        }
 
         getPassword();
 
@@ -1810,6 +1826,27 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         });
 
         builder.show();
+
+    }
+
+
+    private String getRegNumber()
+    {
+        String reg = null;
+
+        DoctorCredentialsDBHelper dbHelper = new DoctorCredentialsDBHelper(getContext());
+
+        reg = dbHelper.getRegNumber();
+
+//        if (reg == null)
+//        {
+//            SharedPreferences doctorRegNumberPref = mContext.getSharedPreferences("doctorRegNumberPref", MODE_PRIVATE);
+//
+//            reg = doctorRegNumberPref.getString("regNumber", null);
+//
+//        }
+
+        return reg;
 
     }
 

@@ -76,7 +76,15 @@ public class HomeFragment extends Fragment {
         }
         catch (Exception e) {
 
-            REG_NUMBER = getRegNumber();
+            try {
+
+                Bundle bundle = getArguments();
+                REG_NUMBER = bundle.getString("regNumber");
+
+            }
+            catch (Exception ex) {
+                REG_NUMBER = getRegNumber();
+            }
         }
 
         mRecyclerView = v.findViewById(R.id.recycler_view);

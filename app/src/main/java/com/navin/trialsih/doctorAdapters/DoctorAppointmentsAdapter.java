@@ -51,6 +51,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     private final static String APPOINTMENT_CHAT_STATUS = "appointmentChatStarted";
 
     public DoctorAppointmentsAdapter(Context context, List<DoctorAppointments> uploads) {
+
         mContext = context;
         mUploads = uploads;
 

@@ -84,6 +84,7 @@ public class AddAppointment extends AppCompatActivity implements BookADoctorAdap
     private final static String DOCTOR_ACTIVE_APPOINTMENTS = "activeAppointments";
     private final static String PATIENT_PHONE = "patientPhone";
     private final static String PATIENT_NAME = "patientName";
+    private final static String APPOINTMENT_CHAT_STARTED = "no";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -373,6 +374,7 @@ public class AddAppointment extends AppCompatActivity implements BookADoctorAdap
         patientAppointments.setAppointmentFeeStatus(APPOINTMENT_DOCTOR_FEE_STATUS);
         patientAppointments.setAppointmentPositionInQueue(APPOINTMENT_DOCTOR_POSITION_IN_QUEUE);
         patientAppointments.setAppointmentWayToConnect(APPOINTMENT_WAY_OF_CONNECT);
+        patientAppointments.setAppointmentChatStarted(APPOINTMENT_CHAT_STARTED);
 
 
         PATIENT_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -463,6 +465,7 @@ public class AddAppointment extends AppCompatActivity implements BookADoctorAdap
         doctorAppointments.setAppointmentPatientUid(APPOINTMENT_PATIENT_UID);
         doctorAppointments.setAppointmentWayToConnect(APPOINTMENT_WAY_OF_CONNECT);
         doctorAppointments.setAppointmentPositionInQueue(APPOINTMENT_DOCTOR_POSITION_IN_QUEUE);
+        doctorAppointments.setAppointmentChatStarted(APPOINTMENT_CHAT_STARTED);
 
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(APPOINTMENT_DOCTOR_REG_NUMBER).child(DOCTOR_ACTIVE_APPOINTMENTS).child(PATIENT_UID);

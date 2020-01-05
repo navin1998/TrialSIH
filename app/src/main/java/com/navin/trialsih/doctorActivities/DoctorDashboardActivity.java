@@ -260,7 +260,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
     public String getRegNumber()
     {
-        SharedPreferences doctorRegNumberPref = mContext.getSharedPreferences("doctorRegNumberPref",MODE_PRIVATE);
+        SharedPreferences doctorRegNumberPref = getSharedPreferences("doctorRegNumberPref",MODE_PRIVATE);
 
         String reg = doctorRegNumberPref.getString("regNumber", null);
 
