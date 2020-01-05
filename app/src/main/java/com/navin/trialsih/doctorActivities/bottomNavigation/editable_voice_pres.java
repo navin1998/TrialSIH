@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -399,7 +400,9 @@ public class editable_voice_pres extends Fragment {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
 
-                //Write the Send File code here
+                //Write the Send File code her
+                inputDialog(filePath2);
+
 
 
 
@@ -422,5 +425,41 @@ public class editable_voice_pres extends Fragment {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    private void inputDialog(final Uri filePath) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Enter Your Email");
+
+        final EditText input = new EditText(getContext());
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+              String email=input.getText().toString();
+                Toast.makeText(getContext(), email, Toast.LENGTH_SHORT).show();
+                 sendEmail(email,filePath);
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void sendEmail(String email ,Uri filePath) {
+        String mSubect="Doctor's Description";
+        String mMessage="Hii"+nameofpat+","+"\n"+"This is link of prescription: "+filePath.toString();
+        JavaApiDemo javaApiDemo=new JavaApiDemo(getContext(),email,mSubect,mMessage);
+        javaApiDemo.execute();
     }
 }
