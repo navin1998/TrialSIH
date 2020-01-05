@@ -731,18 +731,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         String patientMail = mail.getText().toString();
 
 
+        String patientNamePrefName = "patientNamePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientNamePrefKey = "patientName" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
         // saving patient name for future use in appointments...
-        SharedPreferences patientNamePref = getContext().getSharedPreferences("patientNamePrefs", MODE_PRIVATE);
+        SharedPreferences patientNamePref = getContext().getSharedPreferences(patientNamePrefName, MODE_PRIVATE);
         SharedPreferences.Editor patientNameEditor = patientNamePref.edit();
-        patientNameEditor.putString("patientName", patientName);
+        patientNameEditor.putString(patientNamePrefKey, patientName);
         patientNameEditor.commit();
+
+
+        String patientPhonePrefName = "patientPhonePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientPhonePrefKey = "patientPhone" + FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
 
         // saving patient phone for future use in appointments...
-        SharedPreferences patientPhonePref = getContext().getSharedPreferences("patientPhonePrefs", MODE_PRIVATE);
+        SharedPreferences patientPhonePref = getContext().getSharedPreferences(patientPhonePrefName, MODE_PRIVATE);
         SharedPreferences.Editor patientPhoneEditor = patientPhonePref.edit();
-        patientPhoneEditor.putString("patientPhone", patientPhone);
+        patientPhoneEditor.putString(patientPhonePrefKey, patientPhone);
         patientPhoneEditor.commit();
 
 

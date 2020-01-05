@@ -414,9 +414,13 @@ public class AddAppointment extends AppCompatActivity implements BookADoctorAdap
 
     private String getPatientName()
     {
-        SharedPreferences patientNamePref = mContext.getSharedPreferences("patientNamePrefs", MODE_PRIVATE);
 
-        APPOINTMENT_PATIENT_NAME = patientNamePref.getString("patientName", null);
+        String patientNamePrefName = "patientNamePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientNamePrefKey = "patientName" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        SharedPreferences patientNamePref = mContext.getSharedPreferences(patientNamePrefName, MODE_PRIVATE);
+
+        APPOINTMENT_PATIENT_NAME = patientNamePref.getString(patientNamePrefKey, null);
 
         return APPOINTMENT_PATIENT_NAME;
 
@@ -426,9 +430,14 @@ public class AddAppointment extends AppCompatActivity implements BookADoctorAdap
     private String getPatientPhone()
     {
 
-        SharedPreferences patientPhonePref = mContext.getSharedPreferences("patientPhonePrefs", MODE_PRIVATE);
+        String patientPhonePrefName = "patientPhonePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientPhonePrefKey = "patientPhone" + FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        APPOINTMENT_PATIENT_PHONE = patientPhonePref.getString("patientPhone", "0000000000");
+
+
+        SharedPreferences patientPhonePref = mContext.getSharedPreferences(patientPhonePrefName, MODE_PRIVATE);
+
+        APPOINTMENT_PATIENT_PHONE = patientPhonePref.getString(patientPhonePrefKey, "0000000000");
 
         return APPOINTMENT_PATIENT_PHONE;
 
