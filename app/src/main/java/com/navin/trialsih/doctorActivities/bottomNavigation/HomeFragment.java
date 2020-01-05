@@ -109,6 +109,12 @@ public class HomeFragment extends Fragment {
                 else
                 {
 
+                    list = new ArrayList<>();
+                    list.clear();
+
+                    mRecyclerView.setAdapter(null);
+                    doctorAppointmentsAdapter = null;
+
                     ArrayList<String> listOfUid = new ArrayList<>();
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
