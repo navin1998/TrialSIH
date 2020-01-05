@@ -9,12 +9,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -28,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorChatActivity;
 import com.navin.trialsih.doctorClasses.DoctorAppointments;
+import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 
 import java.util.List;
 
@@ -75,7 +78,11 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
             @Override
             public void onClick(View v) {
 
-                verifyForChat(appointments.getAppointmentPatientUid(), REG_NUMBER);
+                Bundle bundle = new Bundle();
+                bundle.putString("patientUid", appointments.getAppointmentPatientUid());
+                bundle.putString("doctorRegNumber", REG_NUMBER);
+
+                verifyForChat(appointments.getAppointmentPatientUid(), REG_NUMBER, bundle);
 
             }
         });
@@ -108,14 +115,14 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
     private void getRegNumber()
     {
-        SharedPreferences doctorRegNumberPref = mContext.getSharedPreferences("doctorRegNumberPref", Context.MODE_PRIVATE);
+        DoctorCredentialsDBHelper dbHelper = new DoctorCredentialsDBHelper(mContext);
 
-        REG_NUMBER = doctorRegNumberPref.getString("regNumber", null);
+        REG_NUMBER = dbHelper.getRegNumber();
 
     }
 
 
-    private void verifyForChat(final String uid, final String reg)
+    private void verifyForChat(final String uid, final String reg, final Bundle bundle)
     {
 
         final ProgressDialog dialog = new ProgressDialog(mContext);
@@ -133,15 +140,26 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
                 {
                     try {
                         if (dataSnapshot.child(uid).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
-                            mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
+
+
+                            Intent i = new Intent(mContext, DoctorChatActivity.class);
+                            i.putExtras(bundle);
+                            mContext.startActivity(i);
+
+
+                        }
+                        else if (dataSnapshot.child(uid).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
+                        {
+                            //showChatRestartDialog(uid, reg, bundle);
+                            Toast.makeText(mContext, "Chat has already ended", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
-                            showChatConfirmDialogForOnlinePayment(uid, reg);
+                            showChatConfirmDialogForOnlinePayment(uid, reg, bundle);
                         }
                     }catch (Exception e) {
 
-                        showChatConfirmDialogForOnlinePayment(uid, reg);
+                        showChatConfirmDialogForOnlinePayment(uid, reg, bundle);
                     }
 
                 }
@@ -151,14 +169,24 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
                     try {
 
                         if (dataSnapshot.child(uid).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
-                            mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
-                        } else {
-                            showChatConfirmDialogForCash(uid, reg);
+
+                            Intent i = new Intent(mContext, DoctorChatActivity.class);
+                            i.putExtras(bundle);
+                            mContext.startActivity(i);
+
+                        }
+                        else if (dataSnapshot.child(uid).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
+                        {
+                            //showChatRestartDialog(uid, reg, bundle);
+                            Toast.makeText(mContext, "Chat has already ended", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            showChatConfirmDialogForCash(uid, reg, bundle);
                         }
                     }
                     catch (Exception e)
                     {
-                        showChatConfirmDialogForCash(uid, reg);
+                        showChatConfirmDialogForCash(uid, reg, bundle);
                     }
 
                 }
@@ -178,7 +206,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     }
 
 
-    private void showChatConfirmDialogForOnlinePayment(final String uid, final String reg)
+    private void showChatConfirmDialogForOnlinePayment(final String uid, final String reg, final Bundle bundle)
     {
         LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_confirm_chat_for_paid, null);
@@ -188,7 +216,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
         titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setView(alertLayout);
         builder.setCancelable(true);
 
@@ -202,11 +230,13 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
             @Override
             public void onClick(View v) {
 
-                mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
+                Intent i = new Intent(mContext, DoctorChatActivity.class);
+                i.putExtras(bundle);
+                mContext.startActivity(i);
 
                 //  update in database that chat has started...
-                updateChatStartStatusInPatientNode(uid, reg);
-                updateChatStartStatusInDoctorNode(uid, reg);
+                updateChatStartStatusInPatientNode(uid, reg, bundle);
+                updateChatStartStatusInDoctorNode(uid, reg, bundle);
 
 
                 dialog.dismiss();
@@ -225,7 +255,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
 
 
-    private void showChatConfirmDialogForCash(final String uid, final String reg)
+    private void showChatConfirmDialogForCash(final String uid, final String reg, final Bundle bundle)
     {
         LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_confirm_chat_for_non_paid, null);
@@ -235,7 +265,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
         titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setView(alertLayout);
         builder.setCancelable(true);
 
@@ -249,12 +279,14 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
             @Override
             public void onClick(View v) {
 
-                mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
+                Intent i = new Intent(mContext, DoctorChatActivity.class);
+                i.putExtras(bundle);
+                mContext.startActivity(i);
 
 
                 //  update in database that chat has started...
-                updateChatStartStatusInPatientNode(uid, reg);
-                updateChatStartStatusInDoctorNode(uid, reg);
+                updateChatStartStatusInPatientNode(uid, reg, bundle);
+                updateChatStartStatusInDoctorNode(uid, reg, bundle);
 
 
 
@@ -273,7 +305,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     }
 
 
-    private void updateChatStartStatusInPatientNode(String uid, String reg)
+    private void updateChatStartStatusInPatientNode(String uid, String reg, Bundle bundle)
     {
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(uid).child(ACTIVE_APPOINTMENTS).child(reg);
@@ -286,7 +318,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     }
 
 
-    private void updateChatStartStatusInDoctorNode(String uid, String reg)
+    private void updateChatStartStatusInDoctorNode(String uid, String reg, Bundle bundle)
     {
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(reg).child(ACTIVE_APPOINTMENTS).child(uid);
@@ -297,6 +329,77 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
         }
         catch (Exception e){}
+
+    }
+
+
+    private void showChatRestartDialog(final String uid, final String reg, final Bundle bundle)
+    {
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_confirm_chat_restart, null);
+        final Button noBtn = alertLayout.findViewById(R.id.btn_no);
+        final Button yesBtn = alertLayout.findViewById(R.id.btn_yes);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        yesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(mContext, DoctorChatActivity.class);
+                i.putExtras(bundle);
+                mContext.startActivity(i);
+
+
+                //  update in database that chat has started...
+                resetChatStatusInDatabase(uid, reg);
+
+
+
+                dialog.dismiss();
+            }
+        });
+
+        noBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+    }
+
+
+    private void resetChatStatusInDatabase(String uid, String reg)
+    {
+
+        final DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(reg).child(ACTIVE_APPOINTMENTS).child(uid);
+
+        try {
+
+            dRef.child("appointmentChatStarted").setValue("yes");
+
+        }
+        catch (Exception e){}
+
+
+        final DatabaseReference pRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(uid).child(ACTIVE_APPOINTMENTS).child(reg);
+
+        try {
+            pRef.child("appointmentChatStarted").setValue("yes");
+        }catch (Exception e){}
 
     }
 

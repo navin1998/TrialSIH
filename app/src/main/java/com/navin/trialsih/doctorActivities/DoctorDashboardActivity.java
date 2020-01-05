@@ -41,6 +41,7 @@ import com.navin.trialsih.doctorActivities.bottomNavigation.ProfileFragment;
 import com.navin.trialsih.doctorActivities.bottomNavigation.VoicePresFragment;
 import com.navin.trialsih.doctorActivities.navigationDrawer.HistoryFragment;
 import com.navin.trialsih.doctorActivities.navigationDrawer.SettingsFragment;
+import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 
 public class DoctorDashboardActivity extends AppCompatActivity {
 
@@ -119,7 +120,9 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
         });
 
-        
+
+        loadNavHeader();
+
         showHomeFragment();
         checkProfileCompletion();
 
@@ -291,10 +294,18 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//
+//
+//        loadNavHeader();
+//
+//    }
 
+
+    private void loadNavHeader()
+    {
 
         try {
 
@@ -387,6 +398,11 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         SharedPreferences.Editor regEditor = doctorRegNumberPref.edit();
         regEditor.putString("regNumber", null);
         regEditor.commit();
+
+
+        DoctorCredentialsDBHelper dbHelper = new DoctorCredentialsDBHelper(mContext);
+        dbHelper.deleteDatabase();
+
 
         Intent intent = new Intent(mContext, SignInActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);

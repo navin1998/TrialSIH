@@ -121,7 +121,12 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
                                 mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
-                            } else {
+                            }
+                            else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
+                            {
+                                Toast.makeText(mContext, "Chat has already ended", Toast.LENGTH_LONG).show();
+                            }
+                            else {
                                 Toast.makeText(mContext, "Please wait for doctor to start the chat", Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception e) {
@@ -134,7 +139,12 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
                                 mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
-                            } else {
+                            }
+                            else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
+                            {
+                                Toast.makeText(mContext, "Chat has already ended", Toast.LENGTH_LONG).show();
+                            }
+                            else {
                                 Toast.makeText(mContext, "Please wait for doctor to start the chat", Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception e) {
@@ -151,7 +161,12 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
                                 mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
-                            } else {
+                            }
+                            else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
+                            {
+                                Toast.makeText(mContext, "Chat has already ended", Toast.LENGTH_LONG).show();
+                            }
+                            else {
                                 Toast.makeText(mContext, "Please wait for doctor to start the chat", Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception exc) {
@@ -164,7 +179,12 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
                                 mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
-                            } else {
+                            }
+                            else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
+                            {
+                                Toast.makeText(mContext, "Chat has already ended", Toast.LENGTH_LONG).show();
+                            }
+                            else {
                                 Toast.makeText(mContext, "Please wait for doctor to start the chat", Toast.LENGTH_LONG).show();
                             }
                         } catch (Exception ex) {

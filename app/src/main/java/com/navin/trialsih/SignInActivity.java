@@ -26,8 +26,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
 import com.navin.trialsih.doctorActivities.DoctorSignInActivity;
 import com.navin.trialsih.doctorActivities.DoctorSignupActivity;
@@ -50,6 +53,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private final static String USER_TYPE_PATIENT = "patients";
     private final static String ACTIVE_APPOINTMENTS = "appointments";
     private final static String PROFILE = "profile";
+    private final static String PATIENT_NAME = "patientName";
+    private final static String PATIENT_PHONE = "patientPhone";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +124,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             Log.d("TAG", "signInWithCredential:success");
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             Toast.makeText(mContext, "Signed in as: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+
+                            saveUserNameAndPhone();
+
                             startActivity(new Intent(mContext, PatientDashboardActivity.class));
                             finish();
                             //updateUI(user);
@@ -190,5 +198,65 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         return isSignedIn;
 
     }
+
+
+    private void saveUserNameAndPhone()
+    {
+
+        String UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(UID).child(PROFILE);
+
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists())
+                {
+                    String patientName = dataSnapshot.child(PATIENT_NAME).getValue().toString();
+                    String patientPhone = dataSnapshot.child(PATIENT_PHONE).getValue().toString();
+
+                    saveInSharedPreferences(patientName, patientPhone);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+
+    private void saveInSharedPreferences(String patientName, String patientPhone)
+    {
+        String patientNamePrefName = "patientNamePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientNamePrefKey = "patientName" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        // saving patient name for future use in appointments...
+        SharedPreferences patientNamePref = mContext.getSharedPreferences(patientNamePrefName, MODE_PRIVATE);
+        SharedPreferences.Editor patientNameEditor = patientNamePref.edit();
+        patientNameEditor.putString(patientNamePrefKey, patientName);
+        patientNameEditor.commit();
+
+
+        String patientPhonePrefName = "patientPhonePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientPhonePrefKey = "patientPhone" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+
+        // saving patient phone for future use in appointments...
+        SharedPreferences patientPhonePref = mContext.getSharedPreferences(patientPhonePrefName, MODE_PRIVATE);
+        SharedPreferences.Editor patientPhoneEditor = patientPhonePref.edit();
+        patientPhoneEditor.putString(patientPhonePrefKey, patientPhone);
+        patientPhoneEditor.commit();
+
+    }
+
 
 }

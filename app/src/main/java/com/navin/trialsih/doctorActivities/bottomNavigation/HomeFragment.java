@@ -1,5 +1,6 @@
 package com.navin.trialsih.doctorActivities.bottomNavigation;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
 import com.navin.trialsih.doctorAdapters.DoctorAppointmentsAdapter;
 import com.navin.trialsih.doctorClasses.DoctorAppointments;
+import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,8 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private View v;
+
+    private Context mContext;
 
     private ImageView cannotFind;
     private TextView cannotFindText;
@@ -59,6 +63,7 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         v = inflater.inflate(R.layout.doctor_fragment_home, container, false);
+        mContext = getContext();
 
         ((DoctorDashboardActivity) getActivity()).getSupportActionBar().setTitle("Home");
 
@@ -171,9 +176,19 @@ public class HomeFragment extends Fragment {
 
     private String getRegNumber()
     {
-        SharedPreferences doctorRegNumberPref = getContext().getSharedPreferences("doctorRegNumberPref",MODE_PRIVATE);
+        String reg = null;
 
-        String reg = doctorRegNumberPref.getString("regNumber", null);
+        DoctorCredentialsDBHelper dbHelper = new DoctorCredentialsDBHelper(mContext);
+
+        reg = dbHelper.getRegNumber();
+
+//        if (reg == null)
+//        {
+//            SharedPreferences doctorRegNumberPref = mContext.getSharedPreferences("doctorRegNumberPref", MODE_PRIVATE);
+//
+//            reg = doctorRegNumberPref.getString("regNumber", null);
+//
+//        }
 
         return reg;
 

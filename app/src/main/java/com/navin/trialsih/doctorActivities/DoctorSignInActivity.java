@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
+import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 import com.navin.trialsih.universalCredentials.SecurePassword;
 
 public class DoctorSignInActivity extends AppCompatActivity {
@@ -201,6 +202,9 @@ public class DoctorSignInActivity extends AppCompatActivity {
         SharedPreferences.Editor regEditor = doctorRegNumberPref.edit();
         regEditor.putString("regNumber", REG_NUMBER);
         regEditor.commit();
+
+        DoctorCredentialsDBHelper dbHelper = new DoctorCredentialsDBHelper(mContext);
+        dbHelper.addToDatabase(REG_NUMBER);
 
         Bundle bundle = new Bundle();
         bundle.putString("regNumber", REG_NUMBER);
