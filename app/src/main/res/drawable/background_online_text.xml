@@ -3,12 +3,12 @@
 
 
     <solid
-        android:color="#D7EBF5"
+        android:color="#1C8004"
         />
 
 
     <corners
-        android:radius="5dp"
+        android:radius="3dp"
         />
 
 

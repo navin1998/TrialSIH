@@ -9,9 +9,10 @@ public class PatientAppointments {
     private String appointmentFee;
     private String appointmentFeeStatus;
     private String appointmentWayToConnect;
+    private String appointmentChatStarted;
 
 
-    public PatientAppointments(String appointmentDoctorName, String appointmentDoctorRegNumber, String appointmentDoctorPhone, String appointmentPositionInQueue, String appointmentFee, String appointmentFeeStatus, String appointmentWayToConnect) {
+    public PatientAppointments(String appointmentDoctorName, String appointmentDoctorRegNumber, String appointmentDoctorPhone, String appointmentPositionInQueue, String appointmentFee, String appointmentFeeStatus, String appointmentWayToConnect, String appointmentChatStarted) {
         this.appointmentDoctorName = appointmentDoctorName;
         this.appointmentDoctorRegNumber = appointmentDoctorRegNumber;
         this.appointmentDoctorPhone = appointmentDoctorPhone;
@@ -19,12 +20,20 @@ public class PatientAppointments {
         this.appointmentFee = appointmentFee;
         this.appointmentFeeStatus = appointmentFeeStatus;
         this.appointmentWayToConnect = appointmentWayToConnect;
+        this.appointmentChatStarted = appointmentChatStarted;
     }
-
 
     public PatientAppointments() {
     }
 
+
+    public String getAppointmentChatStarted() {
+        return appointmentChatStarted;
+    }
+
+    public void setAppointmentChatStarted(String appointmentChatStarted) {
+        this.appointmentChatStarted = appointmentChatStarted;
+    }
 
     public String getAppointmentWayToConnect() {
         return appointmentWayToConnect;

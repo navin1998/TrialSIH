@@ -79,7 +79,16 @@ public class DoctorCredentialsDBHelper extends SQLiteOpenHelper {
 
         String regNumber = null;
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = null;
+
+        try {
+
+            db = this.getWritableDatabase();
+        }
+        catch (Exception e)
+        {
+
+        }
 
         Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
 
