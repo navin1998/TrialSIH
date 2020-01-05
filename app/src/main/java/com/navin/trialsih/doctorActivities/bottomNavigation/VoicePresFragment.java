@@ -36,7 +36,8 @@ import java.util.Locale;
 public class VoicePresFragment extends Fragment {
 
     private View voice;
-    ImageButton button,preview;
+    ImageButton button;
+    Button preview;
     SpeechRecognizer mspeechRecog;
     Intent mSpeechRecogInt;
     public TextView nameofperson;
@@ -75,7 +76,7 @@ public class VoicePresFragment extends Fragment {
         AdviceList=voice.findViewById(R.id.list_advice);
         agesex=voice.findViewById(R.id.patient_age_dis);
         listViewArr=new ListView[]{symptomList,DiagnoseList,PresList,AdviceList};
-        //preview=voice.findViewById(R.id.preview);
+        preview=voice.findViewById(R.id.edit_button);
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         date.setText(sdf.format(Calendar.getInstance().getTime()));
         checkPermission();
@@ -275,7 +276,7 @@ public class VoicePresFragment extends Fragment {
             }
         });
 
-        /*preview.setOnClickListener(new View.OnClickListener() {
+        preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle bundle=new Bundle();
@@ -285,15 +286,15 @@ public class VoicePresFragment extends Fragment {
                 bundle.putStringArrayList ("listdiagnose",Diagnose);
                 bundle.putStringArrayList ("listPrescription",Prescription);
                 bundle.putStringArrayList ("listAdvice",Advice);
-                PresCheckFrag presCheckFrag = new PresCheckFrag();
+                editable_voice_pres presCheckFrag = new editable_voice_pres();
                 FragmentTransaction ft = (getActivity()).getSupportFragmentManager().beginTransaction();
                 presCheckFrag.setArguments(bundle);
-                ft.replace(R.id.fragment_container, presCheckFrag);
+                ft.replace(R.id.doctor_nav_host_fragment, presCheckFrag);
                 ft.addToBackStack(null);
                 ft.commit();
 
             }
-        });*/
+        });
         enableNestedScrolling();
         return voice;
     }
