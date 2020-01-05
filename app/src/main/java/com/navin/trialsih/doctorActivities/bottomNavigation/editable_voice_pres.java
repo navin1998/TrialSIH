@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -50,8 +51,10 @@ import com.itextpdf.text.html.WebColors;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.navin.trialsih.PreviewPres;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
+import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -176,7 +179,8 @@ public class editable_voice_pres extends Fragment {
 
             Log.e("PDFCreator", "PDF Path: " + path);
             SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
-            file = new File(dir, sdf.format(Calendar.getInstance().getTime()) + "" + Calendar.getInstance().getTimeInMillis() + ".pdf");
+            pathtoupload=sdf.format(Calendar.getInstance().getTime()) + "" + Calendar.getInstance().getTimeInMillis() + ".pdf";
+            file = new File(dir, pathtoupload);
             FileOutputStream fOut = new FileOutputStream(file);
             PdfWriter writer = PdfWriter.getInstance(doc, fOut);
 
@@ -313,48 +317,16 @@ public class editable_voice_pres extends Fragment {
                 table.addCell(cell);
                 doc.add(table);
                 doc.close();
-                //uploadFile(filePath1);
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-                // Setting Alert Dialog Title
-                alertDialogBuilder.setTitle("Pdf Generated");
-                // Icon Of Alert Dialog
-                alertDialogBuilder.setIcon(R.drawable.ic_check_black_24dp);
-                // Setting Alert Dialog Message
-                alertDialogBuilder.setMessage("Pdf Generated");
-                alertDialogBuilder.setCancelable(false);
 
-                alertDialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            /*ArrayList<String> FilesInFolder = GetFiles(path);
-                            Uri pathtoupload1=Uri.fromFile(new File(path+FilesInFolder.get(FilesInFolder.size()-1)));
-                            Toast.makeText(getContext(), pathtoupload1.toString(), Toast.LENGTH_SHORT).show();
-                            */
 
-                    File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
-                    File newFile = new File(imagePath, pathtoupload);
-                    Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+                //upload it to firebase
+                //Toast.makeText(getContext(), pathtoupload, Toast.LENGTH_SHORT).show();
 
-                            uploadFile(contentUri);
+                File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
+                File newFile = new File(imagePath, pathtoupload);
+                Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+                uploadFile(contentUri);
 
-                        }
-                    });
-
-                    alertDialogBuilder.setNegativeButton("Preview", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getContext(),"You clicked on Preview",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    alertDialogBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Toast.makeText(getContext(),"Canceled",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
             } catch (Exception e) {
                 Log.e("PDFCreator", "ioException:" + e);
                 Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
@@ -366,8 +338,8 @@ public class editable_voice_pres extends Fragment {
     }
 
     //upload File
-    private void uploadFile(Uri filePath) {
-        //final DoctorDashboardActivity doctoracti=new DoctorDashboardActivity();
+    private void uploadFile(final Uri filePath) {
+        final DoctorCredentialsDBHelper doccre=new DoctorCredentialsDBHelper(getContext());
         //checking if file is available
         Toast.makeText(getContext(), filePath.toString(), Toast.LENGTH_SHORT).show();
         if (filePath != null) {
@@ -377,7 +349,7 @@ public class editable_voice_pres extends Fragment {
             progressDialog.show();
 
             //getting the storage reference
-            final StorageReference sRef = storageReference.child("1806001"+ "/" + System.currentTimeMillis() + "." + nameofpat);
+            final StorageReference sRef = storageReference.child(doccre.getRegNumber()+ "/" + System.currentTimeMillis() + "." + nameofpat);
 
             //adding the file to reference
             sRef.putFile(filePath)
@@ -393,8 +365,9 @@ public class editable_voice_pres extends Fragment {
                             sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    myReference.child("doctors").child("1806012").child("PatientPres").child(nameofpat).setValue(uri.toString());
-
+                                    SimpleDateFormat sdf1 = new SimpleDateFormat("ddMMyyyy");
+                                    myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(nameofpat+sdf1.format(Calendar.getInstance().getTime())+Calendar.getInstance().getTimeInMillis()).setValue(uri.toString());
+                                    AlertDialoger(uri);
                                 }
                             });
                         }
@@ -418,5 +391,43 @@ public class editable_voice_pres extends Fragment {
         } else {
             Toast.makeText(getContext(), "Please select a file", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    void AlertDialoger(final Uri filePath2){
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        // Setting Alert Dialog Title
+        alertDialogBuilder.setTitle("Pdf Generated");
+        // Icon Of Alert Dialog
+        alertDialogBuilder.setIcon(R.drawable.ic_check_black_24dp);
+        // Setting Alert Dialog Message
+        alertDialogBuilder.setMessage("Pdf Generated");
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+
+                //Write the Send File code here
+
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Preview", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, filePath2);
+                startActivity(browserIntent);
+            }
+        });
+        alertDialogBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getContext(),"Canceled",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 }
