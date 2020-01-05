@@ -84,7 +84,7 @@ public class editable_voice_pres extends Fragment {
     ListviewAdapter adaptersymp,adapterdiag,adapterprescri,adapteradvice;
     private PdfPCell cell;
     private String textAnswer;
-    Image bgImage;
+    Image bgImage1;
     private String path;
     private File dir;
     private File file;
@@ -197,9 +197,9 @@ public class editable_voice_pres extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] bitmapdata = stream.toByteArray();
             try {
-                bgImage = Image.getInstance(bitmapdata);
-                bgImage.setAbsolutePosition(330f, 642f);
-                cell.addElement(bgImage);
+                bgImage1 = Image.getInstance(bitmapdata);
+                bgImage1.setAbsolutePosition(330f, 642f);
+                cell.addElement(bgImage1);
                 pt.addCell(cell);
                 cell = new PdfPCell();
                 cell.setBorder(Rectangle.NO_BORDER);
@@ -312,6 +312,7 @@ public class editable_voice_pres extends Fragment {
                 cell.addElement(ftable);
                 table.addCell(cell);
                 doc.add(table);
+                doc.close();
                 //uploadFile(filePath1);
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                 // Setting Alert Dialog Title
@@ -331,7 +332,7 @@ public class editable_voice_pres extends Fragment {
                             */
 
                     File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
-                    File newFile = new File(imagePath, "05012020Aditya.pdf");
+                    File newFile = new File(imagePath, pathtoupload);
                     Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
 
                             uploadFile(contentUri);
