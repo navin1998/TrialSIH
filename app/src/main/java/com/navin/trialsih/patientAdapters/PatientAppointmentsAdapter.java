@@ -3,6 +3,7 @@ package com.navin.trialsih.patientAdapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,11 +66,15 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
         holder.textViewType.setText(appointments.getAppointmentDoctorPhone());
 
 
+        final Bundle bundle = new Bundle();
+        bundle.putString("doctorRegNumber", appointments.getAppointmentDoctorRegNumber());
+
+
         holder.textViewCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                verifyForChat(FirebaseAuth.getInstance().getCurrentUser().getUid(), appointments.getAppointmentDoctorRegNumber());
+                verifyForChat(FirebaseAuth.getInstance().getCurrentUser().getUid(), appointments.getAppointmentDoctorRegNumber(), bundle);
 
             }
         });
@@ -102,7 +107,7 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
 
 
 
-    private void verifyForChat(final String uid, final String reg)
+    private void verifyForChat(final String uid, final String reg, final Bundle bundle)
     {
 
         final ProgressDialog dialog = new ProgressDialog(mContext);
@@ -120,7 +125,12 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
                     if (dataSnapshot.child(reg).child(APPOINTMENT_FEE_STATUS).getValue().toString().toLowerCase().equals("paid")) {
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
-                                mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
+
+                               Intent intent = new Intent(mContext, PatientChatActivity.class);
+                               intent.putExtras(bundle);
+                               mContext.startActivity(intent);
+
+
                             }
                             else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
                             {
@@ -138,7 +148,11 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
 
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
-                                mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
+
+                                Intent intent = new Intent(mContext, PatientChatActivity.class);
+                                intent.putExtras(bundle);
+                                mContext.startActivity(intent);
+
                             }
                             else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
                             {
@@ -160,7 +174,11 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
                     if (dataSnapshot.child(reg).child(APPOINTMENT_FEE_STATUS).getValue().toString().toLowerCase().equals("paid")) {
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
-                                mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
+
+                                Intent intent = new Intent(mContext, PatientChatActivity.class);
+                                intent.putExtras(bundle);
+                                mContext.startActivity(intent);
+
                             }
                             else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
                             {
@@ -178,7 +196,12 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
 
                         try {
                             if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
-                                mContext.startActivity(new Intent(mContext, PatientChatActivity.class));
+
+
+                                Intent intent = new Intent(mContext, PatientChatActivity.class);
+                                intent.putExtras(bundle);
+                                mContext.startActivity(intent);
+
                             }
                             else if (dataSnapshot.child(reg).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("ended"))
                             {

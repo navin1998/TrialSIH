@@ -4,10 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.navin.trialsih.R;
 
 public class PatientChatActivity extends AppCompatActivity {
+
+
+    private static String DOCTOR_REG_NUMBER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +21,15 @@ public class PatientChatActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Chat");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Bundle bundle = getIntent().getExtras();
+        try {
+            DOCTOR_REG_NUMBER = bundle.getString("doctorRegNumber");
+        }catch (Exception e){}
+
+
+        Toast.makeText(this, "REG: " + DOCTOR_REG_NUMBER, Toast.LENGTH_SHORT).show();
+
 
     }
 
