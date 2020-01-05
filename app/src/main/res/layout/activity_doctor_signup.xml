@@ -156,6 +156,7 @@
                 android:paddingBottom="10dp"
                 android:background="@drawable/btn_background"
                 android:id="@+id/doctor_sign_up_btn"
+                android:elevation="20dp"
                 />
 
         </LinearLayout>
