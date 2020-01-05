@@ -2,7 +2,7 @@ package com.navin.trialsih.doctorActivities.bottomNavigation;
 
 import java.util.ArrayList;
 
-public class ArraylistsCheck {
+public class ArrayListsCheck {
 
     ArrayList<String> preNames=new ArrayList<>();
     ArrayList<String> preSymptoms=new ArrayList<>();
@@ -10,7 +10,7 @@ public class ArraylistsCheck {
     ArrayList<String> prePrescription=new ArrayList<>();
     ArrayList<String> preAdvice=new ArrayList<>();
 
-    public ArraylistsCheck(){
+    public ArrayListsCheck(){
         preNames.add("aarav");
         preNames.add("aditya");
         preNames.add("vihaan");

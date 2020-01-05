@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,17 +24,13 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 public class VoicePresFragment extends Fragment {
@@ -49,7 +44,7 @@ public class VoicePresFragment extends Fragment {
     ArrayList<String> Diagnose=new ArrayList<>();
     ArrayList<String> Prescription=new ArrayList<>();
     ArrayList<String> Advice=new ArrayList<>();
-    ArraylistsCheck objarr=new ArraylistsCheck();
+    ArrayListsCheck objarr=new ArrayListsCheck();
     String nameofpat="";
     public TextView date;
     public ListView symptomList;
