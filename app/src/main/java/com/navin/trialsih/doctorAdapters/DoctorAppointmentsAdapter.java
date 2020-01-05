@@ -31,7 +31,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     @NonNull
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        root = LayoutInflater.from(mContext).inflate(R.layout.appointments_item, parent, false);
+        root = LayoutInflater.from(mContext).inflate(R.layout.doctor_appointments_item, parent, false);
 
         return new ImageViewHolder(root);
     }
