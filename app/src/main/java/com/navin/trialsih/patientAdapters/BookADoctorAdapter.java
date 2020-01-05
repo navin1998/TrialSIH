@@ -3,12 +3,14 @@ package com.navin.trialsih.patientAdapters;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorClasses.DoctorAppointments;
 import com.navin.trialsih.doctorClasses.DoctorDetails;
+import com.navin.trialsih.patientActivities.ConfirmPaymentActivity;
 import com.navin.trialsih.patientsClasses.PatientAppointments;
 
 import java.util.ArrayList;
@@ -85,8 +88,6 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     private List<DoctorDetails> mUploads;
     private View root;
 
-    private CallBackInterface callBackInterface;
-
     private final static String CONNECT_MODE_CHAT = "chat";
     private final static String CONNECT_MODE_VISIT = "visit";
     
@@ -111,29 +112,9 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
 
 
-
-    public interface CallBackInterface
-    {
-        void handlePayments(String upiId, String name, String note, String amount, String wayToConnect, String regNumber, String doctorName, String positionInQueue, String doctorPhone);
-    }
-
-
-
-
-
-
     public BookADoctorAdapter(Context context, List<DoctorDetails> uploads) {
         mContext = context;
         mUploads = uploads;
-        
-        try {
-
-            callBackInterface = (CallBackInterface) mContext;
-        }
-        catch (Exception e)
-        {
-            Toast.makeText(context, "Error in handling payment exceptions", Toast.LENGTH_SHORT).show();
-        }
 
         getPatientName();
 
@@ -595,15 +576,32 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                         finalAmount += amount.charAt(i);
                     }
                 }
-                
-                if (callBackInterface != null)
-                {
-                    callBackInterface.handlePayments(upiId, name, note, finalAmount, wayToConnect, regNumber, doctorName, positionInQueue, doctorPhone);
-                }
-                else
-                {
-                    Toast.makeText(mContext, "Error in handling payment exceptions", Toast.LENGTH_SHORT).show();
-                }
+
+
+                /***
+                 *
+                 *
+                 * putting credentials to bundle...
+                 *
+                 *
+                 */
+
+                Bundle bundle = new Bundle();
+                bundle.putString("payUpiID", upiId);
+                bundle.putString("payName", name);
+                bundle.putString("payAmount", finalAmount);
+                bundle.putString("payWayToConnect", wayToConnect);
+                bundle.putString("payRegNumber", regNumber);
+                bundle.putString("payDoctorName", doctorName);
+                bundle.putString("payPositionInQueue", positionInQueue);
+                bundle.putString("payDoctorPhone", doctorPhone);
+
+
+                //starting payment activity...
+                Intent intent = new Intent(mContext, ConfirmPaymentActivity.class);
+                intent.putExtras(bundle);
+                mContext.startActivity(intent);
+
 
             }
 
@@ -735,6 +733,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
             }
         });
+
     }
 
 

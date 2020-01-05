@@ -74,6 +74,23 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
         final DoctorAppointments appointments = mUploads.get(position);
         holder.textViewName.setText(appointments.getAppointmentPatientName());
         holder.textViewType.setText(appointments.getAppointmentPatientPhone());
+
+        String status = appointments.getAppointmentFeeStatus();
+
+        status = status.toLowerCase();
+
+        if (status.equals("paid"))
+        {
+            holder.textViewAppointmentType.setText("ONLINE VISITOR");
+            holder.textViewAppointmentType.setBackground(mContext.getResources().getDrawable(R.drawable.background_online_text));
+        }
+        else
+        {
+            holder.textViewAppointmentType.setText("OFFLINE VISITOR");
+            holder.textViewAppointmentType.setBackground(mContext.getResources().getDrawable(R.drawable.background_offline_text));
+
+        }
+
         
         holder.textViewCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +116,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
         public TextView textViewName;
         public TextView textViewType;
         public TextView textViewCalendar;
+        public TextView textViewAppointmentType;
         public ImageView imageView;
         public CardView cardView;
 
@@ -109,7 +127,9 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
             textViewName = itemView.findViewById(R.id.cardView_commodityName);
             textViewCalendar = itemView.findViewById(R.id.cardView_chat_with_doctor);
             textViewType = itemView.findViewById(R.id.cardView_commodityType);
+            textViewAppointmentType = itemView.findViewById(R.id.cardView_appointmentType);
             imageView = itemView.findViewById(R.id.cardView_commodityImageView);
+
         }
     }
 
