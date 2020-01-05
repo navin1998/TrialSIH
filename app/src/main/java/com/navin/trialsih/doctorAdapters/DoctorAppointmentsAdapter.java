@@ -41,9 +41,11 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     private static String REG_NUMBER;
 
     private final static String USER_TYPE_DOCTOR = "doctors";
+    private final static String USER_TYPE_PATIENT = "patients";
     private final static String PROFILE = "profile";
     private final static String ACTIVE_APPOINTMENTS = "activeAppointments";
     private final static String APPOINTMENT_FEE_STATUS = "appointmentFeeStatus";
+    private final static String APPOINTMENT_CHAT_STATUS = "appointmentChatStarted";
 
     public DoctorAppointmentsAdapter(Context context, List<DoctorAppointments> uploads) {
         mContext = context;
@@ -73,7 +75,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
             @Override
             public void onClick(View v) {
 
-                verifyForChat(appointments.getAppointmentPatientUid());
+                verifyForChat(appointments.getAppointmentPatientUid(), REG_NUMBER);
 
             }
         });
@@ -113,7 +115,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     }
 
 
-    private void verifyForChat(final String uid)
+    private void verifyForChat(final String uid, final String reg)
     {
 
         final ProgressDialog dialog = new ProgressDialog(mContext);
@@ -129,11 +131,36 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
                 if (dataSnapshot.child(uid).child(APPOINTMENT_FEE_STATUS).getValue().toString().toLowerCase().equals("paid"))
                 {
-                    showChatConfirmDialogForOnlinePayment();
+                    try {
+                        if (dataSnapshot.child(uid).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
+                            mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
+                        }
+                        else
+                        {
+                            showChatConfirmDialogForOnlinePayment(uid, reg);
+                        }
+                    }catch (Exception e) {
+
+                        showChatConfirmDialogForOnlinePayment(uid, reg);
+                    }
+
                 }
                 else
                 {
-                    showChatConfirmDialogForCash();
+
+                    try {
+
+                        if (dataSnapshot.child(uid).child(APPOINTMENT_CHAT_STATUS).getValue().toString().toLowerCase().equals("yes")) {
+                            mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
+                        } else {
+                            showChatConfirmDialogForCash(uid, reg);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        showChatConfirmDialogForCash(uid, reg);
+                    }
+
                 }
 
                 dialog.cancel();
@@ -151,7 +178,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
     }
 
 
-    private void showChatConfirmDialogForOnlinePayment()
+    private void showChatConfirmDialogForOnlinePayment(final String uid, final String reg)
     {
         LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_confirm_chat_for_paid, null);
@@ -177,6 +204,11 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
                 mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
 
+                //  update in database that chat has started...
+                updateChatStartStatusInPatientNode(uid, reg);
+                updateChatStartStatusInDoctorNode(uid, reg);
+
+
                 dialog.dismiss();
             }
         });
@@ -193,7 +225,7 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
 
 
-    private void showChatConfirmDialogForCash()
+    private void showChatConfirmDialogForCash(final String uid, final String reg)
     {
         LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_confirm_chat_for_non_paid, null);
@@ -219,6 +251,13 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
                 mContext.startActivity(new Intent(mContext, DoctorChatActivity.class));
 
+
+                //  update in database that chat has started...
+                updateChatStartStatusInPatientNode(uid, reg);
+                updateChatStartStatusInDoctorNode(uid, reg);
+
+
+
                 dialog.dismiss();
             }
         });
@@ -231,6 +270,34 @@ public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppoin
 
             }
         });
+    }
+
+
+    private void updateChatStartStatusInPatientNode(String uid, String reg)
+    {
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(uid).child(ACTIVE_APPOINTMENTS).child(reg);
+
+        try {
+            mRef.child("appointmentChatStarted").setValue("yes");
+        }catch (Exception e){}
+
+
+    }
+
+
+    private void updateChatStartStatusInDoctorNode(String uid, String reg)
+    {
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(reg).child(ACTIVE_APPOINTMENTS).child(uid);
+
+        try {
+
+            mRef.child("appointmentChatStarted").setValue("yes");
+
+        }
+        catch (Exception e){}
+
     }
 
 
