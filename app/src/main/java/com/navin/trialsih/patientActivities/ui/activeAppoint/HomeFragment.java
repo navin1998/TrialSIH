@@ -3,9 +3,7 @@ package com.navin.trialsih.patientActivities.ui.activeAppoint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.DatabaseUtils;
 import android.os.Bundle;
-import android.provider.Contacts;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +11,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,11 +28,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
-import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
 import com.navin.trialsih.patientActivities.AddAppointment;
 import com.navin.trialsih.patientActivities.PatientDashboardActivity;
-import com.navin.trialsih.patientAdapters.AppointmentsAdapter;
-import com.navin.trialsih.patientsClasses.Appointments;
+import com.navin.trialsih.patientAdapters.PatientAppointmentsAdapter;
+import com.navin.trialsih.patientsClasses.PatientAppointments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +46,8 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressCircle;
-    private List<Appointments> list;
-    private AppointmentsAdapter appointmentsAdapter;
+    private List<PatientAppointments> list;
+    private PatientAppointmentsAdapter patientAppointmentsAdapter;
 
     private FloatingActionButton floatingActionButton;
 
@@ -178,18 +173,18 @@ public class HomeFragment extends Fragment {
                 {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
-                        Appointments appointments = snapshot.getValue(Appointments.class);
+                        PatientAppointments appointments = snapshot.getValue(PatientAppointments.class);
                         list.add(appointments);
                     }
 
-                    appointmentsAdapter = new AppointmentsAdapter(getContext(), list);
+                    patientAppointmentsAdapter = new PatientAppointmentsAdapter(getContext(), list);
 
                     mRecyclerView.setHasFixedSize(true);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
                     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-                    mRecyclerView.setAdapter(appointmentsAdapter);
+                    mRecyclerView.setAdapter(patientAppointmentsAdapter);
 
                     cannotFind.setVisibility(View.INVISIBLE);
                     mProgressCircle.setVisibility(View.GONE);

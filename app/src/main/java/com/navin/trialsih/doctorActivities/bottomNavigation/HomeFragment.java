@@ -22,8 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorDashboardActivity;
-import com.navin.trialsih.doctorAdapters.AppointmentsAdapter;
-import com.navin.trialsih.doctorClasses.Appointments;
+import com.navin.trialsih.doctorAdapters.DoctorAppointmentsAdapter;
+import com.navin.trialsih.doctorClasses.DoctorAppointments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +43,8 @@ public class HomeFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressCircle;
 
-    private List<Appointments> list;
-    private AppointmentsAdapter appointmentsAdapter;
+    private List<DoctorAppointments> list;
+    private DoctorAppointmentsAdapter doctorAppointmentsAdapter;
 
 
     private final static String USER_TYPE_DOCTOR = "doctors";
@@ -104,18 +104,18 @@ public class HomeFragment extends Fragment {
                 {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
-                        Appointments appointments = snapshot.getValue(Appointments.class);
+                        DoctorAppointments appointments = snapshot.getValue(DoctorAppointments.class);
                         list.add(appointments);
                     }
 
-                    appointmentsAdapter = new AppointmentsAdapter(getContext(), list);
+                    doctorAppointmentsAdapter = new DoctorAppointmentsAdapter(getContext(), list);
 
                     mRecyclerView.setHasFixedSize(true);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
                     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-                    mRecyclerView.setAdapter(appointmentsAdapter);
+                    mRecyclerView.setAdapter(doctorAppointmentsAdapter);
 
                     cannotFind.setVisibility(View.INVISIBLE);
                     mProgressCircle.setVisibility(View.GONE);

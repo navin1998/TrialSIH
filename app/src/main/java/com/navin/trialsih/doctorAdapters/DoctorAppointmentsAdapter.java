@@ -12,18 +12,18 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.navin.trialsih.R;
-import com.navin.trialsih.doctorClasses.Appointments;
+import com.navin.trialsih.doctorClasses.DoctorAppointments;
 
 import java.util.List;
 
-public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapter.ImageViewHolder>{
+public class DoctorAppointmentsAdapter extends RecyclerView.Adapter<DoctorAppointmentsAdapter.ImageViewHolder>{
 
 
     private Context mContext;
-    private List<Appointments> mUploads;
+    private List<DoctorAppointments> mUploads;
     private View root;
 
-    public AppointmentsAdapter(Context context, List<Appointments> uploads) {
+    public DoctorAppointmentsAdapter(Context context, List<DoctorAppointments> uploads) {
         mContext = context;
         mUploads = uploads;
     }
@@ -39,7 +39,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
 
-        final Appointments appointments = mUploads.get(position);
+        final DoctorAppointments appointments = mUploads.get(position);
         holder.textViewName.setText(appointments.getAppointmentPatientName());
         holder.textViewType.setText(appointments.getAppointmentPatientPhone());
 

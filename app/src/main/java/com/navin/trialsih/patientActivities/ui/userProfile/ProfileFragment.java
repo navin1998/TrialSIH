@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -44,6 +45,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.activation.CommandObject;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
@@ -726,6 +729,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         String patientWeight = weight.getText().toString();
         String patientPhone = phone.getText().toString();
         String patientMail = mail.getText().toString();
+
+
+        // saving patient name for future use in appointments...
+        SharedPreferences patientNamePref = getContext().getSharedPreferences("patientNamePrefs", MODE_PRIVATE);
+        SharedPreferences.Editor patientNameEditor = patientNamePref.edit();
+        patientNameEditor.putString("patientName", patientName);
+        patientNameEditor.commit();
+
+
+
+        // saving patient phone for future use in appointments...
+        SharedPreferences patientPhonePref = getContext().getSharedPreferences("patientPhonePrefs", MODE_PRIVATE);
+        SharedPreferences.Editor patientPhoneEditor = patientPhonePref.edit();
+        patientPhoneEditor.putString("patientPhone", patientPhone);
+        patientPhoneEditor.commit();
+
 
         final PatientDetails patientDetails = new PatientDetails(patientName, patientAge, patientGender, patientBloodGroup, patientWeight, patientPhone, patientMail);
 

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +21,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,16 +28,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorClasses.DoctorDetails;
-import com.navin.trialsih.patientAdapters.AppointmentsAdapter;
-import com.navin.trialsih.patientsClasses.Appointments;
 
 import java.util.List;
 
 public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.ImageViewHolder> {
 
+
     private Context mContext;
     private List<DoctorDetails> mUploads;
     private View root;
+
+    private CallBackInterface callBackInterface;
 
     private final static String CONNECT_MODE_CHAT = "chat";
     private final static String CONNECT_MODE_VISIT = "visit";
@@ -44,15 +46,48 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     private final static String PAY_MODE_ONLINE = "online";
     private final static String PAY_MODE_CASH = "cash";
 
+
+    final int UPI_PAYMENT = 0;
+
     private final static String USER_TYPE_DOCTOR = "doctors";
     private final static String PROFILE = "profile";
     private final static String DOCTOR_UPI_NAME = "doctorUpiName";
+    private final static String DOCTOR_ACTIVE_APPOINTMENTS= "activeAppointments";
     private final static String DOCTOR_UPI_ID = "doctorUpiID";
+    private final static String DOCTOR_FEE = "doctorFee";
+    private final static String DOCTOR_NAME = "doctorName";
+    private final static String DOCTOR_BOOKING_PHONE = "doctorName";
     private static String REG_NUMBER;
+    private DatabaseReference docRefrence = FirebaseDatabase.getInstance().getReference().child("doctors");
+
+
+
+
+
+
+    public interface CallBackInterface
+    {
+        void handlePayments(String upiId, String name, String note, String amount, String wayToConnect, String regNumber, String doctorName, String positionInQueue, String doctorPhone);
+    }
+
+
+
+
+
 
     public BookADoctorAdapter(Context context, List<DoctorDetails> uploads) {
         mContext = context;
         mUploads = uploads;
+        
+        try {
+
+            callBackInterface = (CallBackInterface) mContext;
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(context, "Error in handling payment exceptions", Toast.LENGTH_SHORT).show();
+        }
+        
     }
 
     @NonNull
@@ -417,7 +452,16 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
                 //start payment, user want to connect with method parameter 'String wayToConnect'...
 
-                Toast.makeText(mContext, "Payment will start. Connect method: " + wayToConnect + "    Reg Number: " + regNumber, Toast.LENGTH_SHORT).show();
+
+                //start payment method...
+                /**
+                 *
+                 * starting of payment process, after getting doctorData()...
+                 *
+                 */
+                getDoctorData(regNumber, wayToConnect);
+
+
 
                 dialog.dismiss();
             }
@@ -425,6 +469,102 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
     }
 
+
+
+    /********************************/
+
+
+    /**
+     *
+     * payment starts here...
+     *
+     * onActivityResult() is in AddAppointment.java activity inside 'patientActivities' folder...
+     *
+     *
+     * @param regNumber
+     */
+
+
+    void getDoctorData(final String regNumber, final String wayToConnect)
+    {
+
+        docRefrence.child(regNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String upiId = "", name = "", note = "Appointment Fee", amount = "";
+
+                String doctorName = "";
+                String positionInQueue = "";
+                String doctorPhone = "";
+
+                upiId = dataSnapshot.child(PROFILE).child(DOCTOR_UPI_ID).getValue().toString();
+                name = dataSnapshot.child(PROFILE).child(DOCTOR_UPI_NAME).getValue().toString();
+                amount = dataSnapshot.child(PROFILE).child(DOCTOR_FEE).getValue().toString();
+                doctorName = dataSnapshot.child(PROFILE).child(DOCTOR_NAME).getValue().toString();
+                doctorPhone = dataSnapshot.child(PROFILE).child(DOCTOR_BOOKING_PHONE).getValue().toString();
+
+                try {
+
+                    positionInQueue = String.valueOf(dataSnapshot.child(DOCTOR_ACTIVE_APPOINTMENTS).getChildrenCount());
+
+                }
+                catch (Exception e){}
+
+
+                String finalAmount = "";
+
+                for (int i = 0; i < amount.length(); i++)
+                {
+                    if (Character.isDigit(amount.charAt(i)))
+                    {
+                        finalAmount += amount.charAt(i);
+                    }
+                }
+                
+                if (callBackInterface != null)
+                {
+                    callBackInterface.handlePayments(upiId, name, note, finalAmount, wayToConnect, regNumber, doctorName, positionInQueue, doctorPhone);
+                }
+                else
+                {
+                    Toast.makeText(mContext, "Error in handling payment exceptions", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public static boolean isConnectionAvailable(Context context)
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.isConnected()
+                    && netInfo.isConnectedOrConnecting()
+                    && netInfo.isAvailable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     *
+     * payment ends here...
+     *
+     *
+     * onActivityResult() is in AddAppointment.java activity...
+     *
+     *
+     * @param regNumber
+     */
 
 
     private void showBenefitsOfOnlinePaymentsDialog(final String regNumber)
@@ -516,6 +656,9 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
         });
     }
     
+
+
+
 
 
 }
