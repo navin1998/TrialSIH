@@ -83,7 +83,7 @@ public class DoctorChatActivity extends AppCompatActivity {
         catch (Exception e){}
 
 
-        Toast.makeText(this, "Patient UID: " + PATIENT_UID + "\nDoctor reg number: " + DOCTOR_REG_NUMBER, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Patient UID: " + PATIENT_UID + "\nDoctor reg number: " + DOCTOR_REG_NUMBER, Toast.LENGTH_SHORT).show();
 
 
         final ScrollView scrollview = findViewById(R.id.chatScrollView);
