@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -49,7 +50,7 @@ public class HomeFragment extends Fragment {
 
     private final static String USER_TYPE_DOCTOR = "doctors";
     private final static String USER_TYPE_PATIENT = "patients";
-    private final static String ACTIVE_APPOINTMENTS = "appointments";
+    private final static String ACTIVE_APPOINTMENTS = "activeAppointments";
     private final static String PROFILE = "profile";
 
 
@@ -89,6 +90,11 @@ public class HomeFragment extends Fragment {
     private void loadAppointments()
     {
 
+        list = new ArrayList<>();
+        doctorAppointmentsAdapter = new DoctorAppointmentsAdapter(getContext(), list);
+
+        list.clear();
+
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(ACTIVE_APPOINTMENTS);
 
         mRef.addValueEventListener(new ValueEventListener() {
@@ -102,11 +108,20 @@ public class HomeFragment extends Fragment {
                 }
                 else
                 {
+
+                    ArrayList<String> listOfUid = new ArrayList<>();
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
-                        DoctorAppointments appointments = snapshot.getValue(DoctorAppointments.class);
-                        list.add(appointments);
+                        listOfUid.add(snapshot.getKey());
                     }
+
+
+                    for (String uid : listOfUid)
+                    {
+                        list.add(dataSnapshot.child(uid).getValue(DoctorAppointments.class));
+                    }
+
 
                     doctorAppointmentsAdapter = new DoctorAppointmentsAdapter(getContext(), list);
 
