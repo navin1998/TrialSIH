@@ -19,7 +19,7 @@
             android:id="@+id/title_text"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="Proceed to pay appointment fee"
+            android:text="Confirm your choice"
             android:textColor="#272626"
             android:textSize="18sp"
             android:layout_marginLeft="20dp"
@@ -30,7 +30,7 @@
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:text="Click the button to begin transaction"
+            android:text="Are you sure to start chat now?"
             android:textColor="#272626"
             android:textSize="16sp"
             android:layout_marginLeft="20dp"
@@ -63,22 +63,36 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:padding="20dp"
+            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             >
 
+
             <Button
-                android:id="@+id/btn_pay"
+                android:id="@+id/btn_no"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="PAY"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="NO"
                 android:background="@drawable/background_appointment_btn"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="start"
                 android:textColor="#6D8EF1"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:paddingLeft="55dp"
-                android:paddingRight="55dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="20dp"
+                />
+
+            <Button
+                android:id="@+id/btn_yes"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="YES"
+                android:background="@drawable/background_appointment_btn"
+                android:layout_gravity="end"
+                android:textColor="#6D8EF1"
+                android:layout_marginLeft="30dp"
+                android:layout_marginBottom="20dp"
                 />
 
         </LinearLayout>

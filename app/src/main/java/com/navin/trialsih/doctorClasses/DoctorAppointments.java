@@ -8,19 +8,28 @@ public class DoctorAppointments {
     private String appointmentPatientPhone;
     private String appointmentPatientUid;
     private String appointmentWayToConnect;
+    private String appointmentPositionInQueue;
 
-    public DoctorAppointments(String appointmentFee, String appointmentFeeStatus, String appointmentPatientName, String appointmentPatientPhone, String appointmentPatientUid, String appointmentWayToConnect) {
+    public DoctorAppointments(String appointmentFee, String appointmentFeeStatus, String appointmentPatientName, String appointmentPatientPhone, String appointmentPatientUid, String appointmentWayToConnect, String appointmentPositionInQueue) {
         this.appointmentFee = appointmentFee;
         this.appointmentFeeStatus = appointmentFeeStatus;
         this.appointmentPatientName = appointmentPatientName;
         this.appointmentPatientPhone = appointmentPatientPhone;
         this.appointmentPatientUid = appointmentPatientUid;
         this.appointmentWayToConnect = appointmentWayToConnect;
+        this.appointmentPositionInQueue = appointmentPositionInQueue;
     }
 
     public DoctorAppointments() {
     }
 
+    public String getAppointmentPositionInQueue() {
+        return appointmentPositionInQueue;
+    }
+
+    public void setAppointmentPositionInQueue(String appointmentPositionInQueue) {
+        this.appointmentPositionInQueue = appointmentPositionInQueue;
+    }
 
     public String getAppointmentWayToConnect() {
         return appointmentWayToConnect;

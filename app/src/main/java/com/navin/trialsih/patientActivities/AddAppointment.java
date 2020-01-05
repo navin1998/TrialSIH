@@ -314,12 +314,12 @@ public class AddAppointment extends AppCompatActivity implements BookADoctorAdap
     public void handlePayments(String upiId, String name, String note, String amount, String wayToConnect, String regNumber, String doctorName, String positionInQueue, String doctorPhone)
     {
 
-        APPOINTMENT_PATIENT_FEE = amount;
+        APPOINTMENT_PATIENT_FEE = "Rs. " + amount;
         APPOINTMENT_WAY_OF_CONNECT = wayToConnect;
         APPOINTMENT_DOCTOR_NAME = name;
         APPOINTMENT_DOCTOR_REG_NUMBER = regNumber;
         APPOINTMENT_DOCTOR_PHONE = doctorPhone;
-        APPOINTMENT_DOCTOR_FEE = amount;
+        APPOINTMENT_DOCTOR_FEE = "Rs. " + amount;
         APPOINTMENT_DOCTOR_FEE_STATUS = "paid";
         APPOINTMENT_DOCTOR_POSITION_IN_QUEUE = String.valueOf(Integer.parseInt(positionInQueue) + 1);
 
@@ -462,6 +462,7 @@ public class AddAppointment extends AppCompatActivity implements BookADoctorAdap
         doctorAppointments.setAppointmentPatientPhone(APPOINTMENT_PATIENT_PHONE);
         doctorAppointments.setAppointmentPatientUid(APPOINTMENT_PATIENT_UID);
         doctorAppointments.setAppointmentWayToConnect(APPOINTMENT_WAY_OF_CONNECT);
+        doctorAppointments.setAppointmentPositionInQueue(APPOINTMENT_DOCTOR_POSITION_IN_QUEUE);
 
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(APPOINTMENT_DOCTOR_REG_NUMBER).child(DOCTOR_ACTIVE_APPOINTMENTS).child(PATIENT_UID);

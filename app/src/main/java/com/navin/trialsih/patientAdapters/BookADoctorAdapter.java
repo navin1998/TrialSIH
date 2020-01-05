@@ -3,6 +3,7 @@ package com.navin.trialsih.patientAdapters;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -21,17 +22,61 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
+import com.navin.trialsih.doctorClasses.DoctorAppointments;
 import com.navin.trialsih.doctorClasses.DoctorDetails;
+import com.navin.trialsih.patientsClasses.PatientAppointments;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.ImageViewHolder> {
+
+
+
+    private static String APPOINTMENT_DOCTOR_NAME;
+    private static String APPOINTMENT_DOCTOR_PHONE;
+    private static String APPOINTMENT_DOCTOR_REG_NUMBER;
+    private static String APPOINTMENT_DOCTOR_POSITION_IN_QUEUE;
+    private static String APPOINTMENT_DOCTOR_FEE;
+    private static String APPOINTMENT_DOCTOR_FEE_STATUS;
+
+    private static String APPOINTMENT_POSITION_IN_QUEUE;
+
+
+    private static final String WAY_OF_CONNECT_VISIT = "visit";
+
+
+    private static String APPOINTMENT_WAY_OF_CONNECT;
+
+
+    private static String APPOINTMENT_PATIENT_NAME;
+    private static String APPOINTMENT_PATIENT_UID;
+    private static String APPOINTMENT_PATIENT_PHONE;
+    private static String APPOINTMENT_PATIENT_FEE;
+    private static String APPOINTMENT_PATIENT_FEE_STATUS;
+
+
+    private static final String FEE_STATUS_UNPAID = "unpaid";
+
+
+    private static String PATIENT_UID;
+
+    private final static String USER_TYPE_PATIENT = "patients";
+    private final static String PATIENT_ACTIVE_APPOINTMENTS = "activeAppointments";
+    private final static String PATIENT_PHONE = "patientPhone";
+    private final static String PATIENT_NAME = "patientName";
 
 
     private Context mContext;
@@ -58,7 +103,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     private final static String DOCTOR_NAME = "doctorName";
     private final static String DOCTOR_BOOKING_PHONE = "doctorBookingPhone";
     private static String REG_NUMBER;
-    private DatabaseReference docRefrence = FirebaseDatabase.getInstance().getReference().child("doctors");
+    private DatabaseReference docReference = FirebaseDatabase.getInstance().getReference().child("doctors");
 
 
 
@@ -87,6 +132,10 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
         {
             Toast.makeText(context, "Error in handling payment exceptions", Toast.LENGTH_SHORT).show();
         }
+
+        getPatientName();
+
+        getPatientPhone();
         
     }
 
@@ -488,7 +537,9 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     void getDoctorData(final String regNumber, final String wayToConnect)
     {
 
-        docRefrence.child(regNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+        PATIENT_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        docReference.child(regNumber).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String upiId = "", name = "", note = "Appointment Fee", amount = "";
@@ -502,6 +553,28 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                 amount = dataSnapshot.child(PROFILE).child(DOCTOR_FEE).getValue().toString();
                 doctorName = dataSnapshot.child(PROFILE).child(DOCTOR_NAME).getValue().toString();
                 doctorPhone = dataSnapshot.child(PROFILE).child(DOCTOR_BOOKING_PHONE).getValue().toString();
+
+
+
+
+                // check for already registered...
+                ArrayList<String> listOfUid = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.child(DOCTOR_ACTIVE_APPOINTMENTS).getChildren())
+                {
+                    listOfUid.add(snapshot.getKey());
+                }
+
+
+                if (listOfUid.contains(PATIENT_UID))
+                {
+                    Toast.makeText(mContext, "Already registered", Toast.LENGTH_SHORT).show();
+
+                    return;
+
+                }
+
+
 
                 try {
 
@@ -614,7 +687,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     
     
     
-    private void showLastConfirmationDialog(String regNumber)
+    private void showLastConfirmationDialog(final String regNumber)
     {
         LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.layout_confirm_booking, null);
@@ -649,15 +722,287 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
             public void onClick(View v) {
 
                 //  this is cash transaction...
+                //  upload as a non-paid appointment...
+
+                APPOINTMENT_PATIENT_NAME = getPatientName();
+                APPOINTMENT_PATIENT_PHONE = getPatientPhone();
+
+                getDoctorDataForOfflineTransactions(regNumber);
 
                 dialog.dismiss();
 
             }
         });
     }
-    
 
 
+    /**
+     *
+     * getDoctorDataForOfflineTransactions()...
+     *
+     *
+     */
+
+
+
+
+    void getDoctorDataForOfflineTransactions(final String regNumber)
+    {
+
+        PATIENT_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        docReference.child(regNumber).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String upiId = "", name = "", note = "Appointment Fee", amount = "";
+
+                String doctorName = "";
+                String positionInQueue = "";
+                String doctorPhone = "";
+
+                upiId = dataSnapshot.child(PROFILE).child(DOCTOR_UPI_ID).getValue().toString();
+                name = dataSnapshot.child(PROFILE).child(DOCTOR_UPI_NAME).getValue().toString();
+                amount = dataSnapshot.child(PROFILE).child(DOCTOR_FEE).getValue().toString();
+                doctorName = dataSnapshot.child(PROFILE).child(DOCTOR_NAME).getValue().toString();
+                doctorPhone = dataSnapshot.child(PROFILE).child(DOCTOR_BOOKING_PHONE).getValue().toString();
+
+
+                ArrayList<String> listOfUid = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.child(DOCTOR_ACTIVE_APPOINTMENTS).getChildren())
+                {
+                    listOfUid.add(snapshot.getKey());
+                }
+
+
+                if (listOfUid.contains(PATIENT_UID))
+                {
+                    Toast.makeText(mContext, "Already registered", Toast.LENGTH_SHORT).show();
+
+                    return;
+
+                }
+
+
+                try {
+
+                    positionInQueue = String.valueOf(dataSnapshot.child(DOCTOR_ACTIVE_APPOINTMENTS).getChildrenCount());
+                    positionInQueue = String.valueOf(Integer.parseInt(positionInQueue) + 1);
+
+                }
+                catch (Exception e){}
+
+
+                String finalAmount = "";
+
+                for (int i = 0; i < amount.length(); i++)
+                {
+                    if (Character.isDigit(amount.charAt(i)))
+                    {
+                        finalAmount += amount.charAt(i);
+                    }
+                }
+
+
+                addAppointmentToPatientNode(doctorName, doctorPhone, regNumber, amount, positionInQueue);
+
+                addAppointmentToDoctorNode(amount, positionInQueue);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
+    /**
+     *
+     *
+     * getDoctorDataForOfflineTransactions() ends here...
+     *
+     */
+
+
+
+    private void addAppointmentToPatientNode(String name, String phone, String regNumber, String fee, final String position)
+    {
+
+        APPOINTMENT_DOCTOR_NAME = name;
+        APPOINTMENT_DOCTOR_PHONE = phone;
+        APPOINTMENT_DOCTOR_REG_NUMBER = regNumber;
+        APPOINTMENT_DOCTOR_FEE = fee;
+        APPOINTMENT_DOCTOR_POSITION_IN_QUEUE = position;
+        APPOINTMENT_DOCTOR_FEE_STATUS = FEE_STATUS_UNPAID;
+        APPOINTMENT_WAY_OF_CONNECT = WAY_OF_CONNECT_VISIT;
+
+        final PatientAppointments patientAppointments = new PatientAppointments();
+        patientAppointments.setAppointmentDoctorName(APPOINTMENT_DOCTOR_NAME);
+        patientAppointments.setAppointmentDoctorPhone(APPOINTMENT_DOCTOR_PHONE);
+        patientAppointments.setAppointmentDoctorRegNumber(APPOINTMENT_DOCTOR_REG_NUMBER);
+        patientAppointments.setAppointmentFee(APPOINTMENT_DOCTOR_FEE);
+        patientAppointments.setAppointmentFeeStatus(APPOINTMENT_DOCTOR_FEE_STATUS);
+        patientAppointments.setAppointmentPositionInQueue(APPOINTMENT_DOCTOR_POSITION_IN_QUEUE);
+        patientAppointments.setAppointmentWayToConnect(APPOINTMENT_WAY_OF_CONNECT);
+
+
+        PATIENT_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(PATIENT_UID).child(PATIENT_ACTIVE_APPOINTMENTS).child(APPOINTMENT_DOCTOR_REG_NUMBER);
+
+
+        mRef.setValue(patientAppointments)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Toast.makeText(mContext, "Appointment added successfully, you are at position " + APPOINTMENT_DOCTOR_POSITION_IN_QUEUE + " in the queue", Toast.LENGTH_LONG).show();
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(mContext, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+/*
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                mRef.setValue(patientAppointments)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                Toast.makeText(mContext, "Appointment added successfully, you are at position " + APPOINTMENT_DOCTOR_POSITION_IN_QUEUE + " in the queue", Toast.LENGTH_LONG).show();
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(mContext, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
+
+
+                // adding position to node...
+                mRef.setValue("", position);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+*/
+
+    }
+
+
+    private String getPatientName()
+    {
+
+        String patientNamePrefName = "patientNamePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientNamePrefKey = "patientName" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        SharedPreferences patientNamePref = mContext.getSharedPreferences(patientNamePrefName, MODE_PRIVATE);
+
+        APPOINTMENT_PATIENT_NAME = patientNamePref.getString(patientNamePrefKey, null);
+
+        return APPOINTMENT_PATIENT_NAME;
+
+    }
+
+
+    private String getPatientPhone()
+    {
+
+        String patientPhonePrefName = "patientPhonePrefs" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String patientPhonePrefKey = "patientPhone" + FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+
+        SharedPreferences patientPhonePref = mContext.getSharedPreferences(patientPhonePrefName, MODE_PRIVATE);
+
+        APPOINTMENT_PATIENT_PHONE = patientPhonePref.getString(patientPhonePrefKey, "0000000000");
+
+        return APPOINTMENT_PATIENT_PHONE;
+
+    }
+
+
+    private void addAppointmentToDoctorNode(String fee, String position)
+    {
+
+        APPOINTMENT_PATIENT_PHONE = getPatientPhone();
+        APPOINTMENT_PATIENT_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        APPOINTMENT_PATIENT_FEE = fee;
+        APPOINTMENT_PATIENT_FEE_STATUS = FEE_STATUS_UNPAID;
+        APPOINTMENT_PATIENT_NAME = getPatientName();
+        APPOINTMENT_WAY_OF_CONNECT = WAY_OF_CONNECT_VISIT;
+        APPOINTMENT_POSITION_IN_QUEUE = position;
+
+
+        final DoctorAppointments doctorAppointments = new DoctorAppointments();
+
+        doctorAppointments.setAppointmentFee(APPOINTMENT_PATIENT_FEE);
+        doctorAppointments.setAppointmentFeeStatus(APPOINTMENT_PATIENT_FEE_STATUS);
+        doctorAppointments.setAppointmentPatientName(APPOINTMENT_PATIENT_NAME);
+        doctorAppointments.setAppointmentPatientPhone(APPOINTMENT_PATIENT_PHONE);
+        doctorAppointments.setAppointmentPatientUid(APPOINTMENT_PATIENT_UID);
+        doctorAppointments.setAppointmentWayToConnect(APPOINTMENT_WAY_OF_CONNECT);
+        doctorAppointments.setAppointmentPositionInQueue(APPOINTMENT_POSITION_IN_QUEUE);
+
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(APPOINTMENT_DOCTOR_REG_NUMBER).child(DOCTOR_ACTIVE_APPOINTMENTS).child(PATIENT_UID);
+
+
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                mRef.setValue(doctorAppointments)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                //successfully added to database...
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Toast.makeText(mContext, "Upload to doctor database went wrong", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
 
 
 
