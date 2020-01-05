@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "703993460993-5jo0uppjhpqrh53qqblrgaabma0dl452.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.navin.trialsih",
+            "certificate_hash": "86b586d25500843675585ed8e8fed52f7d03f701"
+          }
+        },
+        {
           "client_id": "703993460993-fkn4uaqt1hfvlefimhrdgu6sldj6qase.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
