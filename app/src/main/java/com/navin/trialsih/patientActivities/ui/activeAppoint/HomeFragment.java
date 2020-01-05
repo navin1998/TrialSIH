@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment {
 
     private static String UID;
     private final static String USER_TYPE = "patients";
-    private final static String ACTIVE_APPOINTMENTS = "appointments";
+    private final static String ACTIVE_APPOINTMENTS = "activeAppointments";
     private final static String PREVIOUS_APPOINTMENTS = "prevAppointments";
     private final static String PREVIOUS_TRANSACTIONS = "prevTransactions";
     private final static String PROFILE = "profile";
@@ -171,10 +171,18 @@ public class HomeFragment extends Fragment {
                 }
                 else
                 {
+
+                    ArrayList<String> listOfRegNumber = new ArrayList<>();
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
-                        PatientAppointments appointments = snapshot.getValue(PatientAppointments.class);
-                        list.add(appointments);
+                        listOfRegNumber.add(snapshot.getKey());
+
+                    }
+
+                    for (String regNumber : listOfRegNumber)
+                    {
+                        list.add(dataSnapshot.child(regNumber).getValue(PatientAppointments.class));
                     }
 
                     patientAppointmentsAdapter = new PatientAppointmentsAdapter(getContext(), list);

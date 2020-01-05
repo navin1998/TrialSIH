@@ -56,7 +56,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
     private final static String DOCTOR_UPI_ID = "doctorUpiID";
     private final static String DOCTOR_FEE = "doctorFee";
     private final static String DOCTOR_NAME = "doctorName";
-    private final static String DOCTOR_BOOKING_PHONE = "doctorName";
+    private final static String DOCTOR_BOOKING_PHONE = "doctorBookingPhone";
     private static String REG_NUMBER;
     private DatabaseReference docRefrence = FirebaseDatabase.getInstance().getReference().child("doctors");
 
