@@ -156,6 +156,11 @@ public class HomeFragment extends Fragment {
     private void loadAppointments()
     {
 
+        list = new ArrayList<>();
+        patientAppointmentsAdapter = new PatientAppointmentsAdapter(getContext(), list);
+
+        list.clear();
+
         UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE).child(UID).child(ACTIVE_APPOINTMENTS);
@@ -208,6 +213,8 @@ public class HomeFragment extends Fragment {
         });
 
     }
+
+    
 
     @Override
     public void onStart() {
