@@ -3,6 +3,7 @@ package com.navin.trialsih.patientActivities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorActivities.DoctorChatActivity;
@@ -31,11 +33,12 @@ public class PatientChatActivity extends AppCompatActivity {
 
     private static String DOCTOR_REG_NUMBER;
 
+    private static final String APPOINTMENT_CHAT_STARTED = "appointmentChatStarted";
+
     private static final String TAG = DoctorChatActivity.class.getSimpleName();
     private static final int USER = 10001;
     private static final int BOT = 10002;
 
-    private String uuid = UUID.randomUUID().toString();
     private LinearLayout chatLayout;
     private EditText queryEditText;
 
@@ -59,6 +62,7 @@ public class PatientChatActivity extends AppCompatActivity {
         }catch (Exception e){}
 
 
+
         final ScrollView scrollview = findViewById(R.id.chatScrollView);
         scrollview.post(new Runnable() {
             @Override
@@ -67,24 +71,29 @@ public class PatientChatActivity extends AppCompatActivity {
             }
         });
 
+        mrefrence = FirebaseDatabase.getInstance().getReference();
+
         chatLayout = findViewById(R.id.chatLayout);
 
-        ImageView sendBtn = findViewById(R.id.sendBtn);
+        final ImageView sendBtn = findViewById(R.id.sendBtn);
         sendBtn.setOnClickListener(this::sendMessage);
 
         queryEditText = findViewById(R.id.queryEditText);
-        queryEditText.setOnKeyListener((view, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                switch (keyCode) {
-                    case KeyEvent.KEYCODE_DPAD_CENTER:
-                    case KeyEvent.KEYCODE_ENTER:
-                        sendMessage(sendBtn);
-                        return true;
-                    default:
-                        break;
+        queryEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            PatientChatActivity.this.sendMessage(sendBtn);
+                            return true;
+                        default:
+                            break;
+                    }
                 }
+                return false;
             }
-            return false;
         });
 
         getTextFromDoctor();
@@ -97,16 +106,67 @@ public class PatientChatActivity extends AppCompatActivity {
 
     private void sendMessage(View view) {
         String msg = queryEditText.getText().toString();
-        if (msg.trim().isEmpty()) {
-            Toast.makeText(PatientChatActivity.this, "Please enter your query!", Toast.LENGTH_LONG).show();
-        } else {
-            showTextView(msg, USER);
-            mrefrence.child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(mAuth.getCurrentUser().getUid()).child("patient_chat").child("statement"+count).setValue(msg);
-            count++;
-            queryEditText.setText("");
+
+        checkChatEndStatus(msg);
+
+    }
+
+    private void checkChatEndStatus(String msg)
+    {
+
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Please wait...");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        mrefrence.child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.child(APPOINTMENT_CHAT_STARTED).getValue().toString().toLowerCase().equals("ended"))
+                {
+
+                    Toast.makeText(PatientChatActivity.this, "Chat has already ended. Cannot send messages", Toast.LENGTH_SHORT).show();
+
+                    dialog.cancel();
+                    return;
+
+                }
+
+                //check for empty string...
+                else if (msg.trim().isEmpty()) {
+
+                    Toast.makeText(PatientChatActivity.this, "Please enter your query!", Toast.LENGTH_LONG).show();
+
+                    dialog.cancel();
+                }
+
+                //displaying data and adding to firebase...
+                else {
+
+                    showTextView(msg, USER);
+                    FirebaseDatabase.getInstance().getReference().child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(mAuth.getCurrentUser().getUid()).child("patient_chat").child("statement"+count).setValue(msg);
+                    count++;
+                    queryEditText.setText("");
+
+                    dialog.cancel();
 
 
-        }
+                }
+
+                dialog.cancel();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                dialog.cancel();
+
+            }
+        });
+
+
     }
 
     void getTextFromDoctor(){
