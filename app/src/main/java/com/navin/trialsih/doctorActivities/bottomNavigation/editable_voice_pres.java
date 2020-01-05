@@ -58,6 +58,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static android.app.Activity.RESULT_OK;
 import static androidx.core.content.FileProvider.getUriForFile;
 
 public class editable_voice_pres extends Fragment {
@@ -88,6 +89,7 @@ public class editable_voice_pres extends Fragment {
     public StorageReference storageReference;
     public DatabaseReference myReference;
     Uri filePath1;
+    static final int PICK_CONTACT_REQUEST = 1;
 
     //use to set background color
     BaseColor myColor = WebColors.getRGBColor("#9E9E9E");
@@ -386,7 +388,7 @@ public class editable_voice_pres extends Fragment {
     }
 
     void AlertDialoger(final Uri filePath2){
-
+        filePath1=filePath2;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         // Setting Alert Dialog Title
         alertDialogBuilder.setTitle("Pdf Generated");
@@ -404,8 +406,6 @@ public class editable_voice_pres extends Fragment {
                 inputDialog(filePath2);
 
 
-
-
             }
         });
 
@@ -413,7 +413,8 @@ public class editable_voice_pres extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, filePath2);
-                startActivity(browserIntent);
+                startActivityForResult(browserIntent,PICK_CONTACT_REQUEST);
+
             }
         });
         alertDialogBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
@@ -461,5 +462,14 @@ public class editable_voice_pres extends Fragment {
         String mMessage="Hii"+nameofpat+","+"\n"+"This is link of prescription: "+filePath.toString();
         JavaApiDemo javaApiDemo=new JavaApiDemo(getContext(),email,mSubect,mMessage);
         javaApiDemo.execute();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == PICK_CONTACT_REQUEST) {
+            // Make sure the request was successful
+            AlertDialoger(filePath1);
+        }
     }
 }
