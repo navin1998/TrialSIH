@@ -31,5 +31,8 @@
     <string name="menu_doctor_logout">Logout</string>
     <string name="menu_doctor_settings">Settings</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>
