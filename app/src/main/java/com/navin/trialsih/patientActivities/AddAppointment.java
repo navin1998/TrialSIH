@@ -29,7 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
-import com.navin.trialsih.doctorAdapters.BookADoctorAdapter;
+import com.navin.trialsih.patientAdapters.BookADoctorAdapter;
 import com.navin.trialsih.doctorClasses.DoctorAppointments;
 import com.navin.trialsih.doctorClasses.DoctorDetails;
 import com.navin.trialsih.patientsClasses.PatientAppointments;
@@ -37,7 +37,7 @@ import com.navin.trialsih.patientsClasses.PatientAppointments;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.navin.trialsih.doctorAdapters.BookADoctorAdapter.isConnectionAvailable;
+import static com.navin.trialsih.patientAdapters.BookADoctorAdapter.isConnectionAvailable;
 
 public class AddAppointment extends AppCompatActivity implements BookADoctorAdapter.CallBackInterface {
 

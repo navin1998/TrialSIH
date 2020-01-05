@@ -1,4 +1,4 @@
-package com.navin.trialsih.doctorAdapters;
+package com.navin.trialsih.patientAdapters;
 
 import android.app.Activity;
 import android.app.AlertDialog;
