@@ -51,6 +51,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.navin.trialsih.R;
+import com.navin.trialsih.doctorClasses.DoctorPrevPresLinkItem;
 import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -365,8 +366,13 @@ public class editable_voice_pres extends Fragment {
                             long timeinmilli=Calendar.getInstance().getTimeInMillis();
                             SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
                             //Toast.makeText(getContext(), email3, Toast.LENGTH_SHORT).show();
-                            myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(email3).child("document" + timeinmilli).child("FileUrl").setValue(uri.toString());
-                            myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(email3).child("document" + timeinmilli).child("Date").setValue(sdf1.format(Calendar.getInstance().getTime()));
+
+
+                            DoctorPrevPresLinkItem item = new DoctorPrevPresLinkItem();
+                            item.setDate(sdf1.format(Calendar.getInstance().getTime()));
+                            item.setFileUrl(uri.toString());
+
+                            myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(email3).child("document" + timeinmilli).setValue(item);
 
                             AlertDialoger(uri, email);
                         }

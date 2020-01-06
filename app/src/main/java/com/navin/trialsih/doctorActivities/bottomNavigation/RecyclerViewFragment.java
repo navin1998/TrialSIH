@@ -99,16 +99,10 @@ public class RecyclerViewFragment extends Fragment {
 
         EMAIL = EMAIL.replaceAll("\\.", "");
 
-//        EMAIL = "\"" + EMAIL + "\"";
-//
-//        Toast.makeText(mContext, "Mail: " + EMAIL + "   REG: " + REG_NUMBER, Toast.LENGTH_SHORT).show();
-
-        mRecyclerView = v.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mProgressCircle = v.findViewById(R.id.progress_circle);
+        mRecyclerView = v.findViewById(R.id.recycler_view_link);
         cannotFind = v.findViewById(R.id.cannotfind);
         cannotFindText = v.findViewById(R.id.cannotfind_text);
+        mProgressCircle = v.findViewById(R.id.progress_circle);
 
         loadItemsInRecyclerView();
 
@@ -117,11 +111,6 @@ public class RecyclerViewFragment extends Fragment {
 
     private void loadItemsInRecyclerView()
     {
-
-        list = new ArrayList<>();
-        doctorPrevPresListAdapter = new DoctorPrevPresListAdapter(getContext(), list);
-
-        list.clear();
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PATIENT_PRES).child(EMAIL);
 
@@ -144,24 +133,12 @@ public class RecyclerViewFragment extends Fragment {
                     mRecyclerView.setAdapter(null);
                     doctorPrevPresListAdapter = null;
 
-                    ArrayList<String> listOfDocNames = new ArrayList<>();
-
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                    {
-                        listOfDocNames.add(snapshot.getKey());
-                    }
-
-
-                    Toast.makeText(mContext, "Names size: " + listOfDocNames.size(), Toast.LENGTH_SHORT).show();
-
-
-                    /*
-
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
                         list.add(snapshot.getValue(DoctorPrevPresLinkItem.class));
                     }
 
+                    //Toast.makeText(mContext, "Size: " + list.size(), Toast.LENGTH_SHORT).show();
 
                     doctorPrevPresListAdapter = new DoctorPrevPresListAdapter(getContext(), list);
 
@@ -176,8 +153,6 @@ public class RecyclerViewFragment extends Fragment {
                     mProgressCircle.setVisibility(View.GONE);
                     cannotFindText.setVisibility(View.INVISIBLE);
 
-
-                     */
 
                 }
             }
