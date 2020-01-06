@@ -875,43 +875,6 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                     }
                 });
 
-/*
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                mRef.setValue(patientAppointments)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-
-                                Toast.makeText(mContext, "Appointment added successfully, you are at position " + APPOINTMENT_DOCTOR_POSITION_IN_QUEUE + " in the queue", Toast.LENGTH_LONG).show();
-
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(mContext, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-
-
-
-                // adding position to node...
-                mRef.setValue("", position);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-*/
-
     }
 
 

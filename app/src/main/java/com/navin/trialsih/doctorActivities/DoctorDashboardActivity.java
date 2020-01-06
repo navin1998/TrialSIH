@@ -12,15 +12,26 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,14 +45,22 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.itextpdf.text.pdf.languages.ArabicLigaturizer;
 import com.navin.trialsih.R;
 import com.navin.trialsih.SignInActivity;
 import com.navin.trialsih.doctorActivities.bottomNavigation.HomeFragment;
 import com.navin.trialsih.doctorActivities.bottomNavigation.ProfileFragment;
+import com.navin.trialsih.doctorActivities.bottomNavigation.RecyclerViewFragment;
 import com.navin.trialsih.doctorActivities.bottomNavigation.VoicePresFragment;
 import com.navin.trialsih.doctorActivities.navigationDrawer.HistoryFragment;
 import com.navin.trialsih.doctorActivities.navigationDrawer.SettingsFragment;
+import com.navin.trialsih.doctorAdapters.DoctorPrevPresListAdapter;
+import com.navin.trialsih.doctorClasses.DoctorPrevPresLinkItem;
 import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
+
+import java.util.ArrayList;
+
+import static java.security.AccessController.getContext;
 
 public class DoctorDashboardActivity extends AppCompatActivity {
 
@@ -59,11 +78,15 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     private final static String ACTIVE_APPOINTMENTS = "appointments";
     private final static String PROFILE = "profile";
 
+    private final static String PATIENT_PRES = "patientPrescriptions";
+
     private AppBarConfiguration mAppBarConfiguration;
 
     private NavigationView navigationView;
 
     private Toolbar toolbar;
+
+    private DrawerLayout drawer;
 
 
     @Override
@@ -73,7 +96,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_doctor_dashboard);
         toolbar = findViewById(R.id.doctor_toolbar);
         setSupportActionBar(toolbar);
-        final DrawerLayout drawer = findViewById(R.id.doctor_drawer_layout);
+        drawer = findViewById(R.id.doctor_drawer_layout);
         navigationView = findViewById(R.id.doctor_nav_view);
 
         mContext = this;
@@ -159,6 +182,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         switch (itemId) {
             case R.id.doctor_appointments:
             case R.id.nav_doctor_appointment_icon:
+                checkAllNavTrue();
+                checkAllBottomNavTrue();
                 isHomeShowing = true;
                 bottomNavigationView.getMenu().getItem(0).setChecked(true);
                 navigationView.getMenu().getItem(0).setChecked(true);
@@ -166,6 +191,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 break;
 
             case R.id.doctor_mic:
+                checkAllNavFalse();
                 isHomeShowing = false;
                 bottomNavigationView.getMenu().getItem(1).setChecked(true);
                 fragment = new VoicePresFragment();
@@ -173,6 +199,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
             case R.id.doctor_profile:
             case R.id.nav_doctor_profile_icon:
+                checkAllNavTrue();
+                checkAllBottomNavTrue();
                 isHomeShowing = false;
                 bottomNavigationView.getMenu().getItem(2).setChecked(true);
                 navigationView.getMenu().getItem(1).setChecked(true);
@@ -181,14 +209,25 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
             case R.id.nav_doctor_history_icon:
                 isHomeShowing = false;
+                checkAllBottomNavFalse();
                 navigationView.getMenu().getItem(2).setChecked(true);
                 fragment = new HistoryFragment();
                 break;
 
             case R.id.nav_doctor_settings_icon:
                 isHomeShowing = false;
-                navigationView.getMenu().getItem(3).setChecked(true);
+                checkAllBottomNavFalse();
+                navigationView.getMenu().getItem(4).setChecked(true);
                 fragment = new SettingsFragment();
+                break;
+
+
+            case R.id.nav_doctor_search_icon:
+                isHomeShowing = true;
+                showHomeFragment();
+                checkAllBottomNavFalse();
+                navigationView.getMenu().getItem(0).setChecked(true);
+                showSearchDialog();
                 break;
 
             case R.id.nav_doctor_logout_icon:
@@ -225,6 +264,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             ft.replace(R.id.doctor_nav_host_fragment, fragment);
             ft.commit();
 
+            checkAllBottomNavTrue();
+            checkAllNavTrue();
             bottomNavigationView.getMenu().getItem(0).setChecked(true);
             navigationView.getMenu().getItem(0).setChecked(true);
 
@@ -254,17 +295,29 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         bottomNavigationView.getMenu().getItem(0).setChecked(true);
         navigationView.getMenu().getItem(0).setChecked(true);
 
+        checkAllBottomNavTrue();
+        checkAllNavTrue();
+
         isHomeShowing = true;
     }
 
 
     public String getRegNumber()
     {
-        SharedPreferences doctorRegNumberPref = getSharedPreferences("doctorRegNumberPref",MODE_PRIVATE);
 
-        String reg = doctorRegNumberPref.getString("regNumber", null);
+        DoctorCredentialsDBHelper dbHelper = new DoctorCredentialsDBHelper(this);
 
-        return reg;
+        if (dbHelper.getRegNumber() != null)
+        {
+            return dbHelper.getRegNumber();
+        }
+        else {
+            SharedPreferences doctorRegNumberPref = getSharedPreferences("doctorRegNumberPref", MODE_PRIVATE);
+
+            String reg = doctorRegNumberPref.getString("regNumber", null);
+
+            return reg;
+        }
 
     }
 
@@ -411,5 +464,262 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         finish();
 
     }
+
+
+    private void showSearchDialog()
+    {
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_email, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button searchBtn = alertLayout.findViewById(R.id.btn_search);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+        final TextView editText = alertLayout.findViewById(R.id.editText_email);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(false);
+
+        final android.app.AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (editText.getText().toString().trim().isEmpty())
+                {
+                    Toast.makeText(mContext, "Please enter a mail", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    showHomeFragment();
+
+                    navigationView.getMenu().getItem(3).setChecked(false);
+                    navigationView.getMenu().getItem(0).setChecked(true);
+                    return;
+                }
+                if (!Patterns.EMAIL_ADDRESS.matcher(editText.getText()
+                .toString()).matches())
+                {
+                    Toast.makeText(mContext, "Please enter a valid mail", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    showHomeFragment();
+
+                    navigationView.getMenu().getItem(3).setChecked(false);
+                    navigationView.getMenu().getItem(0).setChecked(true);
+                    return;
+                }
+
+
+                //  start fragment for recycler view...
+                showRecyclerViewFragment(editText.getText().toString().trim().toLowerCase());
+
+
+                dialog.dismiss();
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                checkAllBottomNavTrue();
+                checkAllNavTrue();
+                navigationView.getMenu().getItem(0).setChecked(true);
+                bottomNavigationView.getMenu().getItem(0).setChecked(true);
+
+                dialog.dismiss();
+
+            }
+        });
+
+
+    }
+
+
+    private void checkAllBottomNavFalse()
+    {
+        bottomNavigationView.getMenu().getItem(0).setCheckable(false);
+        bottomNavigationView.getMenu().getItem(1).setCheckable(false);
+        bottomNavigationView.getMenu().getItem(2).setCheckable(false);
+    }
+
+
+    private void checkAllNavFalse()
+    {
+        navigationView.getMenu().getItem(0).setCheckable(false);
+        navigationView.getMenu().getItem(1).setCheckable(false);
+        navigationView.getMenu().getItem(2).setCheckable(false);
+    }
+
+
+    private void checkAllBottomNavTrue()
+    {
+        bottomNavigationView.getMenu().getItem(0).setCheckable(true);
+        bottomNavigationView.getMenu().getItem(1).setCheckable(true);
+        bottomNavigationView.getMenu().getItem(2).setCheckable(true);
+    }
+
+    private void checkAllNavTrue()
+    {
+        navigationView.getMenu().getItem(0).setCheckable(true);
+        navigationView.getMenu().getItem(1).setCheckable(true);
+        navigationView.getMenu().getItem(2).setCheckable(true);
+    }
+
+
+    private void showRecyclerViewFragment(String EMAIL)
+    {
+        Bundle bundle = new Bundle();
+        bundle.putString("regNumber", REG_NUMBER);
+        bundle.putString("patientMail", EMAIL);
+
+        Fragment fragment = new RecyclerViewFragment();
+
+        fragment.setArguments(bundle);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.doctor_nav_host_fragment, fragment);
+        ft.commit();
+
+        checkAllBottomNavFalse();
+        checkAllNavTrue();
+
+        navigationView.getMenu().getItem(3).setChecked(true);
+
+        isHomeShowing = false;
+    }
+
+
+
+    private void checkForPreviousPres(final String email)
+    {
+
+        String finalMail = email.replaceAll("\\.", "");
+
+        final DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PATIENT_PRES).child(finalMail);
+
+        dRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //if (dataSnapshot.exists())
+                //{
+                    showRecyclerViewDialog(finalMail);
+                Toast.makeText(mContext, "Mail: " + finalMail, Toast.LENGTH_SHORT).show();
+                //}
+               /* else
+                {
+                    Toast.makeText(mContext, "No previous history found" , Toast.LENGTH_LONG).show();
+                }*/
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+    private void showRecyclerViewDialog(String email)
+    {
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_for_list_of_prev_pres, null);
+        final ProgressBar mPCircle = alertLayout.findViewById(R.id.progress_circle);
+        final RecyclerView mRView = alertLayout.findViewById(R.id.recycler_view_link);
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        addItemsToRecyclerView(email, mRView, mPCircle);
+
+
+    }
+
+
+    private void addItemsToRecyclerView(String email, RecyclerView mRView, ProgressBar mPCircle)
+    {
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PATIENT_PRES).child("kundan3316@gmailcom").child("document1578253867067");
+
+        try {
+
+            if (mRef.getKey() != null) {
+
+                mRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                        ArrayList<String> listOfEmails = new ArrayList<>();
+                        final ArrayList<DoctorPrevPresLinkItem> list = new ArrayList<>();
+
+                        Toast.makeText(mContext, "Size: " + list.size(), Toast.LENGTH_SHORT).show();
+
+                        list.add(dataSnapshot.getValue(DoctorPrevPresLinkItem.class));
+
+
+                        DoctorPrevPresListAdapter mAdapter = new DoctorPrevPresListAdapter(mContext, list);
+                        mRView.setHasFixedSize(true);
+                        mRView.setLayoutManager(new LinearLayoutManager(mContext));
+
+                        mRView.setItemAnimator(new DefaultItemAnimator());
+
+                        mRView.setAdapter(mAdapter);
+
+                        mPCircle.setVisibility(View.GONE);
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        Toast.makeText(mContext, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        mPCircle.setVisibility(View.GONE);
+
+                    }
+                });
+
+
+            }
+            else
+            {
+
+                mPCircle.setVisibility(View.GONE);
+                Toast.makeText(mContext, "No previous history found", Toast.LENGTH_LONG).show();
+
+            }
+        }
+        catch (Exception e)
+        {
+
+            mPCircle.setVisibility(View.GONE);
+            // no patientPrescriptions node is present...
+            Toast.makeText(mContext, "No previous history found", Toast.LENGTH_LONG).show();
+
+        }
+
+
+    }
+
+
 
 }
