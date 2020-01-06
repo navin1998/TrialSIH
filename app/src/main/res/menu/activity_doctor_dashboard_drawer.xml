@@ -17,6 +17,13 @@
             android:id="@+id/nav_doctor_history_icon"
             android:icon="@drawable/ic_doctor_history"
             android:title="@string/menu_doctor_history" />
+
+        <item
+            android:id="@+id/nav_doctor_search_icon"
+            android:icon="@drawable/ic_doctor_search"
+            android:title="Search"
+            android:checkable="true"/>
+
         <item
             android:id="@+id/nav_doctor_settings_icon"
             android:icon="@drawable/ic_doctor_settings"

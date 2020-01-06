@@ -403,7 +403,7 @@ public class editable_voice_pres extends Fragment {
         // Icon Of Alert Dialog
         alertDialogBuilder.setIcon(R.drawable.ic_check_black_24dp);
         // Setting Alert Dialog Message
-        alertDialogBuilder.setMessage("Pdf Generated");
+        alertDialogBuilder.setMessage("Pdf generated successfully");
         alertDialogBuilder.setCancelable(false);
 
         alertDialogBuilder.setPositiveButton("Send", new DialogInterface.OnClickListener() {

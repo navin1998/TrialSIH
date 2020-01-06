@@ -81,20 +81,22 @@ public class DoctorCredentialsDBHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = null;
 
+        Cursor res = null;
+
         try {
 
             db = this.getWritableDatabase();
+            res = db.rawQuery("select * from " + TABLE_NAME, null);
+
+
+            if (res.moveToNext() && res.getCount() == 1)
+            {
+                regNumber = res.getString(0);
+            }
         }
         catch (Exception e)
         {
 
-        }
-
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
-
-        if (res.moveToNext() && res.getCount() == 1)
-        {
-            regNumber = res.getString(0);
         }
 
         return regNumber;

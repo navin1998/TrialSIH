@@ -25,6 +25,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
+import com.navin.trialsih.doctorClasses.DoctorAppointments;
+import com.navin.trialsih.patientsClasses.PatientAppointments;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -43,6 +47,7 @@ public class DoctorChatActivity extends AppCompatActivity {
     private final static String USER_TYPE_DOCTOR = "doctors";
     private final static String USER_TYPE_PATIENT = "patients";
     private final static String ACTIVE_APPOINTMENTS = "activeAppointments";
+    private final static String PREV_APPOINTMENTS = "prevAppointments";
 
     private static final String TAG = DoctorChatActivity.class.getSimpleName();
     private static final int USER = 10001;
@@ -289,11 +294,226 @@ public class DoctorChatActivity extends AppCompatActivity {
 
         Snackbar.make(v, "Chat ended by doctor", Snackbar.LENGTH_LONG).show();
 
+        getActiveAppointmentsInDoctorNode();
+        getActiveAppointmentsInPatientNode();
+
         Intent intent = new Intent(mContext, DoctorDashboardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
 
     }
+
+
+    private void getActiveAppointmentsInDoctorNode()
+    {
+
+        final DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(DOCTOR_REG_NUMBER).child(ACTIVE_APPOINTMENTS).child(PATIENT_UID);
+
+        dRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                DoctorAppointments doctorAppointments = dataSnapshot.getValue(DoctorAppointments.class);
+
+                dRef.setValue(null);
+
+                try {
+
+                    dRef.child("doctor_chat").setValue(null);
+                    dRef.child("patient_chat").setValue(null);
+
+                }
+                catch (Exception e){}
+
+                moveToPrevAppointmentsInDoctorNode(doctorAppointments);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+
+
+    private void getActiveAppointmentsInPatientNode()
+    {
+
+        final DatabaseReference pRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(PATIENT_UID).child(ACTIVE_APPOINTMENTS).child(DOCTOR_REG_NUMBER);
+
+        pRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                PatientAppointments patientAppointments = dataSnapshot.getValue(PatientAppointments.class);
+
+                pRef.setValue(null);
+
+                moveToPrevAppointmentsInPatientNode(patientAppointments);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+    private void moveToPrevAppointmentsInDoctorNode(final DoctorAppointments doctorAppointments)
+    {
+
+        final DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(DOCTOR_REG_NUMBER).child(PREV_APPOINTMENTS);
+
+
+        try {
+            if (dRef.getKey() == null) {
+
+                // try will run if no node with this name is present...
+
+            }
+        }catch (Exception e){
+
+            dRef.setValue("");
+
+        }
+
+
+        dRef.child(PATIENT_UID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                try {
+                    if (dRef.child(PATIENT_UID).getKey() == null) {
+
+                        // try will run if no node with this name is present...
+
+                    }
+                }catch (Exception e){
+
+                    dRef.child(PATIENT_UID).setValue("");
+
+                }
+
+                String nameOfNode = "";
+
+                try {
+                    nameOfNode = PREV_APPOINTMENTS + (dataSnapshot.child(PREV_APPOINTMENTS).child(PATIENT_UID).getChildrenCount() + 1);
+                }
+                catch (Exception e)
+                {
+                    nameOfNode = PREV_APPOINTMENTS + "1";
+                }
+
+                dRef.child(PATIENT_UID).child(nameOfNode).setValue(doctorAppointments)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                Toast.makeText(mContext, "Appointment added to history section", Toast.LENGTH_LONG).show();
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Toast.makeText(mContext, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+    private void moveToPrevAppointmentsInPatientNode(final PatientAppointments patientAppointments)
+    {
+
+        final DatabaseReference pRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(PATIENT_UID).child(PREV_APPOINTMENTS);
+
+        try {
+            if (pRef.getKey() == null) {
+
+                // try will run if no node with this name is present...
+
+            }
+        }catch (Exception e){
+
+            pRef.setValue("");
+
+        }
+
+        pRef.child(DOCTOR_REG_NUMBER).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                try {
+                    if (pRef.child(DOCTOR_REG_NUMBER).getKey() == null) {
+
+                        // try will run if no node with this name is present...
+
+                    }
+                }catch (Exception e){
+
+                    pRef.child(DOCTOR_REG_NUMBER).setValue("");
+
+                }
+
+                String nameOfNode = "";
+
+                try {
+                    nameOfNode = PREV_APPOINTMENTS + (dataSnapshot.child(PREV_APPOINTMENTS).child(DOCTOR_REG_NUMBER).getChildrenCount() + 1);
+                }
+                catch (Exception e)
+                {
+                    nameOfNode = PREV_APPOINTMENTS + "1";
+                }
+
+
+                pRef.child(DOCTOR_REG_NUMBER).child(nameOfNode).setValue(patientAppointments)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                // successfully added to previous appointments section...
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Toast.makeText(mContext, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
 }
