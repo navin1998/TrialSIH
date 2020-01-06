@@ -14,13 +14,13 @@ import com.navin.trialsih.R;
 
 import java.util.ArrayList;
 
-public class ListviewAdapter extends BaseAdapter {
+public class ListViewAdapter extends BaseAdapter {
 
     private Context context;
     public ArrayList list;
 
     LayoutInflater mInflater;
-    public ListviewAdapter(Context context, ArrayList list){
+    public ListViewAdapter(Context context, ArrayList list){
         this.context = context;
         this.list  =list;
     }
