@@ -31,8 +31,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -89,6 +92,7 @@ public class editable_voice_pres extends Fragment {
     public StorageReference storageReference;
     public DatabaseReference myReference;
     Uri filePath1;
+    String email2;
     static final int PICK_CONTACT_REQUEST = 1;
 
     //use to set background color
@@ -315,11 +319,7 @@ public class editable_voice_pres extends Fragment {
 
                 //upload it to firebase
                 //Toast.makeText(getContext(), pathtoupload, Toast.LENGTH_SHORT).show();
-
-                File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
-                File newFile = new File(imagePath, pathtoupload);
-                Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
-                uploadFile(contentUri);
+                inputDialog(pathtoupload);
 
             } catch (Exception e) {
                 Log.e("PDFCreator", "ioException:" + e);
@@ -332,7 +332,7 @@ public class editable_voice_pres extends Fragment {
     }
 
     //upload File
-    private void uploadFile(final Uri filePath) {
+    private void uploadFile(final Uri filePath,String email) {
         final DoctorCredentialsDBHelper doccre=new DoctorCredentialsDBHelper(getContext());
         //checking if file is available
         Toast.makeText(getContext(), filePath.toString(), Toast.LENGTH_SHORT).show();
@@ -356,13 +356,20 @@ public class editable_voice_pres extends Fragment {
 //                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
 
                             //creating the upload object to store uploaded image details
-                            sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    SimpleDateFormat sdf1 = new SimpleDateFormat("ddMMyyyy");
-                                    myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(nameofpat+sdf1.format(Calendar.getInstance().getTime())+Calendar.getInstance().getTimeInMillis()).setValue(uri.toString());
-                                    AlertDialoger(uri);
-                                }
+                        sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            String email3 = email.toLowerCase().replaceAll("\\.", "");
+
+                            long timeinmilli=Calendar.getInstance().getTimeInMillis();
+                            SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+                            //Toast.makeText(getContext(), email3, Toast.LENGTH_SHORT).show();
+                            myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(email3).child("document" + timeinmilli).child("FileUrl").setValue(uri.toString());
+                            myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(email3).child("document" + timeinmilli).child("Date").setValue(sdf1.format(Calendar.getInstance().getTime()));
+
+                            AlertDialoger(uri, email);
+                        }
                             });
                         }
                     })
@@ -387,7 +394,8 @@ public class editable_voice_pres extends Fragment {
         }
     }
 
-    void AlertDialoger(final Uri filePath2){
+    void AlertDialoger(final Uri filePath2,String email){
+        email2=email;
         filePath1=filePath2;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         // Setting Alert Dialog Title
@@ -403,8 +411,8 @@ public class editable_voice_pres extends Fragment {
             public void onClick(DialogInterface arg0, int arg1) {
 
                 //Write the Send File code her
-                inputDialog(filePath2);
 
+                sendEmail(email,filePath2);
 
             }
         });
@@ -428,7 +436,7 @@ public class editable_voice_pres extends Fragment {
         alertDialog.show();
     }
 
-    private void inputDialog(final Uri filePath) {
+    private void inputDialog(String pathtoupload1) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Enter Your Email");
@@ -443,9 +451,14 @@ public class editable_voice_pres extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
               String email=input.getText().toString();
                 Toast.makeText(getContext(), email, Toast.LENGTH_SHORT).show();
-                 sendEmail(email,filePath);
+                 //sendEmail(email,filePath);
+                File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
+                File newFile = new File(imagePath, pathtoupload1);
+                Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+                uploadFile(contentUri,email);
 
             }
+
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -469,7 +482,7 @@ public class editable_voice_pres extends Fragment {
         // Check which request we're responding to
         if (requestCode == PICK_CONTACT_REQUEST) {
             // Make sure the request was successful
-            AlertDialoger(filePath1);
+            AlertDialoger(filePath1,email2);
         }
     }
 }

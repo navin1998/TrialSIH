@@ -3,13 +3,21 @@ package com.navin.trialsih.doctorActivities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.InputType;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,6 +33,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorClasses.DoctorDetails;
 import com.navin.trialsih.universalCredentials.SecurePassword;
+
+import java.io.File;
+
+import static androidx.core.content.FileProvider.getUriForFile;
 
 public class DoctorSignupActivity extends AppCompatActivity {
 
@@ -187,6 +199,8 @@ public class DoctorSignupActivity extends AppCompatActivity {
                     password.setText("");
                     confirmPassword.setText("");
 
+                    AlertDialoger();
+
                     signUpBtn.setEnabled(false);
                     signUpBtn.setClickable(false);
                     signUpBtn.setFocusable(false);
@@ -282,4 +296,73 @@ public class DoctorSignupActivity extends AppCompatActivity {
     }
 
 
+    void AlertDialoger(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DoctorSignupActivity.this);
+        // Setting Alert Dialog Title
+        alertDialogBuilder.setTitle("Account Already Exist");
+        // Icon Of Alert Dialog
+        alertDialogBuilder.setIcon(R.drawable.ic_error_black_24dp);
+        // Setting Alert Dialog Message
+        alertDialogBuilder.setMessage("If Someone else has registered with your reg. no. then contact us on the following details\nAdmin email: bytpphyte@gmail.com");
+
+        alertDialogBuilder.setCancelable(false);
+
+        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                inputDialog();
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void inputDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(DoctorSignupActivity.this);
+        builder.setTitle("Enter Your Email");
+
+        final EditText input = new EditText(DoctorSignupActivity.this);
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String email=input.getText().toString();
+                String mailto = "bytpphyte@gmail.com" +
+                        "?cc=" + email +
+                        "&subject=" + Uri.encode("Complain regarding registration as doctor") +
+                        "&body=" + Uri.encode("I had not registered in your app with my registration number still it is showing that I had already registered");
+
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                emailIntent.setData(Uri.parse(mailto));
+
+                try {
+                    startActivity(emailIntent);
+                } catch (ActivityNotFoundException e) {
+                    //TODO: Handle case where no email app is available
+                    Toast.makeText(DoctorSignupActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 }
