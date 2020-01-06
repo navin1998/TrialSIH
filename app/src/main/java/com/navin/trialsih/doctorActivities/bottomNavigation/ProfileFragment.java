@@ -6,6 +6,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -350,16 +353,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
-
     private void askForName()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Enter your name");
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        builder.setCancelable(false);
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
 
-        final EditText input = new EditText(getContext());
+        titleText.setText("What is your name?");
+        messageText.setText("Enter your name below");
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -382,18 +389,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         input.setText(doctorUploadDetails.getDoctorName().toUpperCase());
 
-        builder.setView(input);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
 
                 String testName = input.getText().toString().trim();
                 testName = testName.replaceAll(" ", "");
 
                 if (!(testName.length() > 0))
                 {
-                    Snackbar.make(v, "Name can't be empty", Snackbar.LENGTH_SHORT).show();
+                    nameTop.setText(null);
+                    name.setText(null);
+                    Toast.makeText(getContext(), "Name can't be empty", Toast.LENGTH_SHORT).show();
                 }
                 else {
 
@@ -402,84 +419,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     name.setText(input.getText().toString().toUpperCase());
                 }
 
-                dialog.cancel();
-
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
 
-        builder.show();
-    }
-
-
-
-    private void askForRegNumber()
-    {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Enter your registration number");
-
-        builder.setCancelable(false);
-
-        final EditText input = new EditText(getContext());
-
-        InputFilter filter = new InputFilter() {
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
-                for (int i = start; i < end; ++i)
-                {
-                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\\-1234567890]*").matcher(String.valueOf(source.charAt(i))).matches())
-                    {
-                        return "";
-                    }
-                }
+            public void onClick(View v) {
 
-                return null;
-            }
-        };
-
-        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
-
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-
-        input.setText(doctorUploadDetails.getDoctorRegNumber());
-
-        builder.setView(input);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                String testName = input.getText().toString().trim();
-                testName = testName.replaceAll(" ", "");
-
-                if (!(testName.length() > 0))
-                {
-                    Snackbar.make(v, "Name can't be empty", Snackbar.LENGTH_SHORT).show();
-                }
-                else {
-
-                    doctorUploadDetails.setDoctorRegNumber(input.getText().toString().toUpperCase());
-                    regNumberTop.setText(input.getText().toString().toUpperCase());
-                    regNumber.setText(input.getText().toString().toUpperCase());
-                }
-
-                dialog.cancel();
+                dialog.dismiss();
 
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
     }
 
 
@@ -538,15 +489,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         builder.show();
     }
 
+
     private void askForPhone()
     {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Enter your 10 digits phone");
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        builder.setCancelable(false);
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
 
-        final EditText input = new EditText(getContext());
+        titleText.setText("Your mobile number?");
+        messageText.setText("Enter your contact number below");
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -563,36 +521,49 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             }
         };
 
-        input.setText(phone.getText().toString());
-
         input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(10)});
 
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
-        builder.setView(input);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_NORMAL);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        input.setText(doctorUploadDetails.getDoctorPhone());
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
+
                 if (input.getText().toString().length() != 10)
                 {
-                    Snackbar.make(v, "Invalid phone number", Snackbar.LENGTH_SHORT).show();
+                    phone.setText(null);
+                    Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
                     phone.setText(input.getText().toString());
                     doctorUploadDetails.setDoctorPhone(input.getText().toString());
                 }
-                dialog.cancel();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+
+                dialog.dismiss();
             }
         });
 
-        builder.show();
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
 
     }
 
@@ -600,12 +571,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private void askForBookingPhone()
     {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Enter your 10 digits booking phone");
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        builder.setCancelable(false);
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
 
-        final EditText input = new EditText(getContext());
+        titleText.setText("Your booking mobile number?");
+        messageText.setText("Enter your booking contact number below");
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -622,36 +599,49 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             }
         };
 
-        input.setText(bookingPhone.getText().toString());
-
         input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(10)});
 
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
-        builder.setView(input);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_NORMAL);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        input.setText(doctorUploadDetails.getDoctorBookingPhone());
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
+
                 if (input.getText().toString().length() != 10)
                 {
-                    Snackbar.make(v, "Invalid phone number", Snackbar.LENGTH_SHORT).show();
+                    bookingPhone.setText(null);
+                    Toast.makeText(getContext(), "Invalid phone number", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
                     bookingPhone.setText(input.getText().toString());
                     doctorUploadDetails.setDoctorBookingPhone(input.getText().toString());
                 }
-                dialog.cancel();
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+
+                dialog.dismiss();
             }
         });
 
-        builder.show();
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
 
     }
 
@@ -831,13 +821,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         String selectedDegree = lastDegree.getText().toString().toLowerCase();
 
         int index = 0;
+        boolean found = false;
         for (int i = 0; i < degreeArr.length; i++)
         {
             if (degreeArr[i].toLowerCase().equals(selectedDegree))
             {
                 index = i;
+                found = true;
                 break;
             }
+        }
+
+        if ((!found) && (lastDegree.getText().toString().trim().length() > 0))
+        {
+            index = degreeArr.length - 1;
         }
 
         builder.setSingleChoiceItems(degreeArr, index, new DialogInterface.OnClickListener() {
@@ -848,57 +845,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 {
                     dialog.cancel();
 
-                    AlertDialog.Builder innerBuilder = new AlertDialog.Builder(getContext());
-                    innerBuilder.setTitle("Enter your last degree");
-                    innerBuilder.setCancelable(false);
-
-                    final EditText input = new EditText(getContext());
-
-                    InputFilter filter = new InputFilter() {
-                        @Override
-                        public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
-                            for (int i = start; i < end; ++i)
-                            {
-                                if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.]*").matcher(String.valueOf(source.charAt(i))).matches())
-                                {
-                                    return "";
-                                }
-                            }
-
-                            return null;
-                        }
-                    };
-
-                    input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(20)});
-
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-
-                    input.setText(doctorUploadDetails.getDoctorQualifications());
-
-                    innerBuilder.setView(input);
-
-                    innerBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            lastDegree.setText(input.getText().toString());
-                            doctorUploadDetails.setDoctorQualifications(input.getText().toString());
-
-                            dialog.cancel();
-
-                        }
-                    });
-
-                    innerBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            dialog.cancel();
-
-                        }
-                    });
-
-                    innerBuilder.show();
+                    showCustomDegreeDialog();
 
                 }
                 else {
@@ -917,8 +864,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                lastDegree.setText(degreeArr[0]);
-                doctorUploadDetails.setDoctorQualifications(degreeArr[0]);
+                if (lastDegree.getText().toString().trim().length() == 0) {
+                    lastDegree.setText(degreeArr[0]);
+                    doctorUploadDetails.setDoctorQualifications(degreeArr[0]);
+                }
 
                 dialog.cancel();
 
@@ -935,14 +884,99 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
 
+    private void showCustomDegreeDialog()
+    {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        titleText.setText("Your last degree?");
+        messageText.setText("Enter your last degree below");
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
+                for (int i = start; i < end; ++i)
+                {
+                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(30)});
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+
+        input.setText(doctorUploadDetails.getDoctorQualifications());
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String testName = input.getText().toString().trim();
+                testName = testName.replaceAll(" ", "");
+
+                if (!(testName.length() > 0))
+                {
+                    lastDegree.setText(null);
+                    Toast.makeText(getContext(), "Last degree is required", Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    doctorUploadDetails.setDoctorQualifications(input.getText().toString());
+                    lastDegree.setText(input.getText().toString());
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+    }
+
     private void askForMail()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Enter your mail");
 
-        builder.setCancelable(false);
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        final EditText input = new EditText(getContext());
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        titleText.setText("What is your mail-ID?");
+        messageText.setText("Enter your email ID below");
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -961,43 +995,52 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(50)});
 
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
-        input.setText(doctorUploadDetails.getDoctorMail());
+        input.setText(doctorUploadDetails.getDoctorMail().toUpperCase());
 
-        builder.setView(input);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
 
                 String testName = input.getText().toString().trim();
                 testName = testName.replaceAll(" ", "");
 
                 if (!(testName.length() > 0))
                 {
-                    Snackbar.make(v, "Mail can't be empty", Snackbar.LENGTH_SHORT).show();
+                    mail.setText(null);
+                    Toast.makeText(getContext(), "Email can't be empty", Toast.LENGTH_SHORT).show();
                 }
                 else {
 
-                    doctorUploadDetails.setDoctorMail(input.getText().toString());
-                    mail.setText(input.getText().toString());
+                    doctorUploadDetails.setDoctorMail(input.getText().toString().toLowerCase());
+                    mail.setText(input.getText().toString().toLowerCase());
                 }
 
-                dialog.cancel();
-
+                dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
             }
         });
 
-        builder.show();
     }
-
 
     private void askForMedicalCouncil()
     {
@@ -1025,20 +1068,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         final String selectedCouncil = medicalCouncil.getText().toString().toLowerCase();
 
         int index = 0;
+        boolean found = false;
         for (int i = 0; i < statesMedicalCouncil.size(); i++)
         {
             if (statesMedicalCouncil.get(i).toLowerCase().equals(selectedCouncil))
             {
                 index = i;
+                found = true;
                 break;
             }
         }
+
 
         final String[] mcList = new String[statesMedicalCouncil.size()];
 
         for (int i = 0; i < statesMedicalCouncil.size(); i++)
         {
             mcList[i] = statesMedicalCouncil.get(i);
+        }
+
+        if ((!found) && (medicalCouncil.getText().toString().trim().length() > 0))
+        {
+            index = mcList.length - 1;
         }
 
 
@@ -1048,68 +1099,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
                 if (statesMedicalCouncil.get(which).toLowerCase().contains("other"))
                 {
-
-
                     dialog.cancel();
 
-                    AlertDialog.Builder innerBuilder = new AlertDialog.Builder(getContext());
-                    innerBuilder.setTitle("Enter your medical council name");
-                    innerBuilder.setCancelable(false);
-
-                    final EditText input = new EditText(getContext());
-
-                    InputFilter filter = new InputFilter() {
-                        @Override
-                        public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
-                            for (int i = start; i < end; ++i)
-                            {
-                                if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]*").matcher(String.valueOf(source.charAt(i))).matches())
-                                {
-                                    return "";
-                                }
-                            }
-
-                            return null;
-                        }
-                    };
-
-                    input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(50)});
-
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-
-                    input.setText(doctorUploadDetails.getDoctorMedicalCouncil());
-
-                    innerBuilder.setView(input);
-
-                    innerBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            medicalCouncil.setText(input.getText().toString());
-                            doctorUploadDetails.setDoctorMedicalCouncil(input.getText().toString());
-
-                            dialog.cancel();
-
-                        }
-                    });
-
-                    innerBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            dialog.cancel();
-
-                        }
-                    });
-
-                    innerBuilder.show();
-
-
+                    showCustomMedicalCouncilDialog();
 
                 }
+                else {
 
-                medicalCouncil.setText(statesMedicalCouncil.get(which));
-                doctorUploadDetails.setDoctorMedicalCouncil(statesMedicalCouncil.get(which));
+                    medicalCouncil.setText(statesMedicalCouncil.get(which));
+                    doctorUploadDetails.setDoctorMedicalCouncil(statesMedicalCouncil.get(which));
+
+                }
 
                 dialog.cancel();
 
@@ -1120,8 +1120,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                medicalCouncil.setText(statesMedicalCouncil.get(0));
-                doctorUploadDetails.setDoctorMedicalCouncil(statesMedicalCouncil.get(0));
+                if (medicalCouncil.getText().toString().trim().length() == 0) {
+                    medicalCouncil.setText(statesMedicalCouncil.get(0));
+                    doctorUploadDetails.setDoctorMedicalCouncil(statesMedicalCouncil.get(0));
+                }
 
                 dialog.cancel();
 
@@ -1139,21 +1141,107 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
 
-    private void askForAddress()
+    private void showCustomMedicalCouncilDialog()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Enter your contact address");
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        builder.setCancelable(false);
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
 
-        final EditText input = new EditText(getContext());
+        titleText.setText("Your medical council?");
+        messageText.setText("Enter your medical council below");
 
         InputFilter filter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
                 for (int i = start; i < end; ++i)
                 {
-                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.:\\- ]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(50)});
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+
+        input.setText(doctorUploadDetails.getDoctorMedicalCouncil());
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String testName = input.getText().toString().trim();
+                testName = testName.replaceAll(" ", "");
+
+                if (!(testName.length() > 0))
+                {
+                    medicalCouncil.setText(null);
+                    Toast.makeText(getContext(), "Medical council is required", Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    doctorUploadDetails.setDoctorMedicalCouncil(input.getText().toString().toUpperCase());
+                    medicalCouncil.setText(input.getText().toString().toUpperCase());
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+    }
+
+
+    private void askForAddress()
+    {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        titleText.setText("Your contact address?");
+        messageText.setText("Enter your contact address below");
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
+                for (int i = start; i < end; ++i)
+                {
+                    if (!Pattern.compile("[1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\\.\\:\\- ]*").matcher(String.valueOf(source.charAt(i))).matches())
                     {
                         return "";
                     }
@@ -1169,18 +1257,27 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         input.setText(doctorUploadDetails.getDoctorClinicAddress().toUpperCase());
 
-        builder.setView(input);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
 
                 String testName = input.getText().toString().trim();
                 testName = testName.replaceAll(" ", "");
 
                 if (!(testName.length() > 0))
                 {
-                    Snackbar.make(v, "Address can't be empty", Snackbar.LENGTH_SHORT).show();
+                    address.setText(null);
+                    Toast.makeText(getContext(), "Address can't be empty", Toast.LENGTH_SHORT).show();
                 }
                 else {
 
@@ -1188,18 +1285,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     address.setText(input.getText().toString().toUpperCase());
                 }
 
-                dialog.cancel();
-
+                dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
             }
         });
 
-        builder.show();
     }
 
 
@@ -1681,15 +1779,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     }
 
 
-
     private void askForUpiName()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Enter your name registered in UPI App");
 
-        builder.setCancelable(false);
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        final EditText input = new EditText(getContext());
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        titleText.setText("Your name in UPI app?");
+        messageText.setText("Enter name as registered in your UPI app");
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -1712,18 +1816,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         input.setText(doctorUploadDetails.getDoctorUpiName());
 
-        builder.setView(input);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
 
                 String testName = input.getText().toString().trim();
                 testName = testName.replaceAll(" ", "");
 
                 if (!(testName.length() > 0))
                 {
-                    Snackbar.make(v, "You will not be able to accept UPI Payments", Snackbar.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "You will not be able to accept UPI Payments", Toast.LENGTH_SHORT).show();
 
                     doctorUploadDetails.setDoctorUpiName("");
                     upiName.setText("");
@@ -1731,40 +1843,48 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 }
                 else {
 
-                    doctorUploadDetails.setDoctorUpiName(input.getText().toString().toUpperCase());
+                    doctorUploadDetails.setDoctorUpiName(input.getText().toString());
                     upiName.setText(input.getText().toString());
                 }
 
-                dialog.cancel();
-
+                dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
             }
         });
 
-        builder.show();
     }
 
 
     private void askForUpiID()
     {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Enter your UPI ID");
 
-        builder.setCancelable(false);
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        final EditText input = new EditText(getContext());
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        titleText.setText("Your UPI ID?");
+        messageText.setText("Enter UPI ID as registered in your UPI app");
 
         InputFilter filter = new InputFilter() {
             @Override
             public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
                 for (int i = start; i < end; ++i)
                 {
-                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyz@1234567890_.]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyz@1234567890\\_\\.]*").matcher(String.valueOf(source.charAt(i))).matches())
                     {
                         return "";
                     }
@@ -1780,18 +1900,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         input.setText(doctorUploadDetails.getDoctorUpiID());
 
-        builder.setView(input);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
 
                 String testName = input.getText().toString().trim();
                 testName = testName.replaceAll(" ", "");
 
                 if (!(testName.length() > 0))
                 {
-                    Snackbar.make(v, "You will not be able to accept UPI Payments", Snackbar.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "You will not be able to accept UPI Payments", Toast.LENGTH_SHORT).show();
 
                     doctorUploadDetails.setDoctorUpiID("");
                     upiID.setText("");
@@ -1803,31 +1931,37 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     upiID.setText(input.getText().toString());
                 }
 
-                dialog.cancel();
-
+                dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
             }
         });
 
-        builder.show();
     }
-
 
 
     private void askForFee()
     {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Enter your appointment fee");
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
 
-        builder.setCancelable(false);
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
 
-        final EditText input = new EditText(getContext());
+        titleText.setText("Your appointment fee?");
+        messageText.setText("Enter your appointment fee below");
 
         InputFilter filter = new InputFilter() {
             @Override
@@ -1844,36 +1978,52 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             }
         };
 
-        input.setText(appointmentFee.getText().toString());
-
         input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(4)});
 
-        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_NORMAL);
-        builder.setView(input);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_VARIATION_NORMAL);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        input.setText(doctorUploadDetails.getDoctorFee());
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (Integer.parseInt(input.getText().toString()) == 0)
-                {
-                    Snackbar.make(v, "Minimum fee allowed is Re. 1", Snackbar.LENGTH_SHORT).show();
+            public void onClick(View v) {
+
+                try {
+                    if (Integer.parseInt(input.getText().toString()) == 0) {
+                        appointmentFee.setText(null);
+                        Toast.makeText(getContext(), "Minimum fee allowed is Re. 1", Toast.LENGTH_SHORT).show();
+                    } else {
+                        appointmentFee.setText("Rs. " + input.getText().toString());
+                        doctorUploadDetails.setDoctorFee("Rs. " + input.getText().toString());
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    appointmentFee.setText("Rs. " + input.getText().toString());
-                    doctorUploadDetails.setDoctorFee("Rs. " + input.getText().toString());
+                    Toast.makeText(getContext(), "Minimum fee allowed is Re. 1", Toast.LENGTH_SHORT).show();
                 }
-                dialog.cancel();
+
+                dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
             }
         });
-
-        builder.show();
 
     }
 
