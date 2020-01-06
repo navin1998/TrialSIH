@@ -80,7 +80,7 @@ public class editable_voice_pres extends Fragment {
     ListView listDiagnose;
     ListView listPrescri;
     ListView listAdvice;
-    ListviewAdapter adaptersymp,adapterdiag,adapterprescri,adapteradvice;
+    ListViewAdapter adaptersymp,adapterdiag,adapterprescri,adapteradvice;
     private PdfPCell cell;
     private String textAnswer;
     Image bgImage1;
@@ -124,22 +124,22 @@ public class editable_voice_pres extends Fragment {
 
         listSymptoms =voiceedit.findViewById(R.id.list_symptoms);
         listSymptoms.setItemsCanFocus(true);
-        adaptersymp=new ListviewAdapter(getContext(),Symptoms);
+        adaptersymp=new ListViewAdapter(getContext(),Symptoms);
         listSymptoms.setAdapter(adaptersymp);
 
         listDiagnose =voiceedit.findViewById(R.id.list_diagnose);
         listDiagnose.setItemsCanFocus(true);
-        adapterdiag=new ListviewAdapter(getContext(),Diagnose);
+        adapterdiag=new ListViewAdapter(getContext(),Diagnose);
         listDiagnose.setAdapter(adapterdiag);
 
         listPrescri =voiceedit.findViewById(R.id.list_prescriptions);
         listPrescri.setItemsCanFocus(true);
-        adapterprescri=new ListviewAdapter(getContext(),Prescription);
+        adapterprescri=new ListViewAdapter(getContext(),Prescription);
         listPrescri.setAdapter(adapterprescri);
 
         listAdvice =voiceedit.findViewById(R.id.list_advice);
         listAdvice.setItemsCanFocus(true);
-        adapteradvice=new ListviewAdapter(getContext(),Advice);
+        adapteradvice=new ListViewAdapter(getContext(),Advice);
         listAdvice.setAdapter(adapteradvice);
 
         //creating new file path
