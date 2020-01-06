@@ -3,21 +3,29 @@ package com.navin.trialsih.doctorActivities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,6 +43,7 @@ import com.navin.trialsih.doctorClasses.DoctorDetails;
 import com.navin.trialsih.universalCredentials.SecurePassword;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import static androidx.core.content.FileProvider.getUriForFile;
 
@@ -85,7 +94,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
                 if (validate())
                 {
                     // if everything is fine, upload data to database...
-                    uploadToFirebase();
+                    showTypeOfDoctorDialog();
                 }
             }
         });
@@ -175,8 +184,101 @@ public class DoctorSignupActivity extends AppCompatActivity {
     }
 
 
+    private void showTypeOfDoctorDialog()
+    {
 
-    private void uploadToFirebase()
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("Choose which type of doctor you are");
+        builder.setCancelable(false);
+
+        String[] doctorTypes = new String[] {"General Practitioner", "Family Physician", "Internal Medicine Physician", "Pediatrician", "Obstetrician/Gynecologist (OB/GYN)", "Surgeon", "Psychiatrist", "Cardiologist", "Dermatologist", "Endocrinologist", "Infectious Disease Physician", "Nephrologist", "Ophthalmologist", "Otolaryngologist", "Pulmonologist", "Neurologist", "Physician Executive", "Radiologist", "Anesthesiologist", "Oncologist", "Gastroenterologist", "Orthopedist"};
+
+
+
+        builder.setSingleChoiceItems(doctorTypes, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                showConfirmTypeOfDoctorDialog(doctorTypes[which]);
+
+                dialog.cancel();
+
+            }
+        });
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                showConfirmTypeOfDoctorDialog(doctorTypes[0]);
+
+                dialog.cancel();
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Snackbar.make(v, "Couldn't register. Try again", Snackbar.LENGTH_LONG).show();
+
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+
+    }
+
+
+    private void showConfirmTypeOfDoctorDialog(String doctorType)
+    {
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_confirm_doctor_type, null);
+        final Button declineBtn = alertLayout.findViewById(R.id.btn_decline);
+        final Button confirmBtn = alertLayout.findViewById(R.id.btn_confirm);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+        final TextView doctorMsg = alertLayout.findViewById(R.id.doctor_type_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+        doctorMsg.setText("You won't be able to change your type after registration. You have selected: " + doctorType);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                uploadToFirebase(doctorType);
+
+
+                dialog.dismiss();
+            }
+        });
+
+        declineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(mContext, "Registration revoked by the user", Toast.LENGTH_LONG).show();
+
+                dialog.dismiss();
+
+            }
+        });
+    }
+
+
+    private void uploadToFirebase(String doctorType)
     {
 
         final ProgressDialog dialog = new ProgressDialog(mContext);
@@ -229,6 +331,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
 
 
+                                            dRef.child("doctorType").setValue(doctorType);
                                             dRef.child("password").setValue(getEncryptedPassword());
 
                                             Snackbar.make(v, "Successfully registered, you may login now", Snackbar.LENGTH_SHORT).show();

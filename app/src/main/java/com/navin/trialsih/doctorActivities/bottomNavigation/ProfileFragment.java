@@ -64,6 +64,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private final static String ACTIVE_APPOINTMENTS = "appointments";
     private final static String PROFILE = "profile";
     private static String PASSWORD;
+    private static String DOCTOR_TYPE;
 
     private Uri imagePath;
     private String downloadUrl;
@@ -151,6 +152,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }
 
         getPassword();
+        getDoctorType();
 
         loadProfile();
 
@@ -1276,6 +1278,44 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             progressDialog.dismiss();
 
                             //profile image uploaded successfully...
+
+
+                            /**
+                             *
+                             *
+                             * newly added code...
+                             *
+                             *
+                             */
+
+                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+
+                                    downloadUrl = uri.toString();
+
+                                    //Toast.makeText(getContext(), "Url: " + downloadUrl, Toast.LENGTH_SHORT).show();
+
+                                    uploadToDatabase(downloadUrl);
+                                    //uploading to firebase database...
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Handle any errors
+                                }
+                            });
+
+
+                            /**
+                             *
+                             *
+                             * newly added code ends here...
+                             *
+                             */
+
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -1294,24 +1334,24 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                         }
                     });
 
-            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-
-                    downloadUrl = uri.toString();
-
-                    //Toast.makeText(getContext(), "Url: " + downloadUrl, Toast.LENGTH_SHORT).show();
-
-                    uploadToDatabase(downloadUrl);
-                    //uploading to firebase database...
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                }
-            });
+//            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                @Override
+//                public void onSuccess(Uri uri) {
+//
+//                    downloadUrl = uri.toString();
+//
+//                    //Toast.makeText(getContext(), "Url: " + downloadUrl, Toast.LENGTH_SHORT).show();
+//
+//                    uploadToDatabase(downloadUrl);
+//                    //uploading to firebase database...
+//
+//                }
+//            }).addOnFailureListener(new OnFailureListener() {
+//                @Override
+//                public void onFailure(@NonNull Exception exception) {
+//                    // Handle any errors
+//                }
+//            });
         }
         else
         {
@@ -1500,6 +1540,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
                                 mRef.child("doctorRegNumber").setValue(REG_NUMBER);
                                 mRef.child("password").setValue(PASSWORD);
+                                mRef.child("doctorType").setValue(DOCTOR_TYPE);
 
                                 Snackbar.make(v, "Updated successfully", Snackbar.LENGTH_SHORT).show();
                             }
@@ -1616,19 +1657,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     {
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PROFILE);
 
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        try {
 
-                PASSWORD = dataSnapshot.child("password").getValue().toString();
+            mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-            }
+                    PASSWORD = dataSnapshot.child("password").getValue().toString();
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
 
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Snackbar.make(v, "Error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+        }
 
     }
 
@@ -1847,6 +1895,34 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 //        }
 
         return reg;
+
+    }
+
+
+    private void getDoctorType()
+    {
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PROFILE);
+
+        try {
+
+            mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    DOCTOR_TYPE = dataSnapshot.child("doctorType").getValue().toString();
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Snackbar.make(v, "Error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+        }
 
     }
 
