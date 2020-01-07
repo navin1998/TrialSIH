@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class PatientChatActivity extends AppCompatActivity {
 
     private LinearLayout chatLayout;
     private EditText queryEditText;
+    MediaPlayer ring;
 
     FirebaseAuth mAuth;
 
@@ -54,6 +56,8 @@ public class PatientChatActivity extends AppCompatActivity {
         mrefrence= FirebaseDatabase.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
         getSupportActionBar().setTitle("Chat");
+
+        ring= MediaPlayer.create(PatientChatActivity.this,R.raw.messengerweb);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -200,7 +204,7 @@ public class PatientChatActivity extends AppCompatActivity {
 
             e.printStackTrace();
         }
-
+        ring.start();
     }
 
     private void showTextView(String message, int type) {
