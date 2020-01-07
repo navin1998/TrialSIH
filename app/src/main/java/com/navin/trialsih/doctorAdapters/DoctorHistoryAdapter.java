@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -96,12 +97,83 @@ public class DoctorHistoryAdapter extends RecyclerView.Adapter<DoctorHistoryAdap
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(mContext, "View details clicked", Toast.LENGTH_SHORT).show();
+                showPatientProfileDialog(history.getAppointmentPatientUid(), history.getAppointmentFee(), history.getAppointmentWayToConnect());
 
             }
         });
 
     }
+
+
+    private void showPatientProfileDialog(String UID, String FEE, String WAY_TO_CONNECT)
+    {
+
+        final ProgressDialog pDialog = new ProgressDialog(mContext);
+        pDialog.setMessage("Please wait...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.patient_profile_dialog_layout, null);
+
+
+        final TextView patientName = alertLayout.findViewById(R.id.dialogPatientName);
+        final TextView patientGender = alertLayout.findViewById(R.id.dialogPatientGender);
+        final TextView patientPhone = alertLayout.findViewById(R.id.dialogPatientPhone);
+        final TextView patientAge = alertLayout.findViewById(R.id.dialogPatientAge);
+        final TextView patientBloodGroup = alertLayout.findViewById(R.id.dialogPatientBloodGroup);
+        final TextView patientWeight = alertLayout.findViewById(R.id.dialogPatientWeight);
+        final TextView patientMail = alertLayout.findViewById(R.id.dialogPatientMail);
+        final TextView patientFee = alertLayout.findViewById(R.id.dialogPatientFee);
+        final TextView patientWayToConnect = alertLayout.findViewById(R.id.dialogPatientWayToConnect);
+
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(UID).child(PROFILE);
+
+
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                patientName.setText(dataSnapshot.child("patientName").getValue().toString());
+                patientGender.setText(dataSnapshot.child("patientGender").getValue().toString());
+                patientPhone.setText(dataSnapshot.child("patientPhone").getValue().toString());
+                patientAge.setText(dataSnapshot.child("patientAge").getValue().toString());
+                patientBloodGroup.setText(dataSnapshot.child("patientBloodGroup").getValue().toString());
+                patientWeight.setText(dataSnapshot.child("patientWeight").getValue().toString());
+                patientMail.setText(dataSnapshot.child("patientMail").getValue().toString());
+                patientFee.setText(FEE);
+                patientWayToConnect.setText(WAY_TO_CONNECT.toUpperCase());
+
+
+                pDialog.cancel();
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Toast.makeText(mContext, "Database error: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                pDialog.cancel();
+
+            }
+        });
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+        pDialog.cancel();
+
+    }
+
 
     @Override
     public int getItemCount() {

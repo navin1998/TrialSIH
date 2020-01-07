@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:background="@drawable/background_book_appointment_dialog"
+        >
+
+
+    <!--    Layout for profile picture-->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:id="@+id/dialogDoctorProfilePic"
+            android:src="@drawable/man"
+            android:layout_gravity="center_horizontal"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#7A7878"
+            android:layout_marginBottom="20dp"
+            />
+
+
+
+
+
+<!--        Layout for name-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Name: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient name"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientName"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+        <!--        Layout for gender-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Gender: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient gender"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientGender"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+        <!--        Layout for booking phone-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Contact: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient phone"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientPhone"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+        <!--        Layout for working year experience-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Age: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient age"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientAge"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+        <!--        Layout for last degree-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Blood group: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient blood group"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientBloodGroup"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+        <!--        Layout for address-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Weight: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient weight"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientWeight"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+        <!--        Layout for satisfied patients-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mail: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient mail"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientMail"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+
+        <!--        Layout for fee-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fee paid: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient fee"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientFee"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+
+
+
+        <!--        Layout for satisfied patients-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:padding="10dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Way to connect: "
+                android:textSize="15sp"
+                android:layout_gravity="center_vertical"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Patient way to connect"
+                android:textSize="15sp"
+                android:id="@+id/dialogPatientWayToConnect"
+                android:layout_gravity="center_vertical|end"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+</androidx.core.widget.NestedScrollView>
