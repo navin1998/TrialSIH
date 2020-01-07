@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorClasses.DoctorAppointments;
+import com.navin.trialsih.patientActivities.PatientChatActivity;
 import com.navin.trialsih.patientsClasses.PatientAppointments;
 
 import java.io.IOException;
@@ -55,6 +57,8 @@ public class DoctorChatActivity extends AppCompatActivity {
     private static final int USER = 10001;
     private static final int BOT = 10002;
 
+    MediaPlayer ring;
+
     private String uuid = UUID.randomUUID().toString();
     private LinearLayout chatLayout;
     private EditText queryEditText;
@@ -74,7 +78,7 @@ public class DoctorChatActivity extends AppCompatActivity {
         mrefrence=FirebaseDatabase.getInstance().getReference();
 
         getSupportActionBar().setTitle("Chat");
-
+        ring=MediaPlayer.create(DoctorChatActivity.this,R.raw.messengerweb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mContext = this;
@@ -172,6 +176,8 @@ public class DoctorChatActivity extends AppCompatActivity {
 
                         e.printStackTrace();
                     }
+
+                    ring.start();
 
     }
 
