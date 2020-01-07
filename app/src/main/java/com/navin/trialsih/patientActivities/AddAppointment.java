@@ -114,7 +114,7 @@ public class AddAppointment extends AppCompatActivity {
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR);
 
-        mRef.addValueEventListener(new ValueEventListener() {
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists())
@@ -140,12 +140,6 @@ public class AddAppointment extends AppCompatActivity {
                                 listOfRegNumber.add(snapshot.getKey());
 
                                 list.add(snapshot.child(PROFILE).getValue(DoctorDetails.class));
-                            }
-                            else
-                            {
-
-                                isFound = false;
-
                             }
 
                         }
