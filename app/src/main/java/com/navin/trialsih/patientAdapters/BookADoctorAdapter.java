@@ -561,7 +561,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
 
                 try {
 
-                    positionInQueue = String.valueOf(dataSnapshot.child(DOCTOR_ACTIVE_APPOINTMENTS).getChildrenCount());
+                    positionInQueue = String.valueOf(dataSnapshot.child(DOCTOR_ACTIVE_APPOINTMENTS).getChildrenCount() + 1);
 
                 }
                 catch (Exception e){}
@@ -862,7 +862,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                     @Override
                     public void onSuccess(Void aVoid) {
 
-                        Toast.makeText(mContext, "Appointment added successfully, you are at position " + APPOINTMENT_DOCTOR_POSITION_IN_QUEUE + " in the queue", Toast.LENGTH_LONG).show();
+                        showConfirmationDialog(APPOINTMENT_DOCTOR_POSITION_IN_QUEUE);
 
                     }
                 })
@@ -876,6 +876,42 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                 });
 
     }
+
+
+
+    private void showConfirmationDialog(String msg)
+    {
+
+        LayoutInflater inflater = ((Activity)mContext).getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_appointment_successful, null);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView confirmationText = alertLayout.findViewById(R.id.confirmation_text);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setView(alertLayout);
+        builder.setCancelable(false);
+
+        confirmationText.setText("Appointment added successfully, you are at position " + msg + " in the queue");
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+            }
+        });
+
+    }
+
 
 
     private String getPatientName()

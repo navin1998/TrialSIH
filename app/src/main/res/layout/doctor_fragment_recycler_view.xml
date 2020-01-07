@@ -25,14 +25,14 @@
         android:textSize="22sp"
         android:textAlignment="center"
         android:layout_alignBottom="@+id/cannotfind"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="130dp"
         android:id="@+id/cannotfind_text"
 
         android:visibility="gone"
         />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+        android:id="@+id/recycler_view_link"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"

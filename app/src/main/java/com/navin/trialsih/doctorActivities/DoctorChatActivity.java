@@ -47,9 +47,11 @@ public class DoctorChatActivity extends AppCompatActivity {
     private String PATIENT_UID;
     private String DOCTOR_REG_NUMBER;
     private final static String USER_TYPE_DOCTOR = "doctors";
+    private final static String PROFILE = "profile";
     private final static String USER_TYPE_PATIENT = "patients";
     private final static String ACTIVE_APPOINTMENTS = "activeAppointments";
     private final static String PREV_APPOINTMENTS = "prevAppointments";
+    private final static String SATISFIED_PATIENTS_NUMBER = "doctorSatisfiedPatientsNumber";
 
     private static final String TAG = DoctorChatActivity.class.getSimpleName();
     private static final int USER = 10001;
@@ -265,6 +267,8 @@ public class DoctorChatActivity extends AppCompatActivity {
 
                 endChat();
 
+                updateSatisfiedNumberOfPatients();
+
                 dialog.dismiss();
             }
         });
@@ -277,6 +281,30 @@ public class DoctorChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void updateSatisfiedNumberOfPatients()
+    {
+
+        final DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(DOCTOR_REG_NUMBER).child(PROFILE);
+
+        dRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                int number = Integer.parseInt(dataSnapshot.child(SATISFIED_PATIENTS_NUMBER).getValue().toString());
+
+                dRef.child(SATISFIED_PATIENTS_NUMBER).setValue(String.valueOf(number + 1));
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 

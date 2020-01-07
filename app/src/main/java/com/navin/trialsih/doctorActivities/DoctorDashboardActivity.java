@@ -107,7 +107,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_doctor_appointment, R.id.nav_doctor_profile, R.id.nav_doctor_history,
-                R.id.nav_doctor_settings)
+                R.id.nav_doctor_settings, R.id.nav_doctor_recycler_view)
                 .setDrawerLayout(drawer)
                 .build();
 

@@ -1,6 +1,7 @@
 package com.navin.trialsih.patientActivities.ui.activeAppoint;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -116,6 +118,11 @@ public class HomeFragment extends Fragment {
 
     private boolean isProfileComplete()
     {
+        final ProgressDialog dialog = new ProgressDialog(getContext());
+        dialog.setMessage("Please wait...");
+        dialog.setCancelable(false);
+        dialog.show();
+
         UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         final boolean isComplete = false;
@@ -129,17 +136,21 @@ public class HomeFragment extends Fragment {
                 {
                     if (dataSnapshot.getChildrenCount() > 3)
                     {
-                        Intent intent = new Intent(getContext(), AddAppointment.class);
-                        startActivity(intent);
-                        return;
+
+                        // first ask for type of doctor looking for...
+                        showTypeOfDoctorDialog();
+                        dialog.cancel();
+
                     }
                     else
                     {
+                        dialog.cancel();
                         Snackbar.make(getView(), "Complete your profile first", Snackbar.LENGTH_LONG).show();
                     }
                 }
                 else
                 {
+                    dialog.cancel();
                     Snackbar.make(getView(), "Complete your profile first", Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -147,11 +158,81 @@ public class HomeFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                dialog.cancel();
+
             }
         });
 
         return isComplete;
     }
+
+
+
+
+    private void showTypeOfDoctorDialog()
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Choose which type of doctor you are looking for");
+        builder.setCancelable(false);
+
+        String[] doctorTypes = new String[] {"General Practitioner", "Family Physician", "Internal Medicine Physician", "Pediatrician", "Obstetrician/Gynecologist (OB/GYN)", "Surgeon", "Psychiatrist", "Cardiologist", "Dermatologist", "Endocrinologist", "Infectious Disease Physician", "Nephrologist", "Ophthalmologist", "Otolaryngologist", "Pulmonologist", "Neurologist", "Physician Executive", "Radiologist", "Anesthesiologist", "Oncologist", "Gastroenterologist", "Orthopedist"};
+
+
+
+        builder.setSingleChoiceItems(doctorTypes, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+                Bundle bundle = new Bundle();
+                bundle.putString("doctorType", doctorTypes[which]);
+
+                Intent intent = new Intent(getContext(), AddAppointment.class);
+
+                intent.putExtras(bundle);
+
+                startActivity(intent);
+
+                dialog.cancel();
+
+            }
+        });
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Bundle bundle = new Bundle();
+                bundle.putString("doctorType", doctorTypes[0]);
+
+                Intent intent = new Intent(getContext(), AddAppointment.class);
+
+                intent.putExtras(bundle);
+
+                startActivity(intent);
+
+                dialog.cancel();
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Toast.makeText(getContext(), "Operation cancelled by the user", Toast.LENGTH_SHORT).show();
+
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+
+    }
+
+
 
     private void loadAppointments()
     {

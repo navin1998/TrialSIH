@@ -2,31 +2,30 @@ package com.navin.trialsih.doctorClasses;
 
 public class DoctorPrevPresLinkItem {
 
-    private String FileUrl;
-    private String Date;
+    private String fileUrl;
+    private String date;
 
     public DoctorPrevPresLinkItem(String fileUrl, String date) {
-        FileUrl = fileUrl;
-        Date = date;
+        this.fileUrl = fileUrl;
+        this.date = date;
     }
-
 
     public DoctorPrevPresLinkItem() {
     }
 
     public String getFileUrl() {
-        return FileUrl;
+        return fileUrl;
     }
 
     public void setFileUrl(String fileUrl) {
-        FileUrl = fileUrl;
+        this.fileUrl = fileUrl;
     }
 
     public String getDate() {
-        return Date;
+        return date;
     }
 
     public void setDate(String date) {
-        Date = date;
+        this.date = date;
     }
 }

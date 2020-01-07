@@ -289,6 +289,8 @@ public class ConfirmPaymentActivity extends AppCompatActivity {
                 Toast.makeText(mContext, "Transaction successful", Toast.LENGTH_SHORT).show();
 
 
+                payButton.setVisibility(View.GONE);
+
                 // getting patientName saved in sharedPreferences for future use...
                 APPOINTMENT_PATIENT_NAME = getPatientName();
 

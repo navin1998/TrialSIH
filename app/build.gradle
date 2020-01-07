@@ -72,4 +72,8 @@ dependencies {
     implementation files('libs/additionnal.jar')
     implementation files('libs/mail.jar')
 
+
+    // apache implementation...
+    implementation 'org.apache.httpcomponents:httpclient:4.5.10'
+
 }

@@ -30,4 +30,10 @@
         android:label="@string/menu_doctor_settings"
         tools:layout="@layout/doctor_fragment_settings" />
 
+    <fragment
+        android:id="@+id/nav_doctor_recycler_view"
+        android:name="com.navin.trialsih.doctorActivities.bottomNavigation.RecyclerViewFragment"
+        android:label="Previous Prescriptions"
+        tools:layout="@layout/doctor_fragment_recycler_view" />
+
 </navigation>

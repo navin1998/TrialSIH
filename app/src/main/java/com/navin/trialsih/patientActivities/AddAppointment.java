@@ -53,7 +53,10 @@ public class AddAppointment extends AppCompatActivity {
     private List<DoctorDetails> list;
     private BookADoctorAdapter bookADoctorAdapter;
 
+    private static String DOCTOR_TYPE;
+
     private final static String PROFILE = "profile";
+    private final static String TYPE_OF_DOCTOR = "doctorType";
     private final static String USER_TYPE_DOCTOR = "doctors";
     private final static String USER_TYPE_PATIENT = "patients";
     private final static String PATIENT_ACTIVE_APPOINTMENTS = "activeAppointments";
@@ -73,6 +76,9 @@ public class AddAppointment extends AppCompatActivity {
         getSupportActionBar().setTitle("Add Appointments");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Bundle bundle = getIntent().getExtras();
+        DOCTOR_TYPE = bundle.getString("doctorType");
 
         mRecyclerView = v.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -102,11 +108,13 @@ public class AddAppointment extends AppCompatActivity {
         list = new ArrayList<>();
         list.clear();
 
+        mRecyclerView.setAdapter(null);
+
         bookADoctorAdapter = new BookADoctorAdapter(mContext, list);
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR);
 
-        mRef.addValueEventListener(new ValueEventListener() {
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists())
@@ -119,15 +127,33 @@ public class AddAppointment extends AppCompatActivity {
                 {
                     final ArrayList<String> listOfRegNumber = new ArrayList<>();
 
+                    boolean isFound = false;
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren())
                     {
                         if (snapshot.child(PROFILE).getChildrenCount() > 3)
                         {
-                            listOfRegNumber.add(snapshot.getKey());
+                            if (snapshot.child(PROFILE).child(TYPE_OF_DOCTOR).getValue().toString().equals(DOCTOR_TYPE))
+                            {
+                                isFound = true;
 
-                            list.add(snapshot.child(PROFILE).getValue(DoctorDetails.class));
+                                listOfRegNumber.add(snapshot.getKey());
+
+                                list.add(snapshot.child(PROFILE).getValue(DoctorDetails.class));
+                            }
 
                         }
+                    }
+
+                    if (!isFound)
+                    {
+                        cannotFind.setVisibility(View.VISIBLE);
+                        cannotFindText.setVisibility(View.VISIBLE);
+                        mProgressCircle.setVisibility(View.INVISIBLE);
+
+                        Toast.makeText(mContext, "No doctor found for doctor type: " + DOCTOR_TYPE, Toast.LENGTH_LONG).show();
+
+                        return;
                     }
 
                     ArrayList<DoctorDetails> newList = new ArrayList<>();

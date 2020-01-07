@@ -6,12 +6,11 @@
     android:layout_margin="8dp"
     app:cardElevation="4dp"
     app:cardCornerRadius="8dp"
-    android:id="@+id/gallery_cardView">
+    android:id="@+id/cardView">
 
     <RelativeLayout
         android:id ="@+id/layout1"
         android:layout_width="match_parent"
-        android:gravity="center"
         android:layout_height="wrap_content"
         android:background="#FFF"
         android:paddingLeft="20dp"
@@ -20,44 +19,74 @@
         android:paddingBottom="20dp"
         >
 
-
-
-        <TextView
-            android:id="@+id/cardView_link"
-            android:layout_alignParentTop="true"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Commodity name "
-            android:textColor="#000000"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="16sp"
-            />
+            android:orientation="vertical"
+            android:gravity="start"
+            android:id="@+id/ll_1"
+            >
 
-        <TextView
-            android:id="@+id/cardView_date_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date: "
-            android:layout_below="@+id/cardView_link"
-            android:textColor="#585454"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="16sp"
-            />
+            <TextView
+                android:layout_alignParentTop="true"
+                android:id="@+id/cardView_url_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Prescription URL: "
+                android:layout_below="@+id/cardView_link"
+                android:textColor="#726F6F"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="16sp"
+                />
 
 
+            <TextView
+                android:id="@+id/cardView_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PDF link here"
+                android:textColor="#272626"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="16sp"
+                />
 
-        <TextView
-            android:id="@+id/cardView_date"
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="06/01/2020"
-            android:layout_below="@+id/cardView_link"
-            android:layout_toRightOf="@+id/cardView_date_text"
-            android:textColor="#585454"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="16sp"
-            android:layout_marginLeft="10dp"
-            />
+            android:orientation="horizontal"
+            android:gravity="start"
+            android:layout_below="@+id/ll_1"
+            android:layout_marginTop="10dp"
+            >
+
+            <TextView
+                android:id="@+id/cardView_date_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date: "
+                android:textColor="#726F6F"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="16sp"
+                />
+
+
+
+            <TextView
+                android:id="@+id/cardView_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="06/01/2020"
+                android:layout_toRightOf="@+id/cardView_date_text"
+                android:textColor="#272626"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="16sp"
+                android:layout_marginLeft="10dp"
+                />
+
+        </LinearLayout>
 
     </RelativeLayout>
 

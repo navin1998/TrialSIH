@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -32,6 +31,28 @@
             app:civ_border_width="1dp"
             app:civ_border_color="@color/colorAccent"
             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            >
+
+        <TextView
+            android:id="@+id/cardView_appointmentType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OFFLINE"
+            android:layout_gravity="end"
+            android:textSize="10sp"
+            android:padding="3dp"
+            android:textColor="#FFF"
+            android:background="@drawable/background_offline_text"
+            />
+
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/cardView_commodityName"
@@ -82,11 +103,11 @@
             >
 
             <TextView
-                android:id="@+id/cardView_book_appointment"
+                android:id="@+id/cardView_chat_with_doctor"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Doctor profile"
+                android:text="View details"
                 android:textAlignment="center"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
