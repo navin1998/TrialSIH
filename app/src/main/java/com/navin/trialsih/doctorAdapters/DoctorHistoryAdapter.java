@@ -119,11 +119,23 @@ public class DoctorHistoryAdapter extends RecyclerView.Adapter<DoctorHistoryAdap
 
         final TextView patientName = alertLayout.findViewById(R.id.dialogPatientName);
         final TextView patientGender = alertLayout.findViewById(R.id.dialogPatientGender);
-        final TextView patientPhone = alertLayout.findViewById(R.id.dialogPatientPhone);
+
+        /**
+         *
+         *final TextView patientPhone = alertLayout.findViewById(R.id.dialogPatientPhone);
+         *
+         *
+         */
+
         final TextView patientAge = alertLayout.findViewById(R.id.dialogPatientAge);
         final TextView patientBloodGroup = alertLayout.findViewById(R.id.dialogPatientBloodGroup);
         final TextView patientWeight = alertLayout.findViewById(R.id.dialogPatientWeight);
-        final TextView patientMail = alertLayout.findViewById(R.id.dialogPatientMail);
+
+        /**
+         * 
+         *final TextView patientMail = alertLayout.findViewById(R.id.dialogPatientMail);
+         *
+         */
         final TextView patientFee = alertLayout.findViewById(R.id.dialogPatientFee);
         final TextView patientWayToConnect = alertLayout.findViewById(R.id.dialogPatientWayToConnect);
 
@@ -137,11 +149,11 @@ public class DoctorHistoryAdapter extends RecyclerView.Adapter<DoctorHistoryAdap
 
                 patientName.setText(dataSnapshot.child("patientName").getValue().toString());
                 patientGender.setText(dataSnapshot.child("patientGender").getValue().toString());
-                patientPhone.setText(dataSnapshot.child("patientPhone").getValue().toString());
+                //patientPhone.setText(dataSnapshot.child("patientPhone").getValue().toString());
                 patientAge.setText(dataSnapshot.child("patientAge").getValue().toString());
                 patientBloodGroup.setText(dataSnapshot.child("patientBloodGroup").getValue().toString());
                 patientWeight.setText(dataSnapshot.child("patientWeight").getValue().toString());
-                patientMail.setText(dataSnapshot.child("patientMail").getValue().toString());
+                //patientMail.setText(dataSnapshot.child("patientMail").getValue().toString());
                 patientFee.setText(FEE);
                 patientWayToConnect.setText(WAY_TO_CONNECT.toUpperCase());
 

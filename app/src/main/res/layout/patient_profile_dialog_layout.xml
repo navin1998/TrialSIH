@@ -102,41 +102,41 @@
 
 
 
-        <!--        Layout for booking phone-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="start"
-            android:padding="10dp"
-            >
+<!--        &lt;!&ndash;        Layout for phone&ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="start"-->
+<!--            android:padding="10dp"-->
+<!--            >-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Contact: "
-                android:textSize="15sp"
-                android:layout_gravity="center_vertical"
-                />
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Contact: "-->
+<!--                android:textSize="15sp"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                />-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Patient phone"
-                android:textSize="15sp"
-                android:id="@+id/dialogPatientPhone"
-                android:layout_gravity="center_vertical|end"
-                />
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Patient phone"-->
+<!--                android:textSize="15sp"-->
+<!--                android:id="@+id/dialogPatientPhone"-->
+<!--                android:layout_gravity="center_vertical|end"-->
+<!--                />-->
 
-        </LinearLayout>
-
-
+<!--        </LinearLayout>-->
 
 
 
-        <!--        Layout for working year experience-->
+
+
+        <!--        Layout for age-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -240,35 +240,35 @@
 
 
 
-        <!--        Layout for satisfied patients-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="start"
-            android:padding="10dp"
-            >
+<!--        &lt;!&ndash;        Layout for mail&ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="start"-->
+<!--            android:padding="10dp"-->
+<!--            >-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Mail: "
-                android:textSize="15sp"
-                android:layout_gravity="center_vertical"
-                />
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Mail: "-->
+<!--                android:textSize="15sp"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                />-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Patient mail"
-                android:textSize="15sp"
-                android:id="@+id/dialogPatientMail"
-                android:layout_gravity="center_vertical|end"
-                />
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Patient mail"-->
+<!--                android:textSize="15sp"-->
+<!--                android:id="@+id/dialogPatientMail"-->
+<!--                android:layout_gravity="center_vertical|end"-->
+<!--                />-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
 
 
