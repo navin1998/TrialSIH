@@ -1,11 +1,15 @@
 package com.navin.trialsih.patientActivities.ui.userProfile;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -23,10 +27,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompatSideChannelService;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.navin.trialsih.R;
 import com.navin.trialsih.patientActivities.PatientDashboardActivity;
 import com.navin.trialsih.patientsClasses.PatientDetails;
+import com.navin.trialsih.universalCredentials.SecurePassword;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +54,7 @@ import java.util.regex.Pattern;
 import javax.activation.CommandObject;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.RECEIVER_VISIBLE_TO_INSTANT_APPS;
 
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
@@ -285,10 +293,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 {
                     if (validate())
                     {
-                        onEdit = false;
-                        editBtn.setText("EDIT");
-                        uploadToDatabase();
-                        loadProfile();
+
+
+                        /**
+                         *
+                         *
+                         * add code to ask for the password for the pdf files which we will send on his email...
+                         * We will not store his pdf or any personal information other than those required for
+                         * the medical assistance
+                         *
+                         *
+                         */
+
+
+                        showProfilePasswordDialog();
+
                     }
                 }
                 else
@@ -304,6 +323,82 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }
 
     }
+
+
+    private void showProfilePasswordDialog()
+    {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_pdf_password, null);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title_text);
+        final EditText pass = alertLayout.findViewById(R.id.editText_password);
+        final EditText cnfrmPass = alertLayout.findViewById(R.id.editText_confirm_password);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(false);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String pdfPass = pass.getText().toString();
+                String pdfConfirmPass = cnfrmPass.getText().toString();
+
+                if (validatePdfPass(pdfPass, pdfConfirmPass))
+                {
+
+                    /**
+                     *
+                     * if everything is fine then upload the user's data to our database...
+                     *
+                     */
+
+                    onEdit = false;
+                    editBtn.setText("EDIT");
+
+                    uploadToDatabase(pdfConfirmPass);
+                    loadProfile();
+
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+    }
+
+
+    private boolean validatePdfPass(String pdfPass, String pdfConfirmPass)
+    {
+        if (pdfPass.isEmpty())
+        {
+            Toast.makeText(getContext(), "Password is required", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (pdfConfirmPass.isEmpty())
+        {
+            Toast.makeText(getContext(), "Enter the same password you entered above", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!pdfConfirmPass.equals(pdfPass))
+        {
+            Toast.makeText(getContext(), "Both passwords should be same", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+
+    }
+
 
 
     private void askForName()
@@ -714,8 +809,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
     }
 
-    private void uploadToDatabase()
+    private void uploadToDatabase(String password)
     {
+
+        String pdfPassword = getEncryptedPassword(password);
 
         final ProgressDialog dialog = new ProgressDialog(getContext());
         dialog.setMessage("Please wait...");
@@ -762,11 +859,23 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                mRef.setValue(patientDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Snackbar.make(v, "Updated successfully", Snackbar.LENGTH_SHORT).show();
-                    }
+                mRef.setValue(patientDetails)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+                                mRef.child("pdfPassword").setValue(pdfPassword);
+
+                                Snackbar.make(v, "Updated successfully", Snackbar.LENGTH_SHORT).show();
+                            }
+                })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Snackbar.make(v, "Error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+
+                            }
                 });
 
                 dialog.cancel();
@@ -823,5 +932,25 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         return true;
     }
+
+
+
+    private String getEncryptedPassword(String pass)
+    {
+        SecurePassword securePassword = new SecurePassword();
+
+        String encryptedPass = "";
+
+        try {
+            encryptedPass = securePassword.encrypt(pass);
+        }catch (Exception e)
+        {
+            Toast.makeText(getContext(), "Encryption went wrong", Toast.LENGTH_SHORT).show();
+        }
+
+        return encryptedPass;
+
+    }
+
 
 }
