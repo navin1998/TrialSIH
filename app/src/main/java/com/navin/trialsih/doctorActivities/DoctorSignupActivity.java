@@ -300,9 +300,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
                     regNumber.setText("");
                     password.setText("");
                     confirmPassword.setText("");
-
-                    AlertDialoger();
-
+                    
                     signUpBtn.setEnabled(false);
                     signUpBtn.setClickable(false);
                     signUpBtn.setFocusable(false);
@@ -398,74 +396,4 @@ public class DoctorSignupActivity extends AppCompatActivity {
 
     }
 
-
-    void AlertDialoger(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DoctorSignupActivity.this);
-        // Setting Alert Dialog Title
-        alertDialogBuilder.setTitle("Account Already Exist");
-        // Icon Of Alert Dialog
-        alertDialogBuilder.setIcon(R.drawable.ic_error_black_24dp);
-        // Setting Alert Dialog Message
-        alertDialogBuilder.setMessage("If Someone else has registered with your reg. no. then contact us on the following details\nAdmin email: bytpphyte@gmail.com");
-
-        alertDialogBuilder.setCancelable(false);
-
-        alertDialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                inputDialog();
-            }
-        });
-
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-    private void inputDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(DoctorSignupActivity.this);
-        builder.setTitle("Enter Your Email");
-
-        final EditText input = new EditText(DoctorSignupActivity.this);
-
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
-        builder.setView(input);
-
-        builder.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String email=input.getText().toString();
-                String mailto = "bytpphyte@gmail.com" +
-                        "?cc=" + email +
-                        "&subject=" + Uri.encode("Complain regarding registration as doctor") +
-                        "&body=" + Uri.encode("I had not registered in your app with my registration number still it is showing that I had already registered");
-
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-                emailIntent.setData(Uri.parse(mailto));
-
-                try {
-                    startActivity(emailIntent);
-                } catch (ActivityNotFoundException e) {
-                    //TODO: Handle case where no email app is available
-                    Toast.makeText(DoctorSignupActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }
 }
