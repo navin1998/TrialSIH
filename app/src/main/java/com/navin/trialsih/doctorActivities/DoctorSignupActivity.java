@@ -52,10 +52,12 @@ public class DoctorSignupActivity extends AppCompatActivity {
     private TextInputLayout regNumberLayout;
     private TextInputLayout passwordLayout;
     private TextInputLayout confirmPasswordLayout;
+    private TextInputLayout otpLayout;
 
     private TextInputEditText regNumber;
     private TextInputEditText password;
     private TextInputEditText confirmPassword;
+    private TextInputEditText otp;
 
     private Button signUpBtn;
 
@@ -64,6 +66,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
 
     private final static String USER_TYPE = "doctors";
     private final static String PROFILE = "profile";
+    private final static String OTP = "otps";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +84,12 @@ public class DoctorSignupActivity extends AppCompatActivity {
         regNumberLayout = findViewById(R.id.doctor_reg_number_layout);
         passwordLayout = findViewById(R.id.doctor_pass_layout);
         confirmPasswordLayout = findViewById(R.id.doctor_confirm_pass_layout);
+        otpLayout = findViewById(R.id.doctor_otp_layout);
 
         regNumber = findViewById(R.id.doctor_reg_number);
         password = findViewById(R.id.doctor_pass);
         confirmPassword = findViewById(R.id.doctor_confirm_pass);
+        otp = findViewById(R.id.doctor_otp);
 
         signUpBtn = findViewById(R.id.doctor_sign_up_btn);
 
@@ -108,6 +113,9 @@ public class DoctorSignupActivity extends AppCompatActivity {
         String reg = regNumber.getText().toString().trim();
         reg = reg.replaceAll(" ", "");
 
+        String oneTimePassword = otp.getText().toString().trim();
+        oneTimePassword = oneTimePassword.replaceAll(" ", "");
+
         String pass = password.getText().toString().trim();
         pass = pass.replaceAll(" ", "");
 
@@ -116,6 +124,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
 
         if (reg.isEmpty())
         {
+            regNumberLayout.setErrorEnabled(true);
             regNumberLayout.setError("Registration number is required");
             regNumberLayout.requestFocus();
             return false;
@@ -125,8 +134,21 @@ public class DoctorSignupActivity extends AppCompatActivity {
             regNumberLayout.setErrorEnabled(false);
         }
 
+        if (oneTimePassword.isEmpty())
+        {
+            otpLayout.setErrorEnabled(true);
+            otpLayout.setError("OTP is required");
+            otpLayout.requestFocus();
+            return false;
+        }
+        else
+        {
+            otpLayout.setErrorEnabled(false);
+        }
+
         if (pass.isEmpty())
         {
+            passwordLayout.setErrorEnabled(true);
             passwordLayout.setError("Password is required");
             passwordLayout.requestFocus();
             return false;
@@ -138,6 +160,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
 
         if ((password.getText().toString().length() < 6) || (password.getText().toString().length() > 16))
         {
+            passwordLayout.setErrorEnabled(true);
             passwordLayout.setError("Password should be 6 to 16 characters long");
             passwordLayout.requestFocus();
             return false;
@@ -149,6 +172,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
 
         if (cnfrmPass.isEmpty())
         {
+            confirmPasswordLayout.setErrorEnabled(true);
             confirmPasswordLayout.setError("Enter password again");
             confirmPasswordLayout.requestFocus();
             return false;
@@ -160,6 +184,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
 
         if ((confirmPassword.getText().toString().length() < 6) || (confirmPassword.getText().toString().length() > 16))
         {
+            confirmPasswordLayout.setErrorEnabled(true);
             confirmPasswordLayout.setError("Password should be 6 to 16 characters long");
             confirmPasswordLayout.requestFocus();
             return false;
@@ -171,6 +196,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
 
         if (!password.getText().toString().equals(confirmPassword.getText().toString()))
         {
+            confirmPasswordLayout.setErrorEnabled(true);
             confirmPasswordLayout.setError("Both passwords should be same");
             confirmPasswordLayout.requestFocus();
             return false;
@@ -191,7 +217,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
         builder.setTitle("Choose which type of doctor you are");
         builder.setCancelable(false);
 
-        String[] doctorTypes = new String[] {"General Practitioner", "Family Physician", "Internal Medicine Physician", "Pediatrician", "Obstetrician/Gynecologist (OB/GYN)", "Surgeon", "Psychiatrist", "Cardiologist", "Dermatologist", "Endocrinologist", "Infectious Disease Physician", "Nephrologist", "Ophthalmologist", "Otolaryngologist", "Pulmonologist", "Neurologist", "Physician Executive", "Radiologist", "Anesthesiologist", "Oncologist", "Gastroenterologist", "Orthopedist"};
+        final String[] doctorTypes = new String[] {"General Practitioner", "Family Physician", "Internal Medicine Physician", "Pediatrician", "Obstetrician/Gynecologist (OB/GYN)", "Surgeon", "Psychiatrist", "Cardiologist", "Dermatologist", "Endocrinologist", "Infectious Disease Physician", "Nephrologist", "Ophthalmologist", "Otolaryngologist", "Pulmonologist", "Neurologist", "Physician Executive", "Radiologist", "Anesthesiologist", "Oncologist", "Gastroenterologist", "Orthopedist"};
 
 
 
@@ -286,8 +312,11 @@ public class DoctorSignupActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
 
+        String registrationNumber = regNumber.getText().toString().trim();
+        String REG = registrationNumber.replaceAll(" ", "");
+
         //check if already registerd...
-        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE).child(regNumber.getText().toString());
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE).child(REG);
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -300,7 +329,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
                     regNumber.setText("");
                     password.setText("");
                     confirmPassword.setText("");
-                    
+
                     signUpBtn.setEnabled(false);
                     signUpBtn.setClickable(false);
                     signUpBtn.setFocusable(false);
@@ -312,56 +341,56 @@ public class DoctorSignupActivity extends AppCompatActivity {
                 else
                 {
 
+                    // validate otp here...
+                    final DatabaseReference otpRef = FirebaseDatabase.getInstance().getReference().child(OTP).child(REG);
 
-                    //not registered... Register here...
-                    final DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE).child(regNumber.getText().toString()).child(PROFILE);
-
-                    dRef.child("profile").addListenerForSingleValueEvent(new ValueEventListener() {
+                    otpRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            DoctorDetails doctorDetails = new DoctorDetails();
-                            doctorDetails.setDoctorRegNumber(regNumber.getText().toString());
+                            if (dataSnapshot.exists())
+                            {
 
-                            dRef.setValue(doctorDetails)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
+                                if (dataSnapshot.getValue().toString().equals(otp.getText().toString()))
+                                {
 
+                                    registrationOnFirebase(doctorType);
 
-                                            dRef.child("doctorType").setValue(doctorType);
-                                            dRef.child("password").setValue(getEncryptedPassword());
+                                    dialog.cancel();
 
-                                            Snackbar.make(v, "Successfully registered, you may login now", Snackbar.LENGTH_SHORT).show();
+                                    return;
 
-                                            regNumber.setText("");
-                                            password.setText("");
-                                            confirmPassword.setText("");
+                                }
+                                else
+                                {
+                                    Snackbar.make(v, "Invalid OTP. Try again", Snackbar.LENGTH_LONG).show();
 
-                                            signUpBtn.setEnabled(false);
-                                            signUpBtn.setClickable(false);
-                                            signUpBtn.setFocusable(false);
+                                    dialog.cancel();
 
-                                            signUpBtn.setVisibility(View.INVISIBLE);
+                                    return;
+                                }
 
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
+                            }
+                            else
+                            {
+                                Snackbar.make(v, "Unauthorised access is not allowed", Snackbar.LENGTH_LONG).show();
 
-                                            Snackbar.make(v, "Something went wrong", Snackbar.LENGTH_SHORT).show();
+                                dialog.cancel();
 
-                                        }
-                                    });
+                                return;
+                            }
 
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                            dialog.cancel();
+
                         }
                     });
+
+
                 }
 
                 dialog.cancel();
@@ -379,6 +408,95 @@ public class DoctorSignupActivity extends AppCompatActivity {
         });
     }
 
+
+    private void registrationOnFirebase(String doctorType)
+    {
+
+        final ProgressDialog dialog = new ProgressDialog(mContext);
+        dialog.setMessage("Please wait...");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        String registrationNumber = regNumber.getText().toString().trim();
+        String REG = registrationNumber.replaceAll(" ", "");
+
+        final DatabaseReference dRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE).child(REG).child(PROFILE);
+
+        dRef.child("profile").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                DoctorDetails doctorDetails = new DoctorDetails();
+                doctorDetails.setDoctorRegNumber(REG);
+
+                dRef.setValue(doctorDetails)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+
+
+                                dRef.child("doctorType").setValue(doctorType);
+                                dRef.child("password").setValue(getEncryptedPassword());
+
+                                Snackbar.make(v, "Successfully registered, you may login now", Snackbar.LENGTH_SHORT).show();
+
+                                deleteOTPFromDatabase(REG);
+
+                                regNumber.setText("");
+                                password.setText("");
+                                confirmPassword.setText("");
+                                otp.setText("");
+
+                                signUpBtn.setEnabled(false);
+                                signUpBtn.setClickable(false);
+                                signUpBtn.setFocusable(false);
+
+                                signUpBtn.setVisibility(View.INVISIBLE);
+
+                                dialog.cancel();
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Snackbar.make(v, "Something went wrong", Snackbar.LENGTH_SHORT).show();
+
+
+                                dialog.cancel();
+                            }
+                        });
+
+                dialog.cancel();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Snackbar.make(v, "Database error: " + databaseError.getMessage(), Snackbar.LENGTH_LONG).show();
+
+                dialog.cancel();
+
+            }
+        });
+
+        dialog.cancel();
+
+    }
+
+
+    private void deleteOTPFromDatabase(String REG)
+    {
+
+        final DatabaseReference otpRef = FirebaseDatabase.getInstance().getReference().child(OTP).child(REG);
+        otpRef.setValue(null);
+        return;
+
+    }
+
+
     private String getEncryptedPassword()
     {
         SecurePassword securePassword = new SecurePassword();
@@ -395,5 +513,6 @@ public class DoctorSignupActivity extends AppCompatActivity {
         return encryptedPass;
 
     }
+
 
 }
