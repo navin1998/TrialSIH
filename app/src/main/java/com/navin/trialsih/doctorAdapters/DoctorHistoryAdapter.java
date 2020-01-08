@@ -74,7 +74,6 @@ public class DoctorHistoryAdapter extends RecyclerView.Adapter<DoctorHistoryAdap
 
         final DoctorHistory history = mUploads.get(position);
         holder.textViewName.setText(history.getAppointmentPatientName());
-        holder.textViewType.setText(history.getAppointmentPatientPhone());
 
         String status = history.getAppointmentFeeStatus();
 
@@ -194,7 +193,6 @@ public class DoctorHistoryAdapter extends RecyclerView.Adapter<DoctorHistoryAdap
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {
         public TextView textViewName;
-        public TextView textViewType;
         public TextView textViewCalendar;
         public TextView textViewAppointmentType;
         public ImageView imageView;
@@ -206,7 +204,6 @@ public class DoctorHistoryAdapter extends RecyclerView.Adapter<DoctorHistoryAdap
             cardView = itemView.findViewById(R.id.gallery_cardView);
             textViewName = itemView.findViewById(R.id.cardView_commodityName);
             textViewCalendar = itemView.findViewById(R.id.cardView_chat_with_doctor);
-            textViewType = itemView.findViewById(R.id.cardView_commodityType);
             textViewAppointmentType = itemView.findViewById(R.id.cardView_appointmentType);
             imageView = itemView.findViewById(R.id.cardView_commodityImageView);
 
