@@ -217,18 +217,18 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             case R.id.nav_doctor_settings_icon:
                 isHomeShowing = false;
                 checkAllBottomNavFalse();
-                navigationView.getMenu().getItem(4).setChecked(true);
+                navigationView.getMenu().getItem(3).setChecked(true);
                 fragment = new SettingsFragment();
                 break;
 
 
-            case R.id.nav_doctor_search_icon:
-                isHomeShowing = true;
-                showHomeFragment();
-                checkAllBottomNavFalse();
-                navigationView.getMenu().getItem(0).setChecked(true);
-                showSearchDialog();
-                break;
+//            case R.id.nav_doctor_search_icon:
+//                isHomeShowing = true;
+//                showHomeFragment();
+//                checkAllBottomNavFalse();
+//                navigationView.getMenu().getItem(0).setChecked(true);
+//                showSearchDialog();
+//                break;
 
             case R.id.nav_doctor_logout_icon:
                 showLogoutDialog();
@@ -466,6 +466,14 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     }
 
 
+    /**
+     *
+     * this was for the search icon in iour app, now for no use, but please don't delete it...
+     *
+     *
+     */
+
+
     private void showSearchDialog()
     {
 
@@ -555,6 +563,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         navigationView.getMenu().getItem(0).setCheckable(false);
         navigationView.getMenu().getItem(1).setCheckable(false);
         navigationView.getMenu().getItem(2).setCheckable(false);
+        navigationView.getMenu().getItem(3).setCheckable(false);
+        navigationView.getMenu().getItem(4).setCheckable(false);
     }
 
 
@@ -570,6 +580,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         navigationView.getMenu().getItem(0).setCheckable(true);
         navigationView.getMenu().getItem(1).setCheckable(true);
         navigationView.getMenu().getItem(2).setCheckable(true);
+        navigationView.getMenu().getItem(3).setCheckable(true);
+        navigationView.getMenu().getItem(4).setCheckable(false);
     }
 
 
