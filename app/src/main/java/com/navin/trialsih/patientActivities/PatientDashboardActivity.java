@@ -3,6 +3,8 @@ package com.navin.trialsih.patientActivities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +27,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.navin.trialsih.MainActivity;
@@ -224,6 +227,10 @@ public class PatientDashboardActivity extends AppCompatActivity {
             case R.id.nav_patient_logout:
                 showLogoutDialog();
                 break;
+
+            case R.id.nav_patient_feedback:
+                feedbackClicked();
+                break;
         }
 
         //replacing the fragment
@@ -257,6 +264,37 @@ public class PatientDashboardActivity extends AppCompatActivity {
             super.onBackPressed();
         }
 
+    }
+
+
+
+    private void feedbackClicked()
+    {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] {getResources().getString(R.string.feedback_mail_ID)});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Your feedback subject");
+        intent.putExtra(Intent.EXTRA_TEXT, "Your feedback here...");
+
+        final PackageManager pm = getPackageManager();
+        final List<ResolveInfo> matches = pm.queryIntentActivities(intent, 0);
+        ResolveInfo best = null;
+        for (final ResolveInfo info : matches)
+        {
+            if (info.activityInfo.packageName.endsWith(".gm") || info.activityInfo.name.toLowerCase().contains("gmail"))
+            {
+                best = info;
+            }
+        }
+        if (best != null)
+        {
+            intent.setClassName(best.activityInfo.packageName, best.activityInfo.name);
+            startActivity(intent);
+        }
+        else
+        {
+            Snackbar.make(v, "Couldn't find Gmail on your device", Snackbar.LENGTH_LONG).show();
+        }
     }
 
 
