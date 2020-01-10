@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.navin.trialsih">
+    package="com.pranks.trialsih">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,20 +16,20 @@
         android:roundIcon="@drawable/ic_pranks"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".patientActivities.ConfirmPaymentActivity"></activity>
-        <activity android:name=".patientActivities.PatientChatActivity" />
-        <activity android:name=".doctorActivities.DoctorChatActivity" />
+        <activity android:name="com.pranks.trialsih.patientActivities.ConfirmPaymentActivity"></activity>
+        <activity android:name="com.pranks.trialsih.patientActivities.PatientChatActivity" />
+        <activity android:name="com.pranks.trialsih.doctorActivities.DoctorChatActivity" />
         <activity
-            android:name=".doctorActivities.DoctorDashboardActivity"
+            android:name="com.pranks.trialsih.doctorActivities.DoctorDashboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".doctorActivities.DoctorSignInActivity" />
-        <activity android:name=".doctorActivities.DoctorSignupActivity" />
-        <activity android:name=".patientActivities.AddAppointment" />
+        <activity android:name="com.pranks.trialsih.doctorActivities.DoctorSignInActivity" />
+        <activity android:name="com.pranks.trialsih.doctorActivities.DoctorSignupActivity" />
+        <activity android:name="com.pranks.trialsih.patientActivities.AddAppointment" />
         <activity
-            android:name=".patientActivities.PatientDashboardActivity"
+            android:name="com.pranks.trialsih.patientActivities.PatientDashboardActivity"
             android:label="@string/title_activity_patient_dashboard"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SignInActivity">
+        <activity android:name="com.pranks.trialsih.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +39,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.navin.trialsih"
+            android:authorities="com.pranks.trialsih"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
