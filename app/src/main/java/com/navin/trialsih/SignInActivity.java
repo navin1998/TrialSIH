@@ -2,11 +2,16 @@ package com.navin.trialsih;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.method.SingleLineTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -56,6 +61,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private final static String PATIENT_NAME = "patientName";
     private final static String PATIENT_PHONE = "patientPhone";
 
+    private final static int PERMISSION_ALL = 1;
+    private final static String[] PERMISSIONS = {
+            Manifest.permission.INTERNET,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.ACCESS_NETWORK_STATE
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +79,23 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_signin);
+
+
+        /**
+         *
+         * request all the permissions...
+         *
+         */
+        for (int i = 0; i < PERMISSIONS.length; i++) {
+            if (!hasPermissions(this, PERMISSIONS)) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+            }
+        }
+        /**
+         *
+         * requesting permissions end here...
+         *
+         */
 
         mContext = this;
         v = getWindow().getDecorView().getRootView();
@@ -85,6 +116,18 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
+    }
+
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 
