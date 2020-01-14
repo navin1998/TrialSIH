@@ -33,7 +33,8 @@
             <item
                 android:id="@+id/nav_patient_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
+                android:title="@string/menu_share"
+                android:visible="false"/>
             <item
                 android:id="@+id/nav_patient_feedback"
                 android:icon="@drawable/ic_patient_feedback"

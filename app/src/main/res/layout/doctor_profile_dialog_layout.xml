@@ -182,6 +182,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Experience of: "
+                android:id="@+id/tv_doctorExp"
                 android:textSize="15sp"
                 android:layout_gravity="center_vertical"
                 />
@@ -216,6 +217,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Last degree: "
+                android:id="@+id/tv_doctorLastDegree"
                 android:textSize="15sp"
                 android:layout_gravity="center_vertical"
                 />
@@ -286,6 +288,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Satisfied patients: "
+                android:id="@+id/tv_doctorSatisfiedPatients"
                 android:textSize="15sp"
                 android:layout_gravity="center_vertical"
                 />
@@ -343,35 +346,35 @@
 
 
 
-        <!--        Layout for satisfied patients-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="start"
-            android:padding="10dp"
-            >
+<!--        &lt;!&ndash;        Layout for satisfied patients&ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="start"-->
+<!--            android:padding="10dp"-->
+<!--            >-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Satisfied patients: "
-                android:textSize="15sp"
-                android:layout_gravity="center_vertical"
-                />
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Satisfied patients: "-->
+<!--                android:textSize="15sp"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                />-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Number of patients"
-                android:textSize="15sp"
-                android:id="@+id/dialogDoctorSatisfiedPatients"
-                android:layout_gravity="center_vertical|end"
-                />
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="Number of patients"-->
+<!--                android:textSize="15sp"-->
+<!--                android:id="@+id/dialogDoctorSatisfiedPatients"-->
+<!--                android:layout_gravity="center_vertical|end"-->
+<!--                />-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
 
 

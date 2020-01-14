@@ -414,7 +414,7 @@
                 android:background="@drawable/background_tap_to_speak"
                 android:text="next"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="170dp"
+                android:layout_marginBottom="110dp"
                 android:layout_marginTop="25dp"
                 />
 

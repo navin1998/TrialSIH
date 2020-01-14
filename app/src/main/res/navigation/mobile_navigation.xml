@@ -8,37 +8,37 @@
     <fragment
         android:tag="home_tag"
         android:id="@+id/nav_patient_appointment"
-        android:name="com.navin.trialsih.patientActivities.ui.activeAppoint.HomeFragment"
+        android:name="com.pranks.trialsih.patientActivities.ui.activeAppoint.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_patient_profile"
-        android:name="com.navin.trialsih.patientActivities.ui.userProfile.ProfileFragment"
+        android:name="com.pranks.trialsih.patientActivities.ui.userProfile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_patient_profile" />
 
     <fragment
         android:id="@+id/nav_patient_previous_appointment"
-        android:name="com.navin.trialsih.patientActivities.ui.prevAppoint.PrevAppointmentsFragment"
+        android:name="com.pranks.trialsih.patientActivities.ui.prevAppoint.PrevAppointmentsFragment"
         android:label="@string/menu_patient_previous_appointments"
         tools:layout="@layout/fragment_patient_prev_appointments" />
 
     <fragment
         android:id="@+id/nav_patient_previous_transactions"
-        android:name="com.navin.trialsih.patientActivities.ui.prevTransactions.PrevTransactionsFragment"
+        android:name="com.pranks.trialsih.patientActivities.ui.prevTransactions.PrevTransactionsFragment"
         android:label="@string/menu_patient_previous_transactions"
         tools:layout="@layout/fragment_patient_prev_transactions" />
 
     <fragment
         android:id="@+id/nav_patient_share"
-        android:name="com.navin.trialsih.patientActivities.ui.share.ShareFragment"
+        android:name="com.pranks.trialsih.patientActivities.ui.share.ShareFragment"
         android:label="@string/menu_share"
         tools:layout="@layout/fragment_share" />
 
     <fragment
         android:id="@+id/nav_patient_feedback"
-        android:name="com.navin.trialsih.patientActivities.ui.feedback.FeedbackFragment"
+        android:name="com.pranks.trialsih.patientActivities.ui.feedback.FeedbackFragment"
         android:label="@string/menu_feedback"
         tools:layout="@layout/fragment_feedback" />
 </navigation>

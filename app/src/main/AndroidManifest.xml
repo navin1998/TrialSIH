@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.navin.trialsih">
+    package="com.pranks.trialsih">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,17 +11,16 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_pranks"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_pranks"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PdfPreview"></activity>
-        <activity android:name=".patientActivities.ConfirmPaymentActivity" />
-        <activity android:name=".patientActivities.PatientChatActivity" />
-        <activity android:name=".doctorActivities.DoctorChatActivity" />
+        <activity android:name="com.pranks.trialsih.patientActivities.ConfirmPaymentActivity"></activity>
+        <activity android:name="com.pranks.trialsih.patientActivities.PatientChatActivity" />
+        <activity android:name="com.pranks.trialsih.doctorActivities.DoctorChatActivity" />
         <activity
-            android:name=".doctorActivities.DoctorDashboardActivity"
+            android:name="com.pranks.trialsih.doctorActivities.DoctorDashboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".doctorActivities.DoctorSignInActivity" />
         <activity android:name=".doctorActivities.DoctorSignupActivity" />

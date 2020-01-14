@@ -9,7 +9,7 @@
     android:paddingRight="20dp"
     android:paddingTop="20dp"
     android:paddingBottom="20dp"
-    tools:context=".MainActivity">
+    tools:context="com.pranks.trialsih.MainActivity">
 
     <TextView
         android:text="Recipient Email"

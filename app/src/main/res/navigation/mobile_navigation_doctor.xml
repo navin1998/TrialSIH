@@ -8,31 +8,31 @@
     <fragment
         android:tag="home_tag"
         android:id="@+id/nav_doctor_appointment"
-        android:name="com.navin.trialsih.doctorActivities.bottomNavigation.HomeFragment"
+        android:name="com.pranks.trialsih.doctorActivities.bottomNavigation.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/doctor_fragment_home" />
 
     <fragment
         android:id="@+id/nav_doctor_profile"
-        android:name="com.navin.trialsih.doctorActivities.bottomNavigation.ProfileFragment"
+        android:name="com.pranks.trialsih.doctorActivities.bottomNavigation.ProfileFragment"
         android:label="@string/menu_doctor_profile"
         tools:layout="@layout/doctor_fragment_profile" />
 
     <fragment
         android:id="@+id/nav_doctor_history"
-        android:name="com.navin.trialsih.doctorActivities.navigationDrawer.HistoryFragment"
+        android:name="com.pranks.trialsih.doctorActivities.navigationDrawer.HistoryFragment"
         android:label="@string/menu_doctor_history"
         tools:layout="@layout/doctor_fragment_history" />
 
     <fragment
         android:id="@+id/nav_doctor_settings"
-        android:name="com.navin.trialsih.doctorActivities.navigationDrawer.SettingsFragment"
+        android:name="com.pranks.trialsih.doctorActivities.navigationDrawer.SettingsFragment"
         android:label="@string/menu_doctor_settings"
         tools:layout="@layout/doctor_fragment_settings" />
 
     <fragment
         android:id="@+id/nav_doctor_recycler_view"
-        android:name="com.navin.trialsih.doctorActivities.bottomNavigation.RecyclerViewFragment"
+        android:name="com.pranks.trialsih.doctorActivities.bottomNavigation.RecyclerViewFragment"
         android:label="Previous Prescriptions"
         tools:layout="@layout/doctor_fragment_recycler_view" />
 
