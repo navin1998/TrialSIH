@@ -1,4 +1,4 @@
-package com.navin.trialsih;
+package com.pranks.trialsih;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.pranks.trialsih.R;
 
 import java.io.File;
 
@@ -28,7 +29,7 @@ public class PdfPreview extends AppCompatActivity {
 
         File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
         File newFile = new File(imagePath, path);
-        Uri contentUri = getUriForFile(PdfPreview.this, "com.navin.trialsih", newFile);
+        Uri contentUri = getUriForFile(PdfPreview.this, "com.pranks.trialsih", newFile);
 
         pdfView.fromUri(contentUri)
                 //.pages(0, 2, 1, 3, 3, 3) // all pages are displayed by default

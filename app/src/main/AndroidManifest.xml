@@ -19,6 +19,7 @@
         <activity android:name="com.pranks.trialsih.patientActivities.ConfirmPaymentActivity"></activity>
         <activity android:name="com.pranks.trialsih.patientActivities.PatientChatActivity" />
         <activity android:name="com.pranks.trialsih.doctorActivities.DoctorChatActivity" />
+        <activity android:name=".PdfPreview" />
         <activity
             android:name="com.pranks.trialsih.doctorActivities.DoctorDashboardActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -39,7 +40,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.navin.trialsih"
+            android:authorities="com.pranks.trialsih"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

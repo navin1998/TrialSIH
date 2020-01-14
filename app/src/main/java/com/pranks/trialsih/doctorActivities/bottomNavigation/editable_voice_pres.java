@@ -1,4 +1,4 @@
-package com.navin.trialsih.doctorActivities.bottomNavigation;
+package com.pranks.trialsih.doctorActivities.bottomNavigation;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -61,10 +61,11 @@ import com.itextpdf.text.html.WebColors;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.navin.trialsih.PdfPreview;
-import com.navin.trialsih.R;
-import com.navin.trialsih.doctorClasses.DoctorPrevPresLinkItem;
-import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
+import com.pranks.trialsih.PdfPreview;
+import com.pranks.trialsih.PdfPreview;
+import com.pranks.trialsih.R;
+import com.pranks.trialsih.doctorActivities.bottomNavigation.JavaApiDemo;
+import com.pranks.trialsih.doctorActivities.bottomNavigation.ListViewAdapter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -95,6 +96,7 @@ public class editable_voice_pres extends Fragment {
     ListView listDiagnose;
     ListView listPrescri;
     ListView listAdvice;
+
     ListViewAdapter adaptersymp,adapterdiag,adapterprescri,adapteradvice;
     private PdfPCell cell;
     private String textAnswer;
