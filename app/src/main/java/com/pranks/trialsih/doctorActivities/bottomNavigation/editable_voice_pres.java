@@ -227,8 +227,6 @@ public class editable_voice_pres extends Fragment {
         //create document file
         com.itextpdf.text.Document doc = new com.itextpdf.text.Document();
         try {
-
-            Log.e("PDFCreator", "PDF Path: " + path);
             SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
             pathtoupload=sdf.format(Calendar.getInstance().getTime()) + "" + Calendar.getInstance().getTimeInMillis() + ".pdf";
             file = new File(dir, pathtoupload);
@@ -244,7 +242,7 @@ public class editable_voice_pres extends Fragment {
             //create table
             PdfPTable pt = new PdfPTable(3);
             pt.setWidthPercentage(100);
-            float[] fl = new float[]{15,30, 45};
+            float[] fl = new float[]{25,30, 45};
             pt.setWidths(fl);
             cell = new PdfPCell();
             cell.setBorder(Rectangle.NO_BORDER);
@@ -390,7 +388,7 @@ public class editable_voice_pres extends Fragment {
     void AlertDialoger(String filePath){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         // Setting Alert Dialog Title
-        alertDialogBuilder.setTitle("Pdf Generated");
+        alertDialogBuilder.setTitle("Pdf generated");
         // Icon Of Alert Dialog
         alertDialogBuilder.setIcon(R.drawable.ic_check_black_24dp);
         // Setting Alert Dialog Message
@@ -498,6 +496,7 @@ public class editable_voice_pres extends Fragment {
     {
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.customsignature, null);
+
         SignaturePad mSignaturePad=alertLayout.findViewById(R.id.signature_pad);
         Button mClearButton = alertLayout.findViewById(R.id.clear_button);
         Button mSaveButton = alertLayout.findViewById(R.id.save_button);
@@ -544,7 +543,6 @@ public class editable_voice_pres extends Fragment {
                 try {
                     createPDF(signatureBitmap);
                     dialog.dismiss();
-
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (DocumentException e) {

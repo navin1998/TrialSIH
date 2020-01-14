@@ -20,6 +20,9 @@ public class PdfPreview extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setTitle("PDF Preview");
+
         setContentView(R.layout.activity_pdf_preview);
         pdfView=findViewById(R.id.pdfView);
 
