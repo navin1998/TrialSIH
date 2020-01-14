@@ -7,28 +7,39 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -50,6 +61,7 @@ import com.itextpdf.text.html.WebColors;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.navin.trialsih.PdfPreview;
 import com.navin.trialsih.R;
 import com.navin.trialsih.doctorClasses.DoctorPrevPresLinkItem;
 import com.navin.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
@@ -61,8 +73,10 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import static androidx.core.content.FileProvider.getUriForFile;
 
 public class editable_voice_pres extends Fragment {
@@ -92,9 +106,11 @@ public class editable_voice_pres extends Fragment {
     public String pathtoupload;
     public StorageReference storageReference;
     public DatabaseReference myReference;
-    Uri filePath1;
     String email2;
     static final int PICK_CONTACT_REQUEST = 1;
+    private static String USER_PASS = "12345";
+    PopupWindow mPopupWindow;
+    NestedScrollView scrollView;
 
     //use to set background color
     BaseColor myColor = WebColors.getRGBColor("#9E9E9E");
@@ -113,7 +129,7 @@ public class editable_voice_pres extends Fragment {
         //firebase variables
         storageReference=FirebaseStorage.getInstance().getReference();
         myReference=FirebaseDatabase.getInstance().getReference();
-
+        scrollView=voiceedit.findViewById(R.id.scrollLayout);
         pdfgen=voiceedit.findViewById(R.id.generatepdf);
         nameofPerson_edit=voiceedit.findViewById(R.id.patient_name_dis);
         nameofPerson_edit.setText(nameofpat);
@@ -158,20 +174,54 @@ public class editable_voice_pres extends Fragment {
                         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE },8865);
                     }
 
-                    createPDF();
+                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                    View customView = inflater.inflate(R.layout.customsignature,null);
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (DocumentException e) {
+                    /*
+                    mPopupWindow = new PopupWindow(
+                            customView,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                    );
+
+                    // Set an elevation value for popup window
+                    // Call requires API level 21
+                    if(Build.VERSION.SDK_INT>=21){
+                        mPopupWindow.setElevation(5.0f);
+                    }
+                    */
+
+                    showSignPopUp();
+
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-
         return voiceedit;
     }
 
-    public void createPDF() throws FileNotFoundException, DocumentException {
+    public void onPause() {
+
+        super.onPause();
+        //deleteFolder();
+
+    }
+
+    public void onStop() {
+
+        super.onStop();
+
+        deleteFolder();
+    }
+
+    public void onBackPressed() {
+
+
+    }
+
+    public void createPDF(Bitmap bitmap) throws FileNotFoundException, DocumentException {
         //create document file
         com.itextpdf.text.Document doc = new com.itextpdf.text.Document();
         try {
@@ -182,6 +232,10 @@ public class editable_voice_pres extends Fragment {
             file = new File(dir, pathtoupload);
             FileOutputStream fOut = new FileOutputStream(file);
             PdfWriter writer = PdfWriter.getInstance(doc, fOut);
+
+
+            writer.setEncryption(USER_PASS.getBytes(), USER_PASS.getBytes(),
+                    PdfWriter.ALLOW_PRINTING, PdfWriter.DO_NOT_ENCRYPT_METADATA);
 
             //open the document
             doc.open();
@@ -194,8 +248,8 @@ public class editable_voice_pres extends Fragment {
             cell.setBorder(Rectangle.NO_BORDER);
 
             //set drawable in cell
-            Drawable myImage = getActivity().getResources().getDrawable(R.drawable.trinity);
-            Bitmap bitmap = ((BitmapDrawable) myImage).getBitmap();
+//            Drawable myImage = getActivity().getResources().getDrawable(R.drawable.trinity);
+//            Bitmap bitmap = ((BitmapDrawable) myImage).getBitmap();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] bitmapdata = stream.toByteArray();
@@ -316,11 +370,10 @@ public class editable_voice_pres extends Fragment {
                 table.addCell(cell);
                 doc.add(table);
                 doc.close();
-
-
-                //upload it to firebase
-                //Toast.makeText(getContext(), pathtoupload, Toast.LENGTH_SHORT).show();
-                inputDialog(pathtoupload);
+//                File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
+//                File newFile = new File(imagePath, pathtoupload);
+//                Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+                AlertDialoger(pathtoupload);
 
             } catch (Exception e) {
                 Log.e("PDFCreator", "ioException:" + e);
@@ -332,77 +385,7 @@ public class editable_voice_pres extends Fragment {
         }
     }
 
-    //upload File
-    private void uploadFile(final Uri filePath,String email) {
-        final DoctorCredentialsDBHelper doccre=new DoctorCredentialsDBHelper(getContext());
-        //checking if file is available
-        Toast.makeText(getContext(), filePath.toString(), Toast.LENGTH_SHORT).show();
-        if (filePath != null) {
-            //displaying progress dialog while image is uploading
-            final ProgressDialog progressDialog = new ProgressDialog(getContext());
-            progressDialog.setTitle("Creating PDF");
-            progressDialog.show();
-
-            //getting the storage reference
-            final StorageReference sRef = storageReference.child(doccre.getRegNumber()+ "/" + System.currentTimeMillis() + "." + nameofpat);
-
-            //adding the file to reference
-            sRef.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-
-                            //displaying success toast
-//                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
-
-                            //creating the upload object to store uploaded image details
-                        sRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-
-                            String email3 = email.toLowerCase().replaceAll("\\.", "");
-
-                            long timeinmilli=Calendar.getInstance().getTimeInMillis();
-                            SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
-                            //Toast.makeText(getContext(), email3, Toast.LENGTH_SHORT).show();
-
-
-                            DoctorPrevPresLinkItem item = new DoctorPrevPresLinkItem();
-                            item.setDate(sdf1.format(Calendar.getInstance().getTime()));
-                            item.setFileUrl(uri.toString());
-
-                            myReference.child("doctors").child(doccre.getRegNumber()).child("patientPrescriptions").child(email3).child("document" + timeinmilli).setValue(item);
-
-                            AlertDialoger(uri, email);
-                        }
-                            });
-                        }
-                    })
-
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            progressDialog.dismiss();
-                            Toast.makeText(getContext(), /*exception.getMessage()*/"KKJ", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            //displaying the upload progress
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                            progressDialog.setMessage("Creating " + ((int) progress) + "%...");
-                        }
-                    });
-        } else {
-            Toast.makeText(getContext(), "Please select a file", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    void AlertDialoger(final Uri filePath2,String email){
-        email2=email;
-        filePath1=filePath2;
+    void AlertDialoger(String filePath){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         // Setting Alert Dialog Title
         alertDialogBuilder.setTitle("Pdf Generated");
@@ -418,7 +401,7 @@ public class editable_voice_pres extends Fragment {
 
                 //Write the Send File code her
 
-                sendEmail(email,filePath2);
+                inputDialog(filePath);
 
             }
         });
@@ -426,8 +409,10 @@ public class editable_voice_pres extends Fragment {
         alertDialogBuilder.setNegativeButton("Preview", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, filePath2);
-                startActivityForResult(browserIntent,PICK_CONTACT_REQUEST);
+                Intent i=new Intent(getContext(), PdfPreview.class);
+                i.putExtra("path",filePath);
+                i.putExtra("password",USER_PASS);
+                startActivity(i);
 
             }
         });
@@ -442,7 +427,7 @@ public class editable_voice_pres extends Fragment {
         alertDialog.show();
     }
 
-    private void inputDialog(String pathtoupload1) {
+    private void inputDialog(String filepath) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Enter Your Email");
@@ -458,10 +443,7 @@ public class editable_voice_pres extends Fragment {
               String email=input.getText().toString();
                 Toast.makeText(getContext(), email, Toast.LENGTH_SHORT).show();
                  //sendEmail(email,filePath);
-                File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
-                File newFile = new File(imagePath, pathtoupload1);
-                Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
-                uploadFile(contentUri,email);
+               sendEmail(email,filepath);
 
             }
 
@@ -476,19 +458,99 @@ public class editable_voice_pres extends Fragment {
         builder.show();
     }
 
-    private void sendEmail(String email ,Uri filePath) {
+    private void sendEmail(String email,String filePath) {
+
+        File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
+        File newFile = new File(imagePath, filePath);
+        Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+
         String mSubect="Doctor's Description";
-        String mMessage="Hii"+nameofpat+","+"\n"+"This is link of prescription: "+filePath.toString();
-        JavaApiDemo javaApiDemo=new JavaApiDemo(getContext(),email,mSubect,mMessage);
+        String mMessage="Hii"+nameofpat+","+"\n"+"This is link of prescription: ";
+        JavaApiDemo javaApiDemo=new JavaApiDemo(getContext(),email,mSubect,mMessage,filePath);
         javaApiDemo.execute();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Check which request we're responding to
-        if (requestCode == PICK_CONTACT_REQUEST) {
-            // Make sure the request was successful
-            AlertDialoger(filePath1,email2);
+    void deleteFolder(){
+        // Your directory with files to be deleted
+        String sdcard = Environment.getExternalStorageDirectory() + "/PdfFiles";
+
+// go to your directory
+        File fileList = new File( sdcard );
+
+//check if dir is not null
+        if (fileList != null) {
+
+            // so we can list all files
+            File[] filenames = fileList.listFiles();
+
+            // loop through each file and delete
+            for (File tmpf : filenames) {
+                tmpf.delete();
+            }
+
         }
     }
+
+
+    private void showSignPopUp()
+    {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.customsignature, null);
+        SignaturePad mSignaturePad=alertLayout.findViewById(R.id.signature_pad);
+        Button mClearButton = alertLayout.findViewById(R.id.clear_button);
+        Button mSaveButton = alertLayout.findViewById(R.id.save_button);
+        
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.show();
+
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+            @Override
+            public void onStartSigning() {
+                // signing started...
+            }
+
+            @Override
+            public void onSigned() {
+                mSaveButton.setEnabled(true);
+                mClearButton.setEnabled(true);
+            }
+
+            @Override
+            public void onClear() {
+                mSaveButton.setEnabled(false);
+                mClearButton.setEnabled(false);
+            }
+        });
+
+
+        mClearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSignaturePad.clear();
+            }
+        });
+
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
+                try {
+                    createPDF(signatureBitmap);
+                    dialog.dismiss();
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
 }

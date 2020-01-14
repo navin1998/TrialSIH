@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".patientActivities.ConfirmPaymentActivity"></activity>
+        <activity android:name=".PdfPreview"></activity>
+        <activity android:name=".patientActivities.ConfirmPaymentActivity" />
         <activity android:name=".patientActivities.PatientChatActivity" />
         <activity android:name=".doctorActivities.DoctorChatActivity" />
         <activity

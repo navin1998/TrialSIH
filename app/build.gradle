@@ -44,6 +44,21 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.4'
     implementation 'com.google.firebase:firebase-storage:16.0.4'
     implementation 'com.itextpdf:itextg:5.5.10'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    implementation 'com.github.gcacace:signature-pad:1.2.1'
+
+
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk16
+    implementation group: 'org.bouncycastle', name: 'bcmail-jdk16', version: '1.46'
+
+    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
+
+    // https://mvnrepository.com/artifact/org.bouncycastle/bctsp-jdk16
+    implementation group: 'org.bouncycastle', name: 'bctsp-jdk16', version: '1.46'
+
+
+
     testImplementation 'junit:junit:4.12'
 
     androidTestImplementation 'androidx.test:runner:1.2.0'

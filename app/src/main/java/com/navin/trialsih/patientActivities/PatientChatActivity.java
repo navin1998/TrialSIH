@@ -42,7 +42,6 @@ public class PatientChatActivity extends AppCompatActivity {
 
     private LinearLayout chatLayout;
     private EditText queryEditText;
-    MediaPlayer ring;
 
     FirebaseAuth mAuth;
 
@@ -56,8 +55,6 @@ public class PatientChatActivity extends AppCompatActivity {
         mrefrence= FirebaseDatabase.getInstance().getReference();
         mAuth=FirebaseAuth.getInstance();
         getSupportActionBar().setTitle("Chat");
-
-        ring= MediaPlayer.create(PatientChatActivity.this,R.raw.messengerweb);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -150,7 +147,7 @@ public class PatientChatActivity extends AppCompatActivity {
                 else {
 
                     showTextView(msg, USER);
-                    FirebaseDatabase.getInstance().getReference().child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(mAuth.getCurrentUser().getUid()).child("patient_chat").child("statement"+count).setValue(msg);
+                    FirebaseDatabase.getInstance().getReference().child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(mAuth.getCurrentUser().getUid()).child("patient_chat").push().setValue(msg);
                     count++;
                     queryEditText.setText("");
 
@@ -188,11 +185,16 @@ public class PatientChatActivity extends AppCompatActivity {
                     int h1=1;
                     for(DataSnapshot ds1:dataSnapshot.getChildren()){
                         if(h1==size){
-                            showTextView(dataSnapshot.child("statement"+size).getValue().toString(),BOT);
+                            showTextView(dataSnapshot.child(ds1.getKey()).getValue().toString(),BOT);
                             break;
                         }
                         h1++;
                     }
+                    if(size!=0){
+                        MediaPlayer ring= MediaPlayer.create(PatientChatActivity.this,R.raw.messengerweb);
+                        ring.start();
+                    }
+
                 }
 
                 @Override
@@ -204,7 +206,6 @@ public class PatientChatActivity extends AppCompatActivity {
 
             e.printStackTrace();
         }
-        ring.start();
     }
 
     private void showTextView(String message, int type) {

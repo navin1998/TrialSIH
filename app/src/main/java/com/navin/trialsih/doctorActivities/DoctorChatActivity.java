@@ -57,8 +57,6 @@ public class DoctorChatActivity extends AppCompatActivity {
     private static final int USER = 10001;
     private static final int BOT = 10002;
 
-    MediaPlayer ring;
-
     private String uuid = UUID.randomUUID().toString();
     private LinearLayout chatLayout;
     private EditText queryEditText;
@@ -78,7 +76,6 @@ public class DoctorChatActivity extends AppCompatActivity {
         mrefrence=FirebaseDatabase.getInstance().getReference();
 
         getSupportActionBar().setTitle("Chat");
-        ring=MediaPlayer.create(DoctorChatActivity.this,R.raw.messengerweb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mContext = this;
@@ -136,7 +133,7 @@ public class DoctorChatActivity extends AppCompatActivity {
             Toast.makeText(DoctorChatActivity.this, "Please enter your query!", Toast.LENGTH_LONG).show();
         } else {
             showTextView(msg, USER);
-            mrefrence.child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(PATIENT_UID).child("doctor_chat").child("statement"+count).setValue(msg);
+            mrefrence.child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(PATIENT_UID).child("doctor_chat").push().setValue(msg);
             count++;
             queryEditText.setText("");
 
@@ -160,10 +157,15 @@ public class DoctorChatActivity extends AppCompatActivity {
                                 int h1=1;
                                 for(DataSnapshot ds1:dataSnapshot.getChildren()){
                                     if(h1==size){
-                                        showTextView(dataSnapshot.child("statement"+size).getValue().toString(),BOT);
+                                        showTextView(dataSnapshot.child(ds1.getKey()).getValue().toString(),BOT);
                                         break;
                                     }
                                     h1++;
+                                }
+
+                                if(size!=0){
+                                    MediaPlayer ring= MediaPlayer.create(DoctorChatActivity.this,R.raw.messengerweb);
+                                    ring.start();
                                 }
                             }
 
@@ -176,8 +178,6 @@ public class DoctorChatActivity extends AppCompatActivity {
 
                         e.printStackTrace();
                     }
-
-                    ring.start();
 
     }
 

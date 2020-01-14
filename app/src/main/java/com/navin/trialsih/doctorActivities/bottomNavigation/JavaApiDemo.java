@@ -3,6 +3,7 @@ package com.navin.trialsih.doctorActivities.bottomNavigation;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
@@ -44,15 +45,17 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
     private String mEmail;
     private String mSubject;
     private String mMessage;
+    private String filepath;
 
     private ProgressDialog mProgressDialog;
 
     //Constructor
-    public JavaApiDemo(Context mContext, String mEmail, String mSubject, String mMessage) {
+    public JavaApiDemo(Context mContext, String mEmail, String mSubject, String mMessage,String filepath) {
         this.mContext = mContext;
         this.mEmail = mEmail;
         this.mSubject = mSubject;
         this.mMessage = mMessage;
+        this.filepath=filepath;
     }
 
     @Override
@@ -105,8 +108,7 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
             //Adding subject
 
             mm.setSubject(mSubject);
-            //Adding message
-            mm.setText(mMessage);
+
 
 //
 //            BodyPart messageBodyPart = new MimeBodyPart();
@@ -130,7 +132,36 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
 //            attachpart.attachFile(filePath);
 //            multipart.addBodyPart(attachpart);
 //            mm.setContent(multipart);
+
+
+            // Create the message body part
+            BodyPart messageBodyPart = new MimeBodyPart();
+
+            // Fill the message
+            messageBodyPart.setText("hello");
+
+            // Create a multipart message for attachment
+            Multipart multipart = new MimeMultipart();
+
+            // Set text message part
+            multipart.addBodyPart(messageBodyPart);
+
+            // Second part is attachment
+            messageBodyPart = new MimeBodyPart();
+            String filename = filepath;
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+
+            // Send the complete message parts
+            mm.setContent(multipart);
+
+            // Send message
             Transport.send(mm);
+            Toast.makeText(mContext, "EMail Sent Successfully with attachment!!", Toast.LENGTH_SHORT).show();
+
+
 
         } catch (MessagingException e) {
             e.printStackTrace();
