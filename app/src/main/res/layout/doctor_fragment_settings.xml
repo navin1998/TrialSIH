@@ -7,10 +7,41 @@
     android:background="?android:windowBackground">
 
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@drawable/lock"
+        android:id="@+id/lock"
+        />
+
+
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:layout_margin="5dp"
+        android:text="We will send one OTP to your registered mail-ID for security reasons.\n\nPress the button below to PROCEED"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textColor="#414141"
+        android:layout_below="@+id/lock"
+        />
+
+
+    <Button
+        android:id="@+id/change_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Password"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/password_btn_background"
+        android:layout_alignParentBottom="true"
+        android:textColor="#FFF"
+        android:layout_marginBottom="40dp"
         />
 
 

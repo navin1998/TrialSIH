@@ -58,7 +58,7 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
     protected void onPreExecute() {
         super.onPreExecute();
         //Show progress dialog while sending email
-        mProgressDialog = ProgressDialog.show(mContext,"Sending message", "Please wait...",false,false);
+        mProgressDialog = ProgressDialog.show(mContext,"Sending", "Please wait...",false,false);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
         mProgressDialog.dismiss();
 
         //Show success toast
-        Toast.makeText(mContext,"Message Sent",Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext,"Mail sent to: " + mEmail,Toast.LENGTH_LONG).show();
     }
 
     @Override
