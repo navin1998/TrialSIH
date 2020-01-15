@@ -179,8 +179,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         switch (itemId) {
             case R.id.doctor_appointments:
             case R.id.nav_doctor_appointment_icon:
-                checkAllNavTrue();
-                checkAllBottomNavTrue();
+                setBottomNavCheckableTrue();
                 isHomeShowing = true;
                 bottomNavigationView.getMenu().getItem(0).setChecked(true);
                 navigationView.getMenu().getItem(0).setChecked(true);
@@ -189,6 +188,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
             case R.id.doctor_mic:
                 if (getProfileCompletePref()) {
+                    setBottomNavCheckableTrue();
                     checkAllNavFalse();
                     isHomeShowing = false;
                     bottomNavigationView.getMenu().getItem(1).setChecked(true);
@@ -198,8 +198,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
             case R.id.doctor_profile:
             case R.id.nav_doctor_profile_icon:
-                checkAllNavTrue();
-                checkAllBottomNavTrue();
+                setBottomNavCheckableTrue();
                 isHomeShowing = false;
                 bottomNavigationView.getMenu().getItem(2).setChecked(true);
                 navigationView.getMenu().getItem(1).setChecked(true);
@@ -209,7 +208,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             case R.id.nav_doctor_history_icon:
                 if (getProfileCompletePref()) {
                     isHomeShowing = false;
-                    checkAllBottomNavFalse();
+                    setBottomNavCheckableFalse();
                     navigationView.getMenu().getItem(2).setChecked(true);
                     fragment = new HistoryFragment();
                 }
@@ -218,7 +217,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             case R.id.nav_doctor_settings_icon:
                 if (getProfileCompletePref()) {
                     isHomeShowing = false;
-                    checkAllBottomNavFalse();
+                    setBottomNavCheckableFalse();
                     navigationView.getMenu().getItem(3).setChecked(true);
                     fragment = new SettingsFragment();
                 }
@@ -284,6 +283,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString("regNumber", REG_NUMBER);
 
+            setBottomNavCheckableTrue();
+
             Fragment fragment = new HomeFragment();
 
             fragment.setArguments(bundle);
@@ -292,8 +293,6 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             ft.replace(R.id.doctor_nav_host_fragment, fragment);
             ft.commit();
 
-            checkAllBottomNavTrue();
-            checkAllNavTrue();
             bottomNavigationView.getMenu().getItem(0).setChecked(true);
             navigationView.getMenu().getItem(0).setChecked(true);
 
@@ -313,6 +312,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("regNumber", REG_NUMBER);
 
+        setBottomNavCheckableTrue();
+
         Fragment fragment = new HomeFragment();
 
         fragment.setArguments(bundle);
@@ -323,9 +324,6 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
         bottomNavigationView.getMenu().getItem(0).setChecked(true);
         navigationView.getMenu().getItem(0).setChecked(true);
-
-        checkAllBottomNavTrue();
-        checkAllNavTrue();
 
         isHomeShowing = true;
     }
@@ -585,8 +583,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                checkAllBottomNavTrue();
-                checkAllNavTrue();
+                setBottomNavCheckableTrue();
                 navigationView.getMenu().getItem(0).setChecked(true);
                 bottomNavigationView.getMenu().getItem(0).setChecked(true);
 
@@ -598,39 +595,26 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
     }
 
+    private void checkAllNavFalse()
+    {
+        navigationView.getMenu().getItem(0).setChecked(false);
+        navigationView.getMenu().getItem(1).setChecked(false);
+        navigationView.getMenu().getItem(2).setChecked(false);
+        navigationView.getMenu().getItem(3).setChecked(false);
+    }
 
-    private void checkAllBottomNavFalse()
+    private void setBottomNavCheckableFalse()
     {
         bottomNavigationView.getMenu().getItem(0).setCheckable(false);
         bottomNavigationView.getMenu().getItem(1).setCheckable(false);
         bottomNavigationView.getMenu().getItem(2).setCheckable(false);
     }
 
-
-    private void checkAllNavFalse()
-    {
-        navigationView.getMenu().getItem(0).setCheckable(false);
-        navigationView.getMenu().getItem(1).setCheckable(false);
-        navigationView.getMenu().getItem(2).setCheckable(false);
-        navigationView.getMenu().getItem(3).setCheckable(false);
-        navigationView.getMenu().getItem(4).setCheckable(false);
-    }
-
-
-    private void checkAllBottomNavTrue()
+    private void setBottomNavCheckableTrue()
     {
         bottomNavigationView.getMenu().getItem(0).setCheckable(true);
         bottomNavigationView.getMenu().getItem(1).setCheckable(true);
         bottomNavigationView.getMenu().getItem(2).setCheckable(true);
-    }
-
-    private void checkAllNavTrue()
-    {
-        navigationView.getMenu().getItem(0).setCheckable(true);
-        navigationView.getMenu().getItem(1).setCheckable(true);
-        navigationView.getMenu().getItem(2).setCheckable(true);
-        navigationView.getMenu().getItem(3).setCheckable(true);
-        navigationView.getMenu().getItem(4).setCheckable(false);
     }
 
 
@@ -648,10 +632,9 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         ft.replace(R.id.doctor_nav_host_fragment, fragment);
         ft.commit();
 
-        checkAllBottomNavFalse();
-        checkAllNavTrue();
+        setBottomNavCheckableFalse();
 
-        navigationView.getMenu().getItem(3).setChecked(true);
+        //navigationView.getMenu().getItem(3).setChecked(true);
 
         isHomeShowing = false;
     }

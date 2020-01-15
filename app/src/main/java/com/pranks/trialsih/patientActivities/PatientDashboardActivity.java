@@ -3,6 +3,7 @@ package com.pranks.trialsih.patientActivities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
@@ -25,12 +26,19 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pranks.trialsih.R;
 import com.pranks.trialsih.SignInActivity;
+import com.pranks.trialsih.patientActivities.bottomNavigation.ChatFragment;
 import com.pranks.trialsih.patientActivities.ui.activeAppoint.HomeFragment;
 import com.pranks.trialsih.patientActivities.ui.prevAppoint.PrevAppointmentsFragment;
 import com.pranks.trialsih.patientActivities.ui.prevTransactions.PrevTransactionsFragment;
@@ -50,6 +58,11 @@ import java.util.List;
 public class PatientDashboardActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    private BottomNavigationView bottomNavigationView;
+
+    private final static String USER_TYPE_PATIENT = "patients";
+    private final static String PROFILE = "profile";
+    private static String UID;
 
     private ImageView profilePic;
     private TextView name;
@@ -94,10 +107,26 @@ public class PatientDashboardActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
 
+        bottomNavigationView = findViewById(R.id.patient_bottom_navigationView);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+                displaySelectedScreen(menuItem.getItemId());
+
+                return true;
+            }
+        });
+
+
         profilePic = findViewById(R.id.patient_profile_pic);
         name = findViewById(R.id.patient_name);
         email = findViewById(R.id.patient_email);
 
+        UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        checkProfileCompletion(UID);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -197,28 +226,45 @@ public class PatientDashboardActivity extends AppCompatActivity {
 
         //initializing the fragment object which is selected
         switch (itemId) {
+            case R.id.patient_appointments:
             case R.id.nav_patient_appointment:
                 isHomeShowing = true;
+                setBottomNavCheckableTrue();
+                bottomNavigationView.getMenu().getItem(0).setChecked(true);
                 navigationView.getMenu().getItem(0).setChecked(true);
                 fragment = new HomeFragment();
                 break;
 
             case R.id.nav_patient_profile:
                 isHomeShowing = false;
+                setBottomNavCheckableFalse();
+                checkAllBottomNavFalse();
                 navigationView.getMenu().getItem(1).setChecked(true);
                 fragment = new ProfileFragment();
                 break;
 
             case R.id.nav_patient_previous_appointment:
                 isHomeShowing = false;
+                setBottomNavCheckableFalse();
+                checkAllBottomNavFalse();
                 navigationView.getMenu().getItem(2).setChecked(true);
                 fragment = new PrevAppointmentsFragment();
                 break;
 
             case R.id.nav_patient_previous_transactions:
                 isHomeShowing = false;
+                setBottomNavCheckableFalse();
+                checkAllBottomNavFalse();
                 navigationView.getMenu().getItem(3).setChecked(true);
                 fragment = new PrevTransactionsFragment();
+                break;
+
+            case R.id.patient_chat:
+                isHomeShowing = false;
+                setBottomNavCheckableTrue();
+                checkAllNavFalse();
+                fragment = new ChatFragment();
+                bottomNavigationView.getMenu().getItem(1).setChecked(true);
                 break;
 
             case R.id.nav_patient_logout:
@@ -241,10 +287,40 @@ public class PatientDashboardActivity extends AppCompatActivity {
         drawer.closeDrawer(GravityCompat.START);
     }
 
+    private void setBottomNavCheckableFalse()
+    {
+        bottomNavigationView.getMenu().getItem(0).setCheckable(false);
+        bottomNavigationView.getMenu().getItem(1).setCheckable(false);
+    }
+
+    private void setBottomNavCheckableTrue()
+    {
+        bottomNavigationView.getMenu().getItem(0).setCheckable(true);
+        bottomNavigationView.getMenu().getItem(1).setCheckable(true);
+    }
+
+    private void checkAllBottomNavFalse()
+    {
+        bottomNavigationView.getMenu().getItem(0).setChecked(false);
+        bottomNavigationView.getMenu().getItem(1).setChecked(false);
+    }
+
+
+    private void checkAllNavFalse()
+    {
+        navigationView.getMenu().getItem(0).setChecked(false);
+        navigationView.getMenu().getItem(1).setChecked(false);
+        navigationView.getMenu().getItem(2).setChecked(false);
+        navigationView.getMenu().getItem(3).setChecked(false);
+    }
+
+
     @Override
     public void onBackPressed() {
 
         if (!isHomeShowing) {
+
+            setBottomNavCheckableTrue();
 
             Fragment fragment = new HomeFragment();
 
@@ -253,6 +329,7 @@ public class PatientDashboardActivity extends AppCompatActivity {
             ft.commit();
 
             navigationView.getMenu().getItem(0).setChecked(true);
+            bottomNavigationView.getMenu().getItem(0).setChecked(true);
 
             isHomeShowing = true;
         }
@@ -292,6 +369,68 @@ public class PatientDashboardActivity extends AppCompatActivity {
         {
             Snackbar.make(v, "Couldn't find Gmail on your device", Snackbar.LENGTH_LONG).show();
         }
+    }
+
+
+    private void checkProfileCompletion(String UID)
+    {
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_PATIENT).child(UID).child(PROFILE);
+
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (!dataSnapshot.exists())
+                {
+                    saveProfilePrefs(false);
+                    disableOptions();
+                    Snackbar.make(v, "All options are disabled till profile completion", Snackbar.LENGTH_SHORT).show();
+                }else
+                {
+                    saveProfilePrefs(true);
+                    enableOptions();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void disableOptions()
+    {
+        for (int i = 2; i < 4; i++)
+        {
+            navigationView.getMenu().getItem(i).setEnabled(false);
+        }
+
+
+        bottomNavigationView.getMenu().getItem(1).setEnabled(false);
+
+    }
+
+    private void enableOptions()
+    {
+        for (int i = 2; i < 4; i++)
+        {
+            navigationView.getMenu().getItem(i).setEnabled(true);
+        }
+
+
+        bottomNavigationView.getMenu().getItem(1).setEnabled(true);
+    }
+
+    private void saveProfilePrefs(boolean bool)
+    {
+        SharedPreferences patientProfilePref = mContext.getSharedPreferences("patientProfilePref",MODE_PRIVATE);
+        SharedPreferences.Editor editor = patientProfilePref.edit();
+        editor.putBoolean("isPatientProfileComplete", bool);
+        editor.commit();
     }
 
 

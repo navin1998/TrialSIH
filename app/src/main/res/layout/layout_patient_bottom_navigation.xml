@@ -13,24 +13,26 @@
 
 
         <fragment
-            android:id="@+id/doctor_nav_host_fragment"
+            android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/doctor_bottom_navigationView"
+            android:layout_above="@+id/patient_bottom_navigationView"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/mobile_navigation_doctor" />
+            app:navGraph="@navigation/mobile_navigation" />
+
+
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/doctor_bottom_navigationView"
+            android:id="@+id/patient_bottom_navigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="?android:attr/windowBackground"
+            android:background="@color/colorPrimary"
             app:itemBackground="@color/colorPrimary"
             app:itemIconTint="@drawable/doctor_bottom_nav_color"
             app:itemTextColor="@drawable/doctor_bottom_nav_color"
-            app:menu="@menu/doctor_bottom_navigation"
+            app:menu="@menu/patient_bottom_navigation"
             />
 
     </RelativeLayout>

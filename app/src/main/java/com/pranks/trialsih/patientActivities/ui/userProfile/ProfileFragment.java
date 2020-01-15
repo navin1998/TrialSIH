@@ -860,6 +860,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
                                 mRef.child("pdfPassword").setValue(pdfPassword);
 
+                                saveProfilePrefs();
+
                                 Snackbar.make(v, "Updated successfully", Snackbar.LENGTH_SHORT).show();
                             }
                 })
@@ -885,6 +887,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         });
 
     }
+
+
+    private void saveProfilePrefs() {
+
+        SharedPreferences patientProfilePref = getContext().getSharedPreferences("patientProfilePref",MODE_PRIVATE);
+        SharedPreferences.Editor editor = patientProfilePref.edit();
+        editor.putBoolean("isPatientProfileComplete", true);
+        editor.commit();
+
+    }
+
 
     private boolean validate()
     {
