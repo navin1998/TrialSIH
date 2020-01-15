@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -187,10 +188,12 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 break;
 
             case R.id.doctor_mic:
-                checkAllNavFalse();
-                isHomeShowing = false;
-                bottomNavigationView.getMenu().getItem(1).setChecked(true);
-                fragment = new VoicePresFragment();
+                if (getProfileCompletePref()) {
+                    checkAllNavFalse();
+                    isHomeShowing = false;
+                    bottomNavigationView.getMenu().getItem(1).setChecked(true);
+                    fragment = new VoicePresFragment();
+                }
                 break;
 
             case R.id.doctor_profile:
@@ -204,17 +207,21 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 break;
 
             case R.id.nav_doctor_history_icon:
-                isHomeShowing = false;
-                checkAllBottomNavFalse();
-                navigationView.getMenu().getItem(2).setChecked(true);
-                fragment = new HistoryFragment();
+                if (getProfileCompletePref()) {
+                    isHomeShowing = false;
+                    checkAllBottomNavFalse();
+                    navigationView.getMenu().getItem(2).setChecked(true);
+                    fragment = new HistoryFragment();
+                }
                 break;
 
             case R.id.nav_doctor_settings_icon:
-                isHomeShowing = false;
-                checkAllBottomNavFalse();
-                navigationView.getMenu().getItem(3).setChecked(true);
-                fragment = new SettingsFragment();
+                if (getProfileCompletePref()) {
+                    isHomeShowing = false;
+                    checkAllBottomNavFalse();
+                    navigationView.getMenu().getItem(3).setChecked(true);
+                    fragment = new SettingsFragment();
+                }
                 break;
 
 
@@ -243,6 +250,31 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         drawer.closeDrawer(GravityCompat.START);
 
     }
+
+    private void disableOptions()
+    {
+        for (int i = 2; i < 4; i++)
+        {
+            navigationView.getMenu().getItem(i).setEnabled(false);
+        }
+
+
+        bottomNavigationView.getMenu().getItem(1).setEnabled(false);
+
+    }
+
+
+    private void enableOptions()
+    {
+        for (int i = 2; i < 4; i++)
+        {
+            navigationView.getMenu().getItem(i).setEnabled(true);
+        }
+
+
+        bottomNavigationView.getMenu().getItem(1).setEnabled(true);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -277,6 +309,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
     private void showHomeFragment()
     {
+
         Bundle bundle = new Bundle();
         bundle.putString("regNumber", REG_NUMBER);
 
@@ -323,13 +356,19 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
         final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PROFILE);
 
-        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.getChildrenCount() <= 3)
                 {
+                    saveProfilePrefs(false);
+                    disableOptions();
                     Snackbar.make(v, "All options are disabled till profile completion", Snackbar.LENGTH_SHORT).show();
+                }else
+                {
+                    saveProfilePrefs(true);
+                    enableOptions();
                 }
 
             }
@@ -340,6 +379,20 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean getProfileCompletePref()
+    {
+        SharedPreferences doctorProfilePref = mContext.getSharedPreferences("doctorProfilePref",MODE_PRIVATE);
+        return doctorProfilePref.getBoolean("isProfileComplete", false);
+    }
+
+    private void saveProfilePrefs(boolean bool)
+    {
+        SharedPreferences doctorProfilePref = mContext.getSharedPreferences("doctorProfilePref",MODE_PRIVATE);
+        SharedPreferences.Editor editor = doctorProfilePref.edit();
+        editor.putBoolean("isProfileComplete", bool);
+        editor.commit();
     }
 
 

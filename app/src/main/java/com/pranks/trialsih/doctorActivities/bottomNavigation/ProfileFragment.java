@@ -1765,6 +1765,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 new getTimeAndDate().execute();
 
 
+                                saveProfilePrefs();
+
+
                                 Snackbar.make(v, "Updated successfully", Snackbar.LENGTH_SHORT).show();
                             }
                         })
@@ -1791,6 +1794,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         dialog.cancel();
 
+
+    }
+
+    private void saveProfilePrefs() {
+
+        SharedPreferences doctorProfilePref = getContext().getSharedPreferences("doctorProfilePref",MODE_PRIVATE);
+        SharedPreferences.Editor editor = doctorProfilePref.edit();
+        editor.putBoolean("isProfileComplete", true);
+        editor.commit();
 
     }
 
@@ -2228,7 +2240,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             dialog = new ProgressDialog(getContext());
             dialog.setMessage("Checking permissions, please wait...");
             dialog.setCancelable(false);
-            dialog.show();
+            if (forComparison) {
+                dialog.show();
+            }
+            else if (forSave) {
+                dialog.dismiss();
+            }
 
         }
 
