@@ -314,6 +314,7 @@ public class DoctorSignupActivity extends AppCompatActivity {
                     Snackbar.make(v, "Already registered, please login", Snackbar.LENGTH_SHORT).show();
 
                     regNumber.setText("");
+                    otp.setText("");
                     password.setText("");
                     confirmPassword.setText("");
 

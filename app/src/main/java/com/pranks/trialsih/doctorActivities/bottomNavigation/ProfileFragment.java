@@ -3,13 +3,16 @@ package com.pranks.trialsih.doctorActivities.bottomNavigation;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputFilter;
@@ -49,13 +52,19 @@ import com.pranks.trialsih.doctorActivities.DoctorDashboardActivity;
 import com.pranks.trialsih.doctorClasses.DoctorDetails;
 import com.pranks.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener{
 
@@ -63,8 +72,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private final static String USER_TYPE_DOCTOR = "doctors";
     private final static String ACTIVE_APPOINTMENTS = "appointments";
     private final static String PROFILE = "profile";
+    private final static String CLINIC_NAME_CHANGED_DATE = "clinicNameChangedDate";
     private static String PASSWORD;
     private static String DOCTOR_TYPE;
+    private final static String url = "https://time.is/Unix_time_now";
+    private static boolean forComparison = false;
+    private static boolean forSave = false;
+    private final static int MINIMUM_DAYS_FOR_NEXT_CLINIC_NAME_CHANGE = 7;
+
+    private Context activityContext;
 
     private Uri imagePath;
     private String downloadUrl;
@@ -86,6 +102,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private TextView yearOfExperience;
     private TextView yearOfReg;
     private TextView lastDegree;
+    private TextView clinicName;
     private TextView address;
     private TextView medicalCouncil;
     private TextView mail;
@@ -103,6 +120,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private LinearLayout yearOfExperienceLayout;
     private LinearLayout yearOfRegLayout;
     private LinearLayout lastDegreeLayout;
+    private LinearLayout clinicNameLayout;
     private LinearLayout addressLayout;
     private LinearLayout medicalCouncilLayout;
     private LinearLayout mailLayout;
@@ -151,10 +169,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             }
         }
 
-        getPassword();
-        getDoctorType();
+        activityContext = getContext();
 
-        loadProfile();
 
         ((DoctorDashboardActivity) getActivity()).getSupportActionBar().setTitle("Profile");
 
@@ -173,6 +189,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         yearOfExperience = v.findViewById(R.id.doctor_experience);
         yearOfReg = v.findViewById(R.id.doctor_year_of_registration);
         lastDegree = v.findViewById(R.id.doctor_qualification);
+        clinicName = v.findViewById(R.id.doctor_clinic_name);
         address = v.findViewById(R.id.doctor_address);
         medicalCouncil = v.findViewById(R.id.doctor_council);
         mail = v.findViewById(R.id.doctor_mail);
@@ -190,6 +207,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         yearOfExperienceLayout = v.findViewById(R.id.doctor_experience_layout);
         yearOfRegLayout = v.findViewById(R.id.doctor_year_of_registration_layout);
         lastDegreeLayout = v.findViewById(R.id.doctor_qualification_layout);
+        clinicNameLayout = v.findViewById(R.id.doctor_clinic_name_layout);
         addressLayout = v.findViewById(R.id.doctor_address_layout);
         medicalCouncilLayout = v.findViewById(R.id.doctor_council_layout);
         mailLayout = v.findViewById(R.id.doctor_mail_layout);
@@ -202,8 +220,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         editBtn = v.findViewById(R.id.doctor_profile_edit_btn);
         doctorPic = v.findViewById(R.id.doctor_pic);
 
+        getPassword();
+        getDoctorType();
 
-        layoutArr = new LinearLayout[]{nameLayout, regNumberLayout, genderLayout, phoneLayout, bookingPhoneLayout, yearOfExperienceLayout, yearOfRegLayout, lastDegreeLayout, addressLayout, medicalCouncilLayout, mailLayout, satisfiedPatientsLayout, upiNameLayout, upiIDLayout, appointmentFeeLayout};
+        loadProfile();
+
+
+        layoutArr = new LinearLayout[]{nameLayout, regNumberLayout, genderLayout, phoneLayout, bookingPhoneLayout, yearOfExperienceLayout, yearOfRegLayout, lastDegreeLayout, clinicNameLayout, addressLayout, medicalCouncilLayout, mailLayout, satisfiedPatientsLayout, upiNameLayout, upiIDLayout, appointmentFeeLayout};
 
         for (LinearLayout ll : layoutArr)
         {
@@ -232,6 +255,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             case R.id.doctor_experience_layout:
             case R.id.doctor_year_of_registration_layout:
             case R.id.doctor_qualification_layout:
+            case R.id.doctor_clinic_name_layout:
             case R.id.doctor_address_layout:
             case R.id.doctor_council_layout:
             case R.id.doctor_mail_layout:
@@ -279,6 +303,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
                         case R.id.doctor_qualification_layout:
                             askForLastDegree();
+                            break;
+
+                        case R.id.doctor_clinic_name_layout:
+                            checkClinicName();
                             break;
 
                         case R.id.doctor_address_layout:
@@ -336,7 +364,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 else
                 {
 
-                    doctorUploadDetails = new DoctorDetails(name.getText().toString(), regNumber.getText().toString(), gender.getText().toString(), phone.getText().toString(), bookingPhone.getText().toString(), yearOfExperience.getText().toString(), lastDegree.getText().toString(), address.getText().toString(), satisfiedPatients.getText().toString(), medicalCouncil.getText().toString(), yearOfReg.getText().toString(), null, mail.getText().toString(), upiName.getText().toString(), upiID.getText().toString(), appointmentFee.getText().toString());
+                    doctorUploadDetails = new DoctorDetails(name.getText().toString(), regNumber.getText().toString(), gender.getText().toString(), phone.getText().toString(), bookingPhone.getText().toString(), yearOfExperience.getText().toString(), lastDegree.getText().toString(), clinicName.getText().toString(), address.getText().toString(), satisfiedPatients.getText().toString(), medicalCouncil.getText().toString(), yearOfReg.getText().toString(), null, mail.getText().toString(), upiName.getText().toString(), upiID.getText().toString(), appointmentFee.getText().toString());
 
                     onEdit = true;
                     editBtn.setText("SAVE");
@@ -346,6 +374,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
 
         }
+
+    }
+
+    private void checkClinicName()
+    {
+
+        forComparison = true;
+        forSave = false;
+        new getTimeAndDate().execute();
+
+
+        // if date comparison permits... the above method will ask for clinic name...
+
 
     }
 
@@ -878,6 +919,85 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         });
 
         builder.show();
+    }
+
+
+    private void askForClinicName()
+    {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_credentials, null);
+        final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button okBtn = alertLayout.findViewById(R.id.btn_ok);
+        final TextView titleText = alertLayout.findViewById(R.id.title);
+        final TextView messageText = alertLayout.findViewById(R.id.message);
+        final EditText input = alertLayout.findViewById(R.id.editText);
+
+        titleText.setTypeface(titleText.getTypeface(), Typeface.BOLD);
+
+        titleText.setText("What is your clinic name?");
+        messageText.setText("*NOTE: You can change your clinic name only once in " + MINIMUM_DAYS_FOR_NEXT_CLINIC_NAME_CHANGE + " days");
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
+                for (int i = start; i < end; ++i)
+                {
+                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(50)});
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+
+        input.setText(doctorUploadDetails.getDoctorClinicName().toUpperCase());
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String testName = input.getText().toString().trim();
+                testName = testName.replaceAll(" ", "");
+
+                if (!(testName.length() > 0))
+                {
+                    clinicName.setText(null);
+                    Toast.makeText(getContext(), "This field can't be empty", Toast.LENGTH_SHORT).show();
+                }
+                else {
+
+                    doctorUploadDetails.setDoctorClinicName(input.getText().toString().toUpperCase());
+                    clinicName.setText(input.getText().toString().toUpperCase());
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
     }
 
 
@@ -1614,6 +1734,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         doctorDetails.setDoctorExperience(yearOfExperience.getText().toString());
         doctorDetails.setDoctorYearOfReg(yearOfReg.getText().toString());
         doctorDetails.setDoctorQualifications(lastDegree.getText().toString().toUpperCase());
+        doctorDetails.setDoctorClinicName(clinicName.getText().toString().toUpperCase());
         doctorDetails.setDoctorClinicAddress(address.getText().toString());
         doctorDetails.setDoctorMedicalCouncil(medicalCouncil.getText().toString());
         doctorDetails.setDoctorMail(mail.getText().toString());
@@ -1636,6 +1757,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 mRef.child("doctorRegNumber").setValue(REG_NUMBER);
                                 mRef.child("password").setValue(PASSWORD);
                                 mRef.child("doctorType").setValue(DOCTOR_TYPE);
+
+
+                                // save clinic name changed prefs...
+                                forSave = true;
+                                forComparison = false;
+                                new getTimeAndDate().execute();
+
 
                                 Snackbar.make(v, "Updated successfully", Snackbar.LENGTH_SHORT).show();
                             }
@@ -1663,6 +1791,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
         dialog.cancel();
 
+
+    }
+
+    private void saveClinicNameChangedDate(String timeInMillis)
+    {
+
+        SharedPreferences clinicNamePref = getContext().getSharedPreferences(CLINIC_NAME_CHANGED_DATE, MODE_PRIVATE);
+        SharedPreferences.Editor clinicNameEditor = clinicNamePref.edit();
+        clinicNameEditor.putString(CLINIC_NAME_CHANGED_DATE, timeInMillis);
+        clinicNameEditor.commit();
 
     }
 
@@ -1717,6 +1855,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                     yearOfExperience.setText(list.get(0).getDoctorExperience());
                     yearOfReg.setText(list.get(0).getDoctorYearOfReg());
                     lastDegree.setText(list.get(0).getDoctorQualifications());
+                    clinicName.setText(list.get(0).getDoctorClinicName());
                     address.setText(list.get(0).getDoctorClinicAddress());
                     medicalCouncil.setText(list.get(0).getDoctorMedicalCouncil());
                     mail.setText(list.get(0).getDoctorMail());
@@ -2069,6 +2208,112 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         catch (Exception e)
         {
             Snackbar.make(v, "Error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+        }
+
+    }
+
+
+    public class getTimeAndDate extends AsyncTask<Void, Void, Void>
+    {
+
+        ProgressDialog dialog;
+
+        String text;
+        String timeInMillis = "";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            dialog = new ProgressDialog(getContext());
+            dialog.setMessage("Checking permissions, please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            try {
+
+                Document doc = Jsoup.connect(url).get();
+                text = doc.text();
+
+            }
+            catch (Exception e) {}
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            boolean timeFound = false;
+
+            for (int i = 0; i < text.length(); i++)
+            {
+                if (Character.isDigit(text.charAt(i)))
+                {
+                    timeFound = true;
+                    timeInMillis += text.charAt(i);
+                }
+                else if (!Character.isDigit(text.charAt(i)) && timeFound)
+                {
+                    break;
+                }
+            }
+
+            if (forSave)
+            {
+                saveClinicNameChangedDate(timeInMillis);
+            }
+
+            if (forComparison)
+            {
+                startDateComparison(timeInMillis);
+            }
+
+            dialog.dismiss();
+
+        }
+
+    }
+
+    private String getEarlierTimeForNameChange()
+    {
+
+        SharedPreferences clinicNamePref = getContext().getSharedPreferences(CLINIC_NAME_CHANGED_DATE, MODE_PRIVATE);
+
+        String time = clinicNamePref.getString(CLINIC_NAME_CHANGED_DATE, "0000000000");
+
+        return time;
+
+    }
+
+    private void startDateComparison(String timeInMillis) {
+
+        long earlierTime = Long.parseLong(getEarlierTimeForNameChange());
+        long currentTime = Long.parseLong(timeInMillis);
+
+        long daysDifference = TimeUnit.MILLISECONDS.toDays(currentTime - earlierTime);
+
+        if (daysDifference >= MINIMUM_DAYS_FOR_NEXT_CLINIC_NAME_CHANGE)
+        {
+            askForClinicName();
+        }
+        else
+        {
+            long d = MINIMUM_DAYS_FOR_NEXT_CLINIC_NAME_CHANGE - daysDifference;
+
+            if (d > 1) {
+                Snackbar.make(v, "You can change your clinic name in next " + d + " days", Snackbar.LENGTH_LONG).show();
+            }
+            else if (d == 1)
+            {
+                Snackbar.make(v, "You can change your clinic name the next day", Snackbar.LENGTH_LONG).show();
+            }
         }
 
     }
