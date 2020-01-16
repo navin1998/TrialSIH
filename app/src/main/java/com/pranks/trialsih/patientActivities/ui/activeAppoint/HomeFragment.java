@@ -240,6 +240,8 @@ public class HomeFragment extends Fragment {
         list = new ArrayList<>();
         patientAppointmentsAdapter = new PatientAppointmentsAdapter(getContext(), list);
 
+        mRecyclerView.setAdapter(null);
+
         list.clear();
 
         UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -251,6 +253,8 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists())
                 {
+                    mRecyclerView.setAdapter(null);
+
                     cannotFind.setVisibility(View.VISIBLE);
                     cannotFindText.setVisibility(View.VISIBLE);
                     mProgressCircle.setVisibility(View.INVISIBLE);
@@ -309,6 +313,14 @@ public class HomeFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         UID = user.getUid();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loadAppointments();
 
     }
 }
