@@ -123,35 +123,43 @@ public class PatientChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.child(APPOINTMENT_CHAT_STARTED).getValue().toString().toLowerCase().equals("ended"))
-                {
+                try {
 
+                    if (dataSnapshot.child(APPOINTMENT_CHAT_STARTED).getValue().toString().toLowerCase().equals("ended")) {
+
+                        Toast.makeText(PatientChatActivity.this, "Chat has already ended. Cannot send messages", Toast.LENGTH_SHORT).show();
+
+                        dialog.cancel();
+                        return;
+
+                    }
+
+                    //check for empty string...
+                    else if (msg.trim().isEmpty()) {
+
+                        Toast.makeText(PatientChatActivity.this, "Please enter your query!", Toast.LENGTH_LONG).show();
+
+                        dialog.cancel();
+                    }
+
+                    //displaying data and adding to firebase...
+                    else {
+
+                        showTextView(msg, USER);
+                        FirebaseDatabase.getInstance().getReference().child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(mAuth.getCurrentUser().getUid()).child("patient_chat").push().setValue(msg);
+                        count++;
+                        queryEditText.setText("");
+
+                        dialog.cancel();
+
+
+                    }
+                }
+                catch (Exception e)
+                {
                     Toast.makeText(PatientChatActivity.this, "Chat has already ended. Cannot send messages", Toast.LENGTH_SHORT).show();
 
                     dialog.cancel();
-                    return;
-
-                }
-
-                //check for empty string...
-                else if (msg.trim().isEmpty()) {
-
-                    Toast.makeText(PatientChatActivity.this, "Please enter your query!", Toast.LENGTH_LONG).show();
-
-                    dialog.cancel();
-                }
-
-                //displaying data and adding to firebase...
-                else {
-
-                    showTextView(msg, USER);
-                    FirebaseDatabase.getInstance().getReference().child("doctors").child(DOCTOR_REG_NUMBER).child("activeAppointments").child(mAuth.getCurrentUser().getUid()).child("patient_chat").push().setValue(msg);
-                    count++;
-                    queryEditText.setText("");
-
-                    dialog.cancel();
-
-
                 }
 
                 dialog.cancel();

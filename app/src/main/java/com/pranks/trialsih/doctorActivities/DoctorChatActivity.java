@@ -418,7 +418,7 @@ public class DoctorChatActivity extends AppCompatActivity {
         }
 
 
-        dRef.child(PATIENT_UID).addValueEventListener(new ValueEventListener() {
+        dRef.child(PATIENT_UID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -438,7 +438,7 @@ public class DoctorChatActivity extends AppCompatActivity {
                 String nameOfNode = "";
 
                 try {
-                    nameOfNode = PREV_APPOINTMENTS + (dataSnapshot.child(PREV_APPOINTMENTS).child(PATIENT_UID).getChildrenCount() + 1);
+                    nameOfNode = PREV_APPOINTMENTS + (dataSnapshot.getChildrenCount() + 1);
                 }
                 catch (Exception e)
                 {
@@ -491,7 +491,7 @@ public class DoctorChatActivity extends AppCompatActivity {
 
         }
 
-        pRef.child(DOCTOR_REG_NUMBER).addValueEventListener(new ValueEventListener() {
+        pRef.child(DOCTOR_REG_NUMBER).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -511,7 +511,7 @@ public class DoctorChatActivity extends AppCompatActivity {
                 String nameOfNode = "";
 
                 try {
-                    nameOfNode = PREV_APPOINTMENTS + (dataSnapshot.child(PREV_APPOINTMENTS).child(DOCTOR_REG_NUMBER).getChildrenCount() + 1);
+                    nameOfNode = PREV_APPOINTMENTS + (dataSnapshot.getChildrenCount() + 1);
                 }
                 catch (Exception e)
                 {
