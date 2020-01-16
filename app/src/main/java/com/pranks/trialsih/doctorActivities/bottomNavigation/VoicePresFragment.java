@@ -1,9 +1,12 @@
 package com.pranks.trialsih.doctorActivities.bottomNavigation;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -31,6 +34,10 @@ import com.pranks.trialsih.doctorActivities.bottomNavigation.editable_voice_pres
 import com.pranks.trialsih.R;
 import com.pranks.trialsih.doctorActivities.DoctorDashboardActivity;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +55,7 @@ public class VoicePresFragment extends Fragment {
     ArrayList<String> Diagnose=new ArrayList<>();
     ArrayList<String> Prescription=new ArrayList<>();
     ArrayList<String> Advice=new ArrayList<>();
-    ArrayListsCheck objarr=new ArrayListsCheck();
+    NueralNetworkTrainer objarr=new NueralNetworkTrainer();
     String nameofpat="";
     public TextView date;
     public ListView symptomList;
@@ -373,4 +380,6 @@ public class VoicePresFragment extends Fragment {
             index=9;
         return index;
     }
+
+
 }
