@@ -300,7 +300,27 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                          */
 
 
-                        showProfilePasswordDialog();
+                        //showProfilePasswordDialog();
+
+
+                        /**
+                         *
+                         * discarded because we are sending password as OTP in the mail with the description
+                         * itself...
+                         *
+                         *
+                         *
+                         *
+                         * So, finally we are calling uploadToDatabase() with a dummy password...
+                         *
+                         *
+                         */
+
+
+
+
+                        uploadToDatabase("PRANKS");
+
 
                     }
                 }
@@ -805,6 +825,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
 
     private void uploadToDatabase(String password)
     {
+
+        password = "PRANKS";
 
         String pdfPassword = getEncryptedPassword(password);
 

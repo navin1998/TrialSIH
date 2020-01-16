@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Properties;
@@ -56,7 +58,7 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
     protected void onPreExecute() {
         super.onPreExecute();
         //Show progress dialog while sending email
-        mProgressDialog = ProgressDialog.show(mContext,"Sending message", "Please wait...",false,false);
+        mProgressDialog = ProgressDialog.show(mContext,"Sending", "Please wait...",false,false);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
         mProgressDialog.dismiss();
 
         //Show success toast
-        Toast.makeText(mContext,"Message Sent",Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext,"Mail sent to: " + mEmail,Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -99,68 +101,51 @@ public class JavaApiDemo extends AsyncTask<Void,Void,Void>  {
             mm.setFrom(new InternetAddress(Utils.EMAIL));
             //Adding receiver
             mm.addRecipient(Message.RecipientType.TO, new InternetAddress(mEmail));
+
             //Adding subject
 
             mm.setSubject(mSubject);
 
-
-//
-//            BodyPart messageBodyPart = new MimeBodyPart();
-//
-//            messageBodyPart.setText(mMessage);
-//
-//            Multipart multipart = new MimeMultipart();
-//
-//            multipart.addBodyPart(messageBodyPart);
-//
-//            MimeBodyPart attachpart = new MimeBodyPart();
-//
-//            String filePath=Environment.getExternalStorageDirectory().getAbsolutePath()+"/pdffiles/02012010.pdf";
-////            DataSource source = new FileDataSource(filePath);
-////
-////            messageBodyPart.setDataHandler(new DataHandler(source));
-////
-////            messageBodyPart.setFileName(filePath);
-//
-//
-//            attachpart.attachFile(filePath);
-//            multipart.addBodyPart(attachpart);
-//            mm.setContent(multipart);
-
-
-            // Create the message body part
-
-            BodyPart messageBodyPart = new MimeBodyPart();
-
-            // Fill the message
-            messageBodyPart.setText("hello");
-
-            // Create a multipart message for attachment
-            Multipart multipart = new MimeMultipart();
-
-            // Set text message part
-            multipart.addBodyPart(messageBodyPart);
-
-            // Second part is attachment
-            messageBodyPart = new MimeBodyPart();
-            String filename = filepath;
-            DataSource source = new FileDataSource(filename);
-            messageBodyPart.setDataHandler(new DataHandler(source));
-            messageBodyPart.setFileName(filename);
-            multipart.addBodyPart(messageBodyPart);
-
-            // Send the complete message parts
-            mm.setContent(multipart);
-
-            // Send message
-            Transport.send(mm);
-            Toast.makeText(mContext, "EMail Sent Successfully with attachment!!", Toast.LENGTH_SHORT).show();
-
-
+            //Adding Message
+//            Log.i("message",mMessage);
+            if(filepath.length()==0 || filepath.isEmpty() || filepath==null){
+                mm.setText(mMessage);
+                Transport.send(mm);
+            }
+            else {
+                sendAttachment(mm,mMessage);
+                Transport.send(mm);
+            }
 
         } catch (MessagingException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void sendAttachment(MimeMessage mm,String mMessage) {
+        try{
+            BodyPart messageBodyPart=new MimeBodyPart();
+            messageBodyPart.addHeader("Content-type", "text/HTML; charset=UTF-8");
+            messageBodyPart.setText(mMessage);
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart);
+            messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setText(mMessage);
+            String file = Environment.getExternalStorageDirectory().getAbsolutePath()+"/PdfFiles/"+filepath;
+            String fileName = filepath;
+            DataSource source = new FileDataSource(file);
+
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(fileName);
+            multipart.addBodyPart(messageBodyPart);
+            mm.setContent(multipart);
+
+        }
+        catch (Exception e){
+            Toast.makeText(mContext, "ERROR : "+e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

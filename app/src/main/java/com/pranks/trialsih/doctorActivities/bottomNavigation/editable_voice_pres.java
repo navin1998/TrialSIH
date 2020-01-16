@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -16,6 +17,9 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +54,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -89,7 +94,7 @@ public class editable_voice_pres extends Fragment {
     public DatabaseReference myReference;
     String email2;
     static final int PICK_CONTACT_REQUEST = 1;
-    private static String USER_PASS = "12345";
+    private static String USER_PASS =""+(int)Math.floor(Math.random()*(1000000-100000)+100000);
     PopupWindow mPopupWindow;
     NestedScrollView scrollView;
 
@@ -439,12 +444,12 @@ public class editable_voice_pres extends Fragment {
 
     private void sendEmail(String email,String filePath) {
 
-        File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
-        File newFile = new File(imagePath, filePath);
-        Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+        SpannableString string = new SpannableString(USER_PASS);
+        string.setSpan(new StyleSpan(Typeface.BOLD), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        String mSubect="Doctor's Description";
-        String mMessage="Hii"+nameofpat+","+"\n"+"This is link of prescription: ";
+        String PatientName=nameofPerson_edit.getText().toString();
+        String mSubect="Patient's prescription";
+        String mMessage="Hii "+PatientName+","+"\n\n"+"Password for this prescription: \n"+string;
         JavaApiDemo javaApiDemo=new JavaApiDemo(getContext(),email,mSubect,mMessage,filePath);
         javaApiDemo.execute();
     }

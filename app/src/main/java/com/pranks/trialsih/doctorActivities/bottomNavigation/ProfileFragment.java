@@ -832,10 +832,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         int month = 0;
         int day = 0;
 
-        year = calendar.get(Calendar.YEAR);
+        year = Calendar.getInstance().get(Calendar.YEAR);
 
         if (y > year)
         {
+            yearOfReg.setText(null);
+            doctorUploadDetails.setDoctorYearOfReg(null);
             Snackbar.make(v, "Select valid year of registration", Snackbar.LENGTH_SHORT).show();
         }
         else
