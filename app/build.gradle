@@ -15,8 +15,17 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', "ClientAccessToken", CLIENT_ACCESS_TOKEN
+            resValue 'string', "ClientAccessToken", CLIENT_ACCESS_TOKEN
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', "ClientAccessToken", CLIENT_ACCESS_TOKEN
+            resValue 'string', "ClientAccessToken", CLIENT_ACCESS_TOKEN
         }
     }
 
@@ -94,5 +103,13 @@ dependencies {
     implementation 'com.github.gcacace:signature-pad:1.2.1'
     implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
     implementation 'org.jsoup:jsoup:1.10.2'
+
+    // Dialogflow SDK dependencies
+    implementation 'ai.api:sdk:2.0.7@aar'
+    implementation 'ai.api:libai:1.6.12'
+
+
+    // for Remote Procedure Call to avoid "No functional channel service provider found" error while creating SessionsClient
+    implementation 'io.grpc:grpc-okhttp:1.15.1'
 
 }
