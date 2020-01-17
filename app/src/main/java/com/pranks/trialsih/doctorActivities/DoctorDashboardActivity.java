@@ -155,6 +155,10 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         }
 
 
+
+
+
+
         /**
          *
          *
@@ -167,12 +171,12 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
 
         // this code is for demonstration...
-        else
-        {
-            NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
-            ArrayList<String> l = dbHelper.getNames();
-            Toast.makeText(mContext, "Size: " + l.get(100), Toast.LENGTH_SHORT).show();
-        }
+//        else
+//        {
+//            NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
+//            ArrayList<String> l = dbHelper.getNames();
+//            Toast.makeText(mContext, "Size: " + l.get(100), Toast.LENGTH_SHORT).show();
+//        }
 
 
         /**
