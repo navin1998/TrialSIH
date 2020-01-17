@@ -22,7 +22,8 @@ public class NeuralNetworkDBHelper extends SQLiteOpenHelper {
     public static final String COL_1 = "PresName";
     public static final String COL_2 = "PresSymptoms";
     public static final String COL_3 = "PresDiagnosis";
-    public static final String COL_4 = "PresAdvices";
+    public static final String COL_4 = "PresPrescriptions";
+    public static final String COL_5 = "PresAdvices";
 
     public NeuralNetworkDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -37,7 +38,8 @@ public class NeuralNetworkDBHelper extends SQLiteOpenHelper {
                 "create table " + TABLE_NAME + " (" + COL_1 + " text, " +
                         COL_2 + " text, " +
                         COL_3 + " text, " +
-                        COL_4 + " text);";
+                        COL_4 + " text, " +
+                        COL_5 + " text);";
 
         db.execSQL(CREATE_TABLE_QUERY);
 
@@ -73,7 +75,6 @@ public class NeuralNetworkDBHelper extends SQLiteOpenHelper {
     }
 
 
-
     public ArrayList<String> getNames()
     {
 
@@ -87,10 +88,54 @@ public class NeuralNetworkDBHelper extends SQLiteOpenHelper {
 
         while (res.moveToNext())
         {
-            namesList.add(res.getString(res.getColumnIndex(COL_1)));
+            if (res.getString(res.getColumnIndex(COL_1)) != null) {
+                namesList.add(res.getString(res.getColumnIndex(COL_1)));
+            }
         }
 
         return namesList;
+    }
+
+    public boolean addMedicine(String medicineName)
+    {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = 0;
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COL_4, medicineName);
+
+        result = db.insert(TABLE_NAME, null, contentValues);
+
+        if (result == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+
+
+    public ArrayList<String> getMedicines()
+    {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ArrayList<String> medicineList = new ArrayList<>();
+
+        String query = "select * from " + TABLE_NAME;
+
+        Cursor res = db.rawQuery(query, null);
+
+        while (res.moveToNext())
+        {
+            if (res.getString(res.getColumnIndex(COL_4)) != null) {
+                medicineList.add(res.getString(res.getColumnIndex(COL_4)));
+            }
+        }
+
+        return medicineList;
     }
 
 

@@ -152,6 +152,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         if (!checkInLocalDatabase())
         {
             new NeuralNetworks().execute();
+            new NeuralNetworksForMedicine().execute();
         }
 
 
@@ -175,7 +176,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 //        {
 //            NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
 //            ArrayList<String> l = dbHelper.getNames();
-//            Toast.makeText(mContext, "Size: " + l.get(100), Toast.LENGTH_SHORT).show();
+//            ArrayList<String> l2 = dbHelper.getMedicines();
+//            Toast.makeText(mContext, "Name Size: " + l.size() + "\nMedicine Size: " + l2.size(), Toast.LENGTH_SHORT).show();
 //        }
 
 
@@ -826,11 +828,14 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-    // asynchronous class for saving to local database...
+    /**
+     *
+     *
+     * asynchronous class for saving names to local database... (below)
+     *
+     *
+     */
+    // asynchronous class for saving names to local database...
     public class NeuralNetworks extends AsyncTask<Void, Void, Void> {
 
         ProgressDialog dialog;
@@ -1018,6 +1023,935 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 namesString += girlNameString;
 
                 namesString += surnamesString;
+
+
+            }
+            catch (Exception e) {
+
+                errorFound = true;
+                error = e.getMessage();
+
+            }
+
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            dialog.dismiss();
+
+            if (!errorFound)
+            {
+                saveLocalDatabasePref(true);
+            }
+            else
+            {
+                saveLocalDatabasePref(false);
+            }
+
+        }
+
+    }
+
+
+
+
+
+    /**
+     *
+     *
+     * asynchronous class for saving medicine names to local database... (below)
+     *
+     *
+     */
+    // asynchronous class for saving medicine names to local database...
+    public class NeuralNetworksForMedicine extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog dialog;
+
+        boolean errorFound;
+        String error;
+
+        String baseUrl = "https://www.drugs.com/alpha/";
+
+        String[] alphabet = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+
+
+        ArrayList<String> drugUrlsWithA = new ArrayList<>();
+        ArrayList<String> drugUrlsWithB = new ArrayList<>();
+        ArrayList<String> drugUrlsWithC = new ArrayList<>();
+        ArrayList<String> drugUrlsWithD = new ArrayList<>();
+        ArrayList<String> drugUrlsWithE = new ArrayList<>();
+        ArrayList<String> drugUrlsWithF = new ArrayList<>();
+        ArrayList<String> drugUrlsWithG = new ArrayList<>();
+        ArrayList<String> drugUrlsWithH = new ArrayList<>();
+        ArrayList<String> drugUrlsWithI = new ArrayList<>();
+        ArrayList<String> drugUrlsWithJ = new ArrayList<>();
+        ArrayList<String> drugUrlsWithK = new ArrayList<>();
+        ArrayList<String> drugUrlsWithL = new ArrayList<>();
+        ArrayList<String> drugUrlsWithM = new ArrayList<>();
+        ArrayList<String> drugUrlsWithN = new ArrayList<>();
+        ArrayList<String> drugUrlsWithO = new ArrayList<>();
+        ArrayList<String> drugUrlsWithP = new ArrayList<>();
+        ArrayList<String> drugUrlsWithQ = new ArrayList<>();
+        ArrayList<String> drugUrlsWithR = new ArrayList<>();
+        ArrayList<String> drugUrlsWithS = new ArrayList<>();
+        ArrayList<String> drugUrlsWithT = new ArrayList<>();
+        ArrayList<String> drugUrlsWithU = new ArrayList<>();
+        ArrayList<String> drugUrlsWithV = new ArrayList<>();
+        ArrayList<String> drugUrlsWithW = new ArrayList<>();
+        ArrayList<String> drugUrlsWithX = new ArrayList<>();
+        ArrayList<String> drugUrlsWithY = new ArrayList<>();
+        ArrayList<String> drugUrlsWithZ = new ArrayList<>();
+
+        ArrayList<String> preNames;
+        String boyNameString = "";
+
+        String namesString = "";
+
+        ArrayList<String> nameList = new ArrayList<>();
+
+        NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
+
+        Elements e1;
+        Elements e2;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /**
+             * create the dialog...
+             *
+             */
+
+            dialog = new ProgressDialog(mContext);
+            dialog.setTitle("Contacting server");
+            dialog.setMessage("This is one time process, please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+
+
+            /**
+             *
+             * below code is for filtering urls for scrapping of medicine names...
+             *
+             *
+             */
+
+
+            //for A...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("a") && a.equals("w")))
+                {
+                    drugUrlsWithA.add(baseUrl + "a" + a + ".html");
+                }
+            }
+
+
+            //for B...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("f") && a.equals("g") && a.equals("h") && a.equals("j") && a.equals("k") && a.equals("q") && a.equals("v") && a.equals("w") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithB.add(baseUrl + "b" + a + ".html");
+                }
+            }
+
+
+            //for C...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("f") && a.equals("g") && a.equals("j") && a.equals("k") && a.equals("m") && a.equals("q") && a.equals("s") && a.equals("w") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithC.add(baseUrl + "c" + a + ".html");
+                }
+            }
+
+
+
+            //for D...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("f") && a.equals("g") && a.equals("j") && a.equals("k") && a.equals("l") && a.equals("q") && a.equals("z")))
+                {
+                    drugUrlsWithD.add(baseUrl + "d" + a + ".html");
+                }
+            }
+
+
+
+            //for E...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("i") && a.equals("j") && a.equals("k") && a.equals("w")))
+                {
+                    drugUrlsWithE.add(baseUrl + "e" + a + ".html");
+                }
+            }
+
+
+
+            //for F...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("f") && a.equals("g") && a.equals("h") && a.equals("j") && a.equals("k") && a.equals("n") && a.equals("p") && a.equals("q") && a.equals("s") && a.equals("t") && a.equals("v") && a.equals("w") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithF.add(baseUrl + "f" + a + ".html");
+                }
+            }
+
+
+
+            //for G...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("c") && a.equals("d") && a.equals("f") && a.equals("g") && a.equals("h") && a.equals("j") && a.equals("k") && a.equals("q") && a.equals("s") && a.equals("w") && a.equals("x")))
+                {
+                    drugUrlsWithG.add(baseUrl + "g" + a + ".html");
+                }
+            }
+
+
+            //for H...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("f") && a.equals("g") && a.equals("h") && a.equals("j") && a.equals("k") && a.equals("l") && a.equals("n") && a.equals("q") && a.equals("r") && a.equals("s") && a.equals("v") && a.equals("w") && a.equals("x")))
+                {
+                    drugUrlsWithH.add(baseUrl + "h" + a + ".html");
+                }
+            }
+
+
+
+            //for I...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("a") && a.equals("e") && a.equals("g") && a.equals("h") && a.equals("i") && a.equals("j") && a.equals("k") && a.equals("u") && a.equals("w") && a.equals("y")))
+                {
+                    drugUrlsWithI.add(baseUrl + "i" + a + ".html");
+                }
+            }
+
+
+
+            //for J...
+            for (String a : alphabet)
+            {
+                if ((a.equals("a") || a.equals("c") || a.equals("e") || a.equals("i") || a.equals("m") || a.equals("o") || a.equals("t") || a.equals("u") || a.equals("y")))
+                {
+                    drugUrlsWithJ.add(baseUrl + "j" + a + ".html");
+                }
+            }
+
+
+            /**
+             *
+             *
+             *
+             *
+             */
+
+
+            //for K...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("f") && a.equals("g") && a.equals("j") && a.equals("k") && a.equals("m") && a.equals("q") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithK.add(baseUrl + "k" + a + ".html");
+                }
+            }
+
+
+            //for L...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("f") && a.equals("h") && a.equals("j") && a.equals("k") && a.equals("l") && a.equals("n") && a.equals("p") && a.equals("q") && a.equals("r") && a.equals("s") && a.equals("v") && a.equals("w") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithL.add(baseUrl + "l" + a + ".html");
+                }
+            }
+
+
+
+            //for M...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("j") && a.equals("k") && a.equals("q") && a.equals("r") && a.equals("w") && a.equals("x")))
+                {
+                    drugUrlsWithM.add(baseUrl + "m" + a + ".html");
+                }
+            }
+
+
+
+            //for N...
+            for (String a : alphabet)
+            {
+                if ((a.equals("a") || a.equals("e") || a.equals("f") || a.equals("i") || a.equals("o") || a.equals("p") || a.equals("r") || a.equals("u") || a.equals("y")))
+                {
+                    drugUrlsWithN.add(baseUrl + "n" + a + ".html");
+                }
+            }
+
+
+            //for O...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("i") && a.equals("j") && a.equals("k") && a.equals("o") && a.equals("q") && a.equals("w")))
+                {
+                    drugUrlsWithO.add(baseUrl + "o" + a + ".html");
+                }
+            }
+
+
+
+            //for P...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("g") && a.equals("j") && a.equals("k") && a.equals("p") && a.equals("q") && a.equals("t") && a.equals("v") && a.equals("w") && a.equals("z")))
+                {
+                    drugUrlsWithP.add(baseUrl + "p" + a + ".html");
+                }
+            }
+
+
+
+            //for Q...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("a") && a.equals("e") && a.equals("f") && a.equals("g") && a.equals("h") && a.equals("i") && a.equals("j") && a.equals("k") && a.equals("o") && a.equals("q") && a.equals("w") && a.equals("x") && a.equals("y") && a.equals("z")))
+                {
+                    drugUrlsWithQ.add(baseUrl + "q" + a + ".html");
+                }
+            }
+
+
+
+            //for R...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("j") && a.equals("k") && a.equals("l") && a.equals("n") && a.equals("q") && a.equals("r") && a.equals("s") && a.equals("v") && a.equals("w") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithR.add(baseUrl + "r" + a + ".html");
+                }
+            }
+
+
+
+            //for S...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("g") && a.equals("j") && a.equals("v") && a.equals("z")))
+                {
+                    drugUrlsWithS.add(baseUrl + "s" + a + ".html");
+                }
+            }
+
+
+            /**
+             *
+             *
+             *
+             */
+
+
+
+            //for T...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("j") && a.equals("k") && a.equals("m") && a.equals("q") && a.equals("t") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithT.add(baseUrl + "t" + a + ".html");
+                }
+            }
+
+
+
+            //for U...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("e") && a.equals("f") && a.equals("g") && a.equals("h") && a.equals("i") && a.equals("j") && a.equals("o") && a.equals("q") && a.equals("u") && a.equals("w") && a.equals("x") && a.equals("y") && a.equals("z")))
+                {
+                    drugUrlsWithU.add(baseUrl + "u" + a + ".html");
+                }
+            }
+
+
+            //for V...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("g") && a.equals("j") && a.equals("k") && a.equals("l") && a.equals("q") && a.equals("v") && a.equals("w") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithV.add(baseUrl + "v" + a + ".html");
+                }
+            }
+
+
+
+            //for W...
+            for (String a : alphabet)
+            {
+                if ((a.equals("a") || a.equals("e") || a.equals("h") || a.equals("i") || a.equals("o") || a.equals("p") || a.equals("r") || a.equals("y")))
+                {
+                    drugUrlsWithW.add(baseUrl + "w" + a + ".html");
+                }
+            }
+
+
+
+            //for X...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("f") && a.equals("j") && a.equals("k") && a.equals("l") && a.equals("m") && a.equals("n") && a.equals("q") && a.equals("s") && a.equals("w") && a.equals("x") && a.equals("z")))
+                {
+                    drugUrlsWithX.add(baseUrl + "x" + a + ".html");
+                }
+            }
+
+
+
+            //for Y...
+            for (String a : alphabet)
+            {
+                if ((a.equals("a") || a.equals("b") || a.equals("c") || a.equals("e") || a.equals("f") || a.equals("i") || a.equals("o") || a.equals("u")))
+                {
+                    drugUrlsWithY.add(baseUrl + "y" + a + ".html");
+                }
+            }
+
+
+
+            //for Z...
+            for (String a : alphabet)
+            {
+                if (!(a.equals("b") && a.equals("d") && a.equals("j") && a.equals("k") && a.equals("l") && a.equals("p") && a.equals("q") && a.equals("r") && a.equals("v") && a.equals("w") && a.equals("x")))
+                {
+                    drugUrlsWithZ.add(baseUrl + "z" + a + ".html");
+                }
+            }
+
+
+
+
+            /**
+             *
+             *
+             * end here...
+             *
+             */
+
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            try {
+
+
+                Document doc;
+
+                // drug name with a...
+                for (String url : drugUrlsWithA)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with b...
+                for (String url : drugUrlsWithB)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with c...
+                for (String url : drugUrlsWithC)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with d...
+                for (String url : drugUrlsWithD)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with e...
+                for (String url : drugUrlsWithE)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with f...
+                for (String url : drugUrlsWithF)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with g...
+                for (String url : drugUrlsWithG)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                /**
+                 *
+                 *
+                 *
+                 *
+                 */
+
+
+
+                // drug name with h...
+                for (String url : drugUrlsWithH)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with i...
+                for (String url : drugUrlsWithI)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with j...
+                for (String url : drugUrlsWithJ)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with K...
+                for (String url : drugUrlsWithK)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with l...
+                for (String url : drugUrlsWithL)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with m...
+                for (String url : drugUrlsWithM)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with n...
+                for (String url : drugUrlsWithN)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+                // drug name with o...
+                for (String url : drugUrlsWithO)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with p...
+                for (String url : drugUrlsWithP)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with q...
+                for (String url : drugUrlsWithQ)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with r...
+                for (String url : drugUrlsWithR)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with s...
+                for (String url : drugUrlsWithS)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+                /**
+                 *
+                 *
+                 *
+                 *
+                 */
+
+
+
+                // drug name with t...
+                for (String url : drugUrlsWithT)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with u...
+                for (String url : drugUrlsWithU)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with v...
+                for (String url : drugUrlsWithV)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with w...
+                for (String url : drugUrlsWithW)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+
+                // drug names with x...
+                for (String url : drugUrlsWithX)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                /**
+                 *
+                 *
+                 *
+                 *
+                 */
+
+
+
+                // drug name with Y...
+                for (String url : drugUrlsWithY)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                // drug names with z...
+                for (String url : drugUrlsWithZ)
+                {
+
+                    doc = Jsoup.connect(url).get();
+                    e2 = doc.select("ul.ddc-list-column-2 li a[href]");
+                    for (Element e : e2)
+                    {
+                        boyNameString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addMedicine(e.text().toLowerCase());
+                    }
+
+                }
+
+
+                /**
+                 *
+                 * ends here...
+                 *
+                 */
+
+
+
+                namesString += boyNameString;
 
 
             }
