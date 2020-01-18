@@ -223,6 +223,7 @@ public class BookADoctorAdapter extends RecyclerView.Adapter<BookADoctorAdapter.
                 {
                     Glide.with(mContext)
                             .load(dataSnapshot.child("doctorPhotoUri").getValue().toString())
+                            .fitCenter()
                             .placeholder(R.drawable.man)
                             .into(doctorPic);
                 }catch (Exception e){}

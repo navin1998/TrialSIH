@@ -139,4 +139,48 @@ public class NeuralNetworkDBHelper extends SQLiteOpenHelper {
     }
 
 
+    public boolean addSymptoms(String symptomName)
+    {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long result = 0;
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(COL_2, symptomName);
+
+        result = db.insert(TABLE_NAME, null, contentValues);
+
+        if (result == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+
+    }
+
+
+
+    public ArrayList<String> getSymptoms()
+    {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ArrayList<String> symptomsList = new ArrayList<>();
+
+        String query = "select * from " + TABLE_NAME;
+
+        Cursor res = db.rawQuery(query, null);
+
+        while (res.moveToNext())
+        {
+            if (res.getString(res.getColumnIndex(COL_2)) != null) {
+                symptomsList.add(res.getString(res.getColumnIndex(COL_2)));
+            }
+        }
+
+        return symptomsList;
+    }
+
+
 }

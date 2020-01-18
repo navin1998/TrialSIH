@@ -153,6 +153,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         {
             new NeuralNetworks().execute();
             new NeuralNetworksForMedicine().execute();
+            new NeuralNetworksForSymptoms().execute();
         }
 
 
@@ -172,13 +173,14 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
 
         // this code is for demonstration...
-//        else
-//        {
-//            NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
-//            ArrayList<String> l = dbHelper.getNames();
-//            ArrayList<String> l2 = dbHelper.getMedicines();
-//            Toast.makeText(mContext, "Name Size: " + l.size() + "\nMedicine Size: " + l2.size(), Toast.LENGTH_SHORT).show();
-//        }
+        else
+        {
+            NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
+            ArrayList<String> l = dbHelper.getNames();
+            ArrayList<String> l2 = dbHelper.getMedicines();
+            ArrayList<String> l3 = dbHelper.getSymptoms();
+            Toast.makeText(mContext, "Name Size: " + l.size() + "\nMedicine Size: " + l2.size() + "\nSymptom Size: " + l3.size(), Toast.LENGTH_LONG).show();
+        }
 
 
         /**
@@ -1985,6 +1987,146 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         }
 
     }
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     *
+     * asynchronous class for saving symptoms to local database... (below)
+     *
+     *
+     */
+    // asynchronous class for saving symptoms to local database...
+    public class NeuralNetworksForSymptoms extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog dialog;
+
+        boolean errorFound;
+        String error;
+
+        String symptomsUrl = "https://en.wikipedia.org/wiki/List_of_medical_symptoms";
+
+        String baseUrl = "https://www.medicinenet.com/symptoms_and_signs/alpha_";
+
+        String[] alphabet = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "y", "z"};
+
+        ArrayList<String> urls = new ArrayList<>();
+
+        String symptomsString = "";
+
+        ArrayList<String> nameList = new ArrayList<>();
+
+        NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
+
+        Elements e1;
+        Elements e2;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /**
+             * create the dialog...
+             *
+             */
+
+            dialog = new ProgressDialog(mContext);
+            dialog.setTitle("Contacting server");
+            dialog.setMessage("This is one time process, please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+
+
+            for (String a : alphabet)
+            {
+                urls.add(baseUrl + a + ".htm");
+            }
+
+
+            /**
+             *
+             *
+             * end here...
+             *
+             */
+
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            try {
+
+
+                Document doc;
+                doc = Jsoup.connect(symptomsUrl).get();
+                e2 = doc.select("div.div-col ul li ul li a[href]");
+                for (Element e : e2)
+                {
+                    symptomsString += e.text().toLowerCase() + "\n";
+                    nameList.add(e.text().toLowerCase());
+
+                    dbHelper.addSymptoms(e.text().toLowerCase());
+                }
+
+
+                for (String newUrl : urls)
+                {
+
+                    doc = Jsoup.connect(newUrl).get();
+                    e2 = doc.select("div.AZ_results ul li a[href]");
+                    for (Element e : e2)
+                    {
+                        symptomsString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addSymptoms(e.text().toLowerCase());
+                    }
+
+                }
+
+
+            }
+            catch (Exception e) {
+
+                errorFound = true;
+                error = e.getMessage();
+
+            }
+
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            dialog.dismiss();
+
+            if (!errorFound)
+            {
+                saveLocalDatabasePref(true);
+            }
+            else
+            {
+                saveLocalDatabasePref(false);
+            }
+
+        }
+
+    }
+
 
 
 
