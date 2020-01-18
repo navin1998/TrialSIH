@@ -567,7 +567,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
     /**
      *
-     * this was for the search icon in iour app, now for no use, but please don't delete it...
+     * this was for the search icon in our app, now for no use, but please don't delete it...
      *
      *
      */
