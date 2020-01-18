@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,12 +31,19 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 import com.github.gcacace.signaturepad.views.SignaturePad;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -49,6 +57,7 @@ import com.pranks.trialsih.PdfPreview;
 import com.pranks.trialsih.R;
 import com.pranks.trialsih.doctorActivities.bottomNavigation.JavaApiDemo;
 import com.pranks.trialsih.doctorActivities.bottomNavigation.ListViewAdapter;
+import com.pranks.trialsih.doctorDBHelpers.DoctorCredentialsDBHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,6 +67,7 @@ import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import static android.app.Activity.RESULT_OK;
@@ -85,6 +95,7 @@ public class editable_voice_pres extends Fragment {
     private PdfPCell cell;
     private String textAnswer;
     Image bgImage1;
+    Image signImage;
     private String path;
     private File dir;
     private File file;
@@ -98,9 +109,18 @@ public class editable_voice_pres extends Fragment {
     PopupWindow mPopupWindow;
     NestedScrollView scrollView;
 
+
+
+    private final static String USER_TYPE_DOCTOR = "doctors";
+    private final static String PROFILE = "profile";
+    private static String REG_NUMBER;
+
+
+
     //use to set background color
     BaseColor myColor = WebColors.getRGBColor("#9E9E9E");
     BaseColor myColor1 = WebColors.getRGBColor("#757575");
+    BaseColor backTop = WebColors.getRGBColor("#48CDDF");
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -144,6 +164,12 @@ public class editable_voice_pres extends Fragment {
         listAdvice.setItemsCanFocus(true);
         adapteradvice=new ListViewAdapter(getContext(),Advice);
         listAdvice.setAdapter(adapteradvice);
+
+
+        //getting registration number of doctor...
+        DoctorCredentialsDBHelper dbHelper = new DoctorCredentialsDBHelper(getContext());
+        REG_NUMBER = dbHelper.getRegNumber();
+
 
         //creating new file path
         path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/PdfFiles";
@@ -207,10 +233,174 @@ public class editable_voice_pres extends Fragment {
 
     }
 
-    public void createPDF(Bitmap bitmap) throws FileNotFoundException, DocumentException {
-        //create document file
+    public void createPDF(Bitmap signBitmap, String doctorName, String doctorDegree, String doctorType, String doctorPhone, String clinicName, String clinicAddress, String clinicMail, String patientName, String patientAge, String patientGender) throws FileNotFoundException, DocumentException {
+
+        /**
+         *
+         *
+         *
+         */
+
+
+//        //create document file
+//        com.itextpdf.text.Document doc = new com.itextpdf.text.Document();
+//        try {
+//            SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+//            pathtoupload=sdf.format(Calendar.getInstance().getTime()) + "" + Calendar.getInstance().getTimeInMillis() + ".pdf";
+//            file = new File(dir, pathtoupload);
+//            FileOutputStream fOut = new FileOutputStream(file);
+//            PdfWriter writer = PdfWriter.getInstance(doc, fOut);
+//
+//
+//            writer.setEncryption(USER_PASS.getBytes(), USER_PASS.getBytes(),
+//                    PdfWriter.ALLOW_PRINTING, PdfWriter.DO_NOT_ENCRYPT_METADATA);
+//
+//            //open the document
+//            doc.open();
+//            //create table
+//            PdfPTable pt = new PdfPTable(3);
+//            pt.setWidthPercentage(100);
+//            float[] fl = new float[]{25,30, 45};
+//            pt.setWidths(fl);
+//            cell = new PdfPCell();
+//            cell.setBorder(Rectangle.NO_BORDER);
+//
+//            //set drawable in cell
+////            Drawable myImage = getActivity().getResources().getDrawable(R.drawable.trinity);
+////            Bitmap bitmap = ((BitmapDrawable) myImage).getBitmap();
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//            byte[] bitmapdata = stream.toByteArray();
+//            try {
+//                bgImage1 = Image.getInstance(bitmapdata);
+//                bgImage1.setAbsolutePosition(330f, 642f);
+//                cell.addElement(bgImage1);
+//                pt.addCell(cell);
+//                cell = new PdfPCell();
+//                cell.setBorder(Rectangle.NO_BORDER);
+//                cell.addElement(new Paragraph(nameofPerson_edit.getText().toString()+"\n"+agesex_edit.getText().toString()));
+//
+//                cell.addElement(new Paragraph(""));
+//                cell.addElement(new Paragraph(""));
+//                pt.addCell(cell);
+//                cell = new PdfPCell(new Paragraph(""));
+//                cell.setBorder(Rectangle.NO_BORDER);
+//                pt.addCell(cell);
+//
+//                PdfPTable pTable = new PdfPTable(1);
+//                pTable.setWidthPercentage(100);
+//                cell = new PdfPCell();
+//                cell.setColspan(1);
+//                cell.addElement(pt);
+//                pTable.addCell(cell);
+//                PdfPTable table = new PdfPTable(3);
+//
+//                float[] columnWidth = new float[]{6, 30, 30};
+//                table.setWidths(columnWidth);
+//
+//
+//                cell = new PdfPCell();
+//
+//
+//                cell.setBackgroundColor(myColor);
+//                cell.setColspan(3);
+//                cell.addElement(pTable);
+//                table.addCell(cell);
+//                cell = new PdfPCell(new Phrase(" "));
+//                cell.setColspan(3);
+//                table.addCell(cell);
+//                cell = new PdfPCell();
+//                cell.setColspan(3);
+//
+//                cell.setBackgroundColor(myColor1);
+//
+//                cell = new PdfPCell(new Phrase("#"));
+//                cell.setBackgroundColor(myColor1);
+//                table.addCell(cell);
+//                cell = new PdfPCell(new Phrase("Parameters"));
+//                cell.setBackgroundColor(myColor1);
+//                table.addCell(cell);
+//                cell = new PdfPCell(new Phrase("Discription"));
+//                cell.setBackgroundColor(myColor1);
+//                table.addCell(cell);
+//
+//                //table.setHeaderRows(3);
+//                cell = new PdfPCell();
+//                cell.setColspan(3);
+//
+//                table.addCell(String.valueOf(1));
+//                table.addCell("Symptoms");
+//                String symtomcell="";
+//                for(String s12:Symptoms){
+//                    symtomcell+=s12+"\n";
+//                }
+//                table.addCell(symtomcell);
+//
+//                table.addCell(String.valueOf(2));
+//                table.addCell("Diagnosis");
+//                String diagnosecell="";
+//                for(String s12:Diagnose){
+//                    diagnosecell+=s12+"\n";
+//                }
+//                table.addCell(diagnosecell);
+//
+//                table.addCell(String.valueOf(3));
+//                table.addCell("Prescription");
+//                String Prescell="";
+//                for(String s12:Prescription){
+//                    Prescell+=s12+"\n";
+//                }
+//                table.addCell(Prescell);
+//
+//                table.addCell(String.valueOf(2));
+//                table.addCell("Advice");
+//                String advicecell="";
+//                for(String s12:Advice){
+//                    advicecell+=s12+"\n";
+//                }
+//                table.addCell(advicecell);
+//
+//                PdfPTable ftable = new PdfPTable(3);
+//                ftable.setWidthPercentage(100);
+//                float[] columnWidthaa = new float[]{30, 10, 30};
+//                ftable.setWidths(columnWidthaa);
+//                cell = new PdfPCell();
+//                cell.setColspan(3);
+//                cell.setBackgroundColor(myColor1);
+//                cell = new PdfPCell(new Phrase("Signature"));
+//                cell.setBorder(Rectangle.NO_BORDER);
+//                cell.setBackgroundColor(myColor1);
+//                ftable.addCell(cell);
+//                cell = new PdfPCell(new Phrase(""));
+//                cell.setBorder(Rectangle.NO_BORDER);
+//                cell.setBackgroundColor(myColor1);
+//                ftable.addCell(cell);
+//                cell = new PdfPCell(new Phrase(""));
+//                cell.setBorder(Rectangle.NO_BORDER);
+//                cell.setBackgroundColor(myColor1);
+//                ftable.addCell(cell);
+//                cell = new PdfPCell(new Paragraph("By Prank Limited"));
+//                cell.setColspan(3);
+//                ftable.addCell(cell);
+//                cell = new PdfPCell();
+//                cell.setColspan(3);
+//                cell.addElement(ftable);
+//                table.addCell(cell);
+//                doc.add(table);
+//                doc.close();
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
         com.itextpdf.text.Document doc = new com.itextpdf.text.Document();
         try {
+
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.medical);
             SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
             pathtoupload=sdf.format(Calendar.getInstance().getTime()) + "" + Calendar.getInstance().getTimeInMillis() + ".pdf";
             file = new File(dir, pathtoupload);
@@ -218,148 +408,492 @@ public class editable_voice_pres extends Fragment {
             PdfWriter writer = PdfWriter.getInstance(doc, fOut);
 
 
-            writer.setEncryption(USER_PASS.getBytes(), USER_PASS.getBytes(),
-                    PdfWriter.ALLOW_PRINTING, PdfWriter.DO_NOT_ENCRYPT_METADATA);
+//            writer.setEncryption(USER_PASS.getBytes(), USER_PASS.getBytes(),
+//                    PdfWriter.ALLOW_PRINTING, PdfWriter.DO_NOT_ENCRYPT_METADATA);
 
             //open the document
             doc.open();
+
+
             //create table
-            PdfPTable pt = new PdfPTable(3);
+            PdfPTable pt = new PdfPTable(2);
             pt.setWidthPercentage(100);
-            float[] fl = new float[]{25,30, 45};
+            float[] fl = new float[]{25, 75};
             pt.setWidths(fl);
             cell = new PdfPCell();
             cell.setBorder(Rectangle.NO_BORDER);
 
-            //set drawable in cell
-//            Drawable myImage = getActivity().getResources().getDrawable(R.drawable.trinity);
-//            Bitmap bitmap = ((BitmapDrawable) myImage).getBitmap();
+
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] bitmapdata = stream.toByteArray();
+            byte[] bitmapData = stream.toByteArray();
+
             try {
-                bgImage1 = Image.getInstance(bitmapdata);
-                bgImage1.setAbsolutePosition(330f, 642f);
+
+                cell.setBackgroundColor(backTop);
+                bgImage1 = Image.getInstance(bitmapData);
+                bgImage1.setAbsolutePosition(0f, 0f);
                 cell.addElement(bgImage1);
-                pt.addCell(cell);
-                cell = new PdfPCell();
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.addElement(new Paragraph(nameofPerson_edit.getText().toString()+"\n"+agesex_edit.getText().toString()));
-
-                cell.addElement(new Paragraph(""));
-                cell.addElement(new Paragraph(""));
-                pt.addCell(cell);
-                cell = new PdfPCell(new Paragraph(""));
-                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
                 pt.addCell(cell);
 
-                PdfPTable pTable = new PdfPTable(1);
-                pTable.setWidthPercentage(100);
-                cell = new PdfPCell();
-                cell.setColspan(1);
-                cell.addElement(pt);
-                pTable.addCell(cell);
-                PdfPTable table = new PdfPTable(3);
-
-                float[] columnWidth = new float[]{6, 30, 30};
-                table.setWidths(columnWidth);
-
 
                 cell = new PdfPCell();
-
-
-                cell.setBackgroundColor(myColor);
-                cell.setColspan(3);
-                cell.addElement(pTable);
-                table.addCell(cell);
-                cell = new PdfPCell(new Phrase(" "));
-                cell.setColspan(3);
-                table.addCell(cell);
-                cell = new PdfPCell();
-                cell.setColspan(3);
-
-                cell.setBackgroundColor(myColor1);
-
-                cell = new PdfPCell(new Phrase("#"));
-                cell.setBackgroundColor(myColor1);
-                table.addCell(cell);
-                cell = new PdfPCell(new Phrase("Parameters"));
-                cell.setBackgroundColor(myColor1);
-                table.addCell(cell);
-                cell = new PdfPCell(new Phrase("Discription"));
-                cell.setBackgroundColor(myColor1);
-                table.addCell(cell);
-
-                //table.setHeaderRows(3);
-                cell = new PdfPCell();
-                cell.setColspan(3);
-
-                table.addCell(String.valueOf(1));
-                table.addCell("Symptoms");
-                String symtomcell="";
-                for(String s12:Symptoms){
-                    symtomcell+=s12+"\n";
-                }
-                table.addCell(symtomcell);
-
-                table.addCell(String.valueOf(2));
-                table.addCell("Diagnosis");
-                String diagnosecell="";
-                for(String s12:Diagnose){
-                    diagnosecell+=s12+"\n";
-                }
-                table.addCell(diagnosecell);
-
-                table.addCell(String.valueOf(3));
-                table.addCell("Prescription");
-                String Prescell="";
-                for(String s12:Prescription){
-                    Prescell+=s12+"\n";
-                }
-                table.addCell(Prescell);
-
-                table.addCell(String.valueOf(2));
-                table.addCell("Advice");
-                String advicecell="";
-                for(String s12:Advice){
-                    advicecell+=s12+"\n";
-                }
-                table.addCell(advicecell);
-
-                PdfPTable ftable = new PdfPTable(3);
-                ftable.setWidthPercentage(100);
-                float[] columnWidthaa = new float[]{30, 10, 30};
-                ftable.setWidths(columnWidthaa);
-                cell = new PdfPCell();
-                cell.setColspan(3);
-                cell.setBackgroundColor(myColor1);
-                cell = new PdfPCell(new Phrase("Signature"));
                 cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBackgroundColor(myColor1);
-                ftable.addCell(cell);
-                cell = new PdfPCell(new Phrase(""));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBackgroundColor(myColor1);
-                ftable.addCell(cell);
-                cell = new PdfPCell(new Phrase(""));
-                cell.setBorder(Rectangle.NO_BORDER);
-                cell.setBackgroundColor(myColor1);
-                ftable.addCell(cell);
-                cell = new PdfPCell(new Paragraph("By Prank Limited"));
-                cell.setColspan(3);
-                ftable.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 */
+
+                Font whiteLarge = new Font(Font.FontFamily.TIMES_ROMAN, 30, Font.NORMAL, BaseColor.WHITE);
+                whiteLarge.setStyle(Font.BOLD);
+
+                Font whiteSmall = new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, BaseColor.WHITE);
+
+                Font greySmall = new Font(Font.FontFamily.HELVETICA, 14, Font.NORMAL, BaseColor.GRAY);
+
+                Chunk c1 = new Chunk(clinicName, whiteLarge);
+                Paragraph p1 = new Paragraph(c1);
+                Chunk c2 = new Chunk(clinicAddress, whiteSmall);
+                Paragraph p2 = new Paragraph(c2);
+                Chunk c3 = new Chunk(clinicMail, whiteSmall);
+                Paragraph p3 = new Paragraph(c3);
+
+
+                /**
+                 *
+                 *
+                 */
+
+                cell.setBackgroundColor(backTop);
+                cell.addElement(p1);
+                cell.addElement(p2);
+                cell.addElement(p3);
+                pt.addCell(cell);
+
+                /**
+                 *
+                 *
+                 */
+
+
+                PdfPTable pt2 = new PdfPTable(2);
+                pt2.setWidthPercentage(70);
+                fl = new float[]{50, 50};
+                pt2.setWidths(fl);
+
                 cell = new PdfPCell();
-                cell.setColspan(3);
-                cell.addElement(ftable);
-                table.addCell(cell);
-                doc.add(table);
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPaddingTop(10);
+                cell.setBackgroundColor(WebColors.getRGBColor("#FFFFFF"));
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+                cell.addElement(new Paragraph(doctorName + ", " + doctorDegree));
+                cell.addElement(new Paragraph(doctorType));
+                cell.addElement(new Paragraph(doctorPhone));
+                cell.addElement(new Paragraph("   "));
+                pt2.addCell(cell);
+
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setPaddingTop(10);
+                cell.setBackgroundColor(WebColors.getRGBColor("#FFFFFF"));
+
+                String presNumber = "" + ((int)(Math.random() * (1000000 - 10000)) + 10000);
+
+                p1 = new Paragraph("Prescription no.: " + presNumber);
+                p1.setAlignment(Element.ALIGN_RIGHT);
+                cell.addElement(p1);
+
+                Date date = Calendar.getInstance().getTime();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String strDate = dateFormat.format(date);
+
+                p1 = new Paragraph("Date : " + strDate);
+                p1.setAlignment(Element.ALIGN_RIGHT);
+                cell.addElement(p1);
+
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(new Paragraph("   "));
+                pt2.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+                PdfPTable pt3 = new PdfPTable(1);
+                pt3.setWidthPercentage(100);
+                pt3.setPaddingTop(500f);
+                fl = new float[]{100};
+                pt3.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBackgroundColor(backTop);
+                cell.setFixedHeight(2f);
+                pt3.addCell(cell);
+
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+
+                //pt4..
+
+                PdfPTable pt4 = new PdfPTable(2);
+                pt4.setWidthPercentage(70);
+                fl = new float[]{50, 50};
+                pt4.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBackgroundColor(WebColors.getRGBColor("#FFFFFF"));
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+                Font greySmallBold = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, BaseColor.GRAY);
+
+                c1 = new Chunk("Patient details: ", greySmallBold);
+                p1 = new Paragraph(c1);
+
+                cell.addElement(p1);
+                cell.addElement(new Paragraph(patientName));
+                cell.addElement(new Paragraph(patientAge + "/" + patientGender));
+                cell.addElement(new Paragraph("   "));
+                pt4.addCell(cell);
+
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBackgroundColor(WebColors.getRGBColor("#FFFFFF"));
+
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(new Paragraph("   "));
+                pt4.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+                PdfPTable pt5 = new PdfPTable(1);
+                pt5.setWidthPercentage(100);
+                fl = new float[]{100};
+                pt5.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBackgroundColor(backTop);
+                cell.setFixedHeight(2f);
+                pt5.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 */
+
+
+                PdfPTable pt6 = new PdfPTable(3);
+                pt6.setWidthPercentage(100);
+                fl = new float[]{10, 45, 45};
+                pt6.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                c1 = new Chunk("#", greySmallBold);
+                p1 = new Paragraph(c1);
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(p1);
+                pt6.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                c1 = new Chunk("Parameters", greySmallBold);
+                p1 = new Paragraph(c1);
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(p1);
+                pt6.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                c1 = new Chunk("Details", greySmallBold);
+                p1 = new Paragraph(c1);
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(p1);
+                pt6.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+
+                PdfPTable pt7 = new PdfPTable(3);
+                pt7.setWidthPercentage(100);
+                fl = new float[]{10, 45, 45};
+                pt7.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("1.");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                pt7.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("Symptoms");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                cell.addElement(new Paragraph("   "));
+                pt7.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                for (String s : Symptoms)
+                {
+                    p1 = new Paragraph(s.toUpperCase());
+                    p1.setAlignment(Element.ALIGN_CENTER);
+                    cell.addElement(p1);
+                }
+                cell.addElement(new Paragraph("   "));
+                pt7.addCell(cell);
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+                PdfPTable ptl = new PdfPTable(1);
+                ptl.setWidthPercentage(100);
+                fl = new float[]{100};
+                ptl.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.setBackgroundColor(WebColors.getRGBColor("#BCC0C4"));
+                cell.setFixedHeight(2f);
+                ptl.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+                PdfPTable pt8 = new PdfPTable(3);
+                pt8.setWidthPercentage(100);
+                fl = new float[]{10, 45, 45};
+                pt8.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("2.");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                pt8.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("Diagnosis");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                cell.addElement(new Paragraph("   "));
+                pt8.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                for (String s : Diagnose)
+                {
+                    p1 = new Paragraph(s.toUpperCase());
+                    p1.setAlignment(Element.ALIGN_CENTER);
+                    cell.addElement(p1);
+                }
+                cell.addElement(new Paragraph("   "));
+                pt8.addCell(cell);
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+                PdfPTable pt9 = new PdfPTable(3);
+                pt9.setWidthPercentage(100);
+                fl = new float[]{10, 45, 45};
+                pt9.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("3.");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                pt9.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("Prescription");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                cell.addElement(new Paragraph("   "));
+                pt9.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                for (String s : Prescription)
+                {
+                    p1 = new Paragraph(s.toUpperCase());
+                    p1.setAlignment(Element.ALIGN_CENTER);
+                    cell.addElement(p1);
+                }
+                cell.addElement(new Paragraph("   "));
+                pt9.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+
+
+                PdfPTable pt10 = new PdfPTable(3);
+                pt10.setWidthPercentage(100);
+                fl = new float[]{10, 45, 45};
+                pt10.setWidths(fl);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("4.");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                pt10.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                p1 = new Paragraph("Advice");
+                p1.setAlignment(Element.ALIGN_CENTER);
+                cell.addElement(p1);
+                cell.addElement(new Paragraph("   "));
+                pt10.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                for (String s : Advice)
+                {
+                    p1 = new Paragraph(s.toUpperCase());
+                    p1.setAlignment(Element.ALIGN_CENTER);
+                    cell.addElement(p1);
+                }
+                cell.addElement(new Paragraph("   "));
+                pt10.addCell(cell);
+
+
+
+                /**
+                 *
+                 *
+                 */
+
+                // add sign here...
+
+                PdfPTable ptSign = new PdfPTable(1);
+                ptSign.setWidthPercentage(100);
+                fl = new float[]{100};
+                ptSign.setWidths(fl);
+
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+
+
+                stream = new ByteArrayOutputStream();
+                signBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                bitmapData = stream.toByteArray();
+
+
+                signImage = Image.getInstance(bitmapData);
+                signImage.setAbsolutePosition(0f, 0f);
+                cell.addElement(signImage);
+                cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                ptSign.addCell(cell);
+
+
+                /**
+                 *
+                 *
+                 *
+                 */
+
+                doc.add(pt);
+                doc.add(pt2);
+                doc.add(pt3);
+                doc.add(pt4);
+                doc.add(pt5);
+                doc.add(pt6);
+                doc.add(ptl);
+                doc.add(pt7);
+                doc.add(ptl);
+                doc.add(pt8);
+                doc.add(ptl);
+                doc.add(pt9);
+                doc.add(ptl);
+                doc.add(pt10);
+                doc.add(ptl);
+                doc.add(ptSign);
                 doc.close();
-//                File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
-//                File newFile = new File(imagePath, pathtoupload);
-//                Uri contentUri = getUriForFile(getContext(), "com.navin.trialsih", newFile);
+
+
+                /***
+                 *
+                 *
+                 *
+                 */
                 AlertDialoger(pathtoupload);
 
-            } catch (Exception e) {
+    } catch (Exception e) {
                 Log.e("PDFCreator", "ioException:" + e);
                 Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -524,17 +1058,77 @@ public class editable_voice_pres extends Fragment {
             @Override
             public void onClick(View view) {
                 Bitmap signatureBitmap = mSignaturePad.getSignatureBitmap();
-                try {
-                    createPDF(signatureBitmap);
-                    dialog.dismiss();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (DocumentException e) {
-                    e.printStackTrace();
-                }
+
+                // calling of method...
+                getInfos(signatureBitmap);
+                dialog.dismiss();
             }
         });
 
     }
+
+
+    private void getInfos(Bitmap signBitmap)
+    {
+
+        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(PROFILE);
+
+
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                String docName, docDegree, docType, docPhone, clinicName, clinicAddress, docMail, patName, patAge, patGender;
+
+
+                docName = dataSnapshot.child("doctorName").getValue().toString();
+                docDegree = dataSnapshot.child("doctorQualifications").getValue().toString();
+                docType = dataSnapshot.child("doctorType").getValue().toString();
+                docPhone = dataSnapshot.child("doctorBookingPhone").getValue().toString();
+                clinicName = dataSnapshot.child("doctorClinicName").getValue().toString();
+                clinicAddress = dataSnapshot.child("doctorClinicAddress").getValue().toString();
+                docMail = dataSnapshot.child("doctorMail").getValue().toString();
+                patName = nameofPerson_edit.getText().toString();
+
+                try {
+                    String tempArr[] = agesex_edit.getText().toString().split("/");
+                    patAge = tempArr[0];
+                    patGender = tempArr[1];
+                    if (patGender.toLowerCase().contains("male")) {
+                        patGender = "Male";
+                    } else {
+                        patGender = "Female";
+                    }
+                }
+                catch (Exception e)
+                {
+                    patName = "Anonymous";
+                    patAge = "xx Years";
+                    patGender = "Unknown";
+                }
+
+                try {
+
+                    createPDF(signBitmap, docName, docDegree, docType, docPhone, clinicName, clinicAddress, docMail, patName, patAge, patGender);
+                }
+                catch (Exception e)
+                {
+                    Snackbar.make(voiceedit, "Error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+
 
 }

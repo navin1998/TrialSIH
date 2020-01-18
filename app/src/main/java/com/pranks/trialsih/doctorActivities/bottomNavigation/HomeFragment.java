@@ -104,61 +104,59 @@ public class HomeFragment extends Fragment {
 
         list.clear();
 
-        final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(ACTIVE_APPOINTMENTS);
+        try {
+            final DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child(USER_TYPE_DOCTOR).child(REG_NUMBER).child(ACTIVE_APPOINTMENTS);
 
-        mRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists())
-                {
-                    cannotFind.setVisibility(View.VISIBLE);
-                    cannotFindText.setVisibility(View.VISIBLE);
-                    mProgressCircle.setVisibility(View.INVISIBLE);
-                }
-                else
-                {
+            mRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        cannotFind.setVisibility(View.VISIBLE);
+                        cannotFindText.setVisibility(View.VISIBLE);
+                        mProgressCircle.setVisibility(View.INVISIBLE);
+                    } else {
 
-                    list = new ArrayList<>();
-                    list.clear();
+                        list = new ArrayList<>();
+                        list.clear();
 
-                    mRecyclerView.setAdapter(null);
-                    doctorAppointmentsAdapter = null;
+                        mRecyclerView.setAdapter(null);
+                        doctorAppointmentsAdapter = null;
 
-                    ArrayList<String> listOfUid = new ArrayList<>();
+                        ArrayList<String> listOfUid = new ArrayList<>();
 
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren())
-                    {
-                        listOfUid.add(snapshot.getKey());
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            listOfUid.add(snapshot.getKey());
+                        }
+
+
+                        for (String uid : listOfUid) {
+                            list.add(dataSnapshot.child(uid).getValue(DoctorAppointments.class));
+                        }
+
+
+                        doctorAppointmentsAdapter = new DoctorAppointmentsAdapter(getContext(), list);
+
+                        mRecyclerView.setHasFixedSize(true);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+                        mRecyclerView.setAdapter(doctorAppointmentsAdapter);
+
+                        cannotFind.setVisibility(View.INVISIBLE);
+                        mProgressCircle.setVisibility(View.GONE);
+                        cannotFindText.setVisibility(View.INVISIBLE);
+
                     }
+                }
 
-
-                    for (String uid : listOfUid)
-                    {
-                        list.add(dataSnapshot.child(uid).getValue(DoctorAppointments.class));
-                    }
-
-
-                    doctorAppointmentsAdapter = new DoctorAppointmentsAdapter(getContext(), list);
-
-                    mRecyclerView.setHasFixedSize(true);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-                    mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                    mRecyclerView.setAdapter(doctorAppointmentsAdapter);
-
-                    cannotFind.setVisibility(View.INVISIBLE);
-                    mProgressCircle.setVisibility(View.GONE);
-                    cannotFindText.setVisibility(View.INVISIBLE);
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+            });
+        }
+        catch (Exception e){}
 
     }
 
