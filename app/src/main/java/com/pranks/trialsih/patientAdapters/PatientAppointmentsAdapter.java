@@ -61,6 +61,7 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
         final PatientAppointments appointments = mUploads.get(position);
         holder.textViewName.setText(appointments.getAppointmentDoctorName());
         holder.textViewType.setText(appointments.getAppointmentDoctorPhone());
+        holder.textViewCount.setText("IN QUEUE: " + appointments.getAppointmentPositionInQueue());
 
 
         final Bundle bundle = new Bundle();
@@ -88,6 +89,7 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
         public TextView textViewName;
         public TextView textViewType;
         public TextView textViewCalendar;
+        public TextView textViewCount;
         public ImageView imageView;
         public CardView cardView;
 
@@ -97,6 +99,7 @@ public class PatientAppointmentsAdapter extends RecyclerView.Adapter<PatientAppo
             cardView = itemView.findViewById(R.id.gallery_cardView);
             textViewName = itemView.findViewById(R.id.cardView_commodityName);
             textViewCalendar = itemView.findViewById(R.id.cardView_chat_with_doctor);
+            textViewCount = itemView.findViewById(R.id.cardView_count);
             textViewType = itemView.findViewById(R.id.cardView_commodityType);
             imageView = itemView.findViewById(R.id.cardView_commodityImageView);
         }

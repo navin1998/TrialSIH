@@ -45,4 +45,14 @@
         />
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="By pressing this button, you agree to our\n'Terms and Conditions'"
+        android:layout_above="@+id/change_password"
+        android:layout_margin="10dp"
+        android:textAlignment="center"
+        />
+
+
 </RelativeLayout>

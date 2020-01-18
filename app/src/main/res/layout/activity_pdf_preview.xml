@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PdfPreview"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/pdfView"
         android:layout_width="match_parent"
-        android:layout_height="540dp"/>
+        android:layout_height="match_parent"/>
+
     <Button
         android:id="@+id/sendpdf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Send"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_background"
+        android:layout_alignParentBottom="true"
         >
     </Button>
 
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+</RelativeLayout>

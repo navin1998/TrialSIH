@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -17,11 +19,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import android.os.Environment;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +33,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.barteksc.pdfviewer.PDFView;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -76,7 +83,7 @@ import static androidx.core.content.FileProvider.getUriForFile;
 
 public class editable_voice_pres extends Fragment {
     private static final int PICK_IMAGE_REQUEST = 234;
-    private static final int PICK_PDF_CODE =2342 ;
+    private static final int PICK_PDF_CODE =2342;
     public View voiceedit;
     ArrayList<String> Symptoms=new ArrayList<>();
     ArrayList<String> Diagnose=new ArrayList<>();
@@ -214,23 +221,19 @@ public class editable_voice_pres extends Fragment {
         return voiceedit;
     }
 
-    public void onPause() {
 
-        super.onPause();
-        //deleteFolder();
-
-    }
-
-    public void onStop() {
-
-        super.onStop();
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
         deleteFolder();
     }
 
-    public void onBackPressed() {
+    @Override
+    public void onStop() {
+        super.onStop();
 
-
+        deleteFolder();
     }
 
     public void createPDF(Bitmap signBitmap, String doctorName, String doctorDegree, String doctorType, String doctorPhone, String clinicName, String clinicAddress, String clinicMail, String patientName, String patientAge, String patientGender) throws FileNotFoundException, DocumentException {
@@ -406,6 +409,9 @@ public class editable_voice_pres extends Fragment {
             file = new File(dir, pathtoupload);
             FileOutputStream fOut = new FileOutputStream(file);
             PdfWriter writer = PdfWriter.getInstance(doc, fOut);
+
+            writer.setEncryption(USER_PASS.getBytes(), USER_PASS.getBytes(),
+                    PdfWriter.ALLOW_PRINTING, PdfWriter.DO_NOT_ENCRYPT_METADATA);
 
 
 //            writer.setEncryption(USER_PASS.getBytes(), USER_PASS.getBytes(),
@@ -891,7 +897,11 @@ public class editable_voice_pres extends Fragment {
                  *
                  *
                  */
-                AlertDialoger(pathtoupload);
+                //AlertDialoger(pathtoupload);
+
+                //showPDFPreviewAndSendDialog(pathtoupload);
+
+                showAlertDialog(pathtoupload);
 
     } catch (Exception e) {
                 Log.e("PDFCreator", "ioException:" + e);
@@ -902,6 +912,233 @@ public class editable_voice_pres extends Fragment {
             Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    /**
+     *
+     * method for show custom alert dialog to send and preview pdfs... (below)
+     *
+     */
+
+
+
+    private void showPDFPreviewAndSendDialog(String filepath)
+    {
+
+        /**
+         *  instantiating variables
+         *
+         */
+
+        File phonePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");
+        File newFile = new File(phonePath, path);
+        Uri contentUri = getUriForFile(getContext(), "com.pranks.trialsih", newFile);
+
+
+        /**
+         *
+         *
+         */
+
+
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_pdf_preview, null);
+        final Button sendBtn = alertLayout.findViewById(R.id.sendpdf);
+        final PDFView pdfView = alertLayout.findViewById(R.id.pdfView);
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(false);
+
+
+        pdfView.fromUri(contentUri)
+                .enableSwipe(true)
+                .swipeHorizontal(false)
+                .enableDoubletap(true)
+                .defaultPage(0)
+                .enableAnnotationRendering(false)
+                .password(USER_PASS)
+                .scrollHandle(null)
+                .load();
+
+
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(getContext(), "Send button clicked", Toast.LENGTH_SHORT).show();
+
+                inputDialog(filepath);
+
+                dialog.dismiss();
+            }
+        });
+
+    }
+
+
+
+
+
+
+    /**
+     *
+     *
+     *
+     */
+
+
+    /**
+     *
+     * method for show custom alert dialog for cancel, send or preview (below)
+     *
+     */
+
+
+
+    private void showAlertDialog(String filepath)
+    {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_pdf_generated, null);
+        final Button sendBtn = alertLayout.findViewById(R.id.btn_send);
+        //final Button cancelBtn = alertLayout.findViewById(R.id.btn_cancel);
+        final Button previewBtn = alertLayout.findViewById(R.id.btn_preview);
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(false);
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                inputDialogForMail(filepath);
+
+                dialog.dismiss();
+            }
+        });
+
+
+        previewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i=new Intent(getContext(), PdfPreview.class);
+                i.putExtra("path",filepath);
+                i.putExtra("password",USER_PASS);
+                try {
+                    i.putExtra("patName", nameofPerson_edit.getText().toString());
+                }
+                catch (Exception e)
+                {
+                    i.putExtra("patName", "Anonymous");
+                }
+                startActivity(i);
+
+                dialog.dismiss();
+            }
+        });
+
+    }
+
+
+    private void inputDialogForMail(String filepath)
+    {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_ask_for_patient_mail, null);
+        final Button sendBtn = alertLayout.findViewById(R.id.btn_send);
+        final EditText input = alertLayout.findViewById(R.id.editText);
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(alertLayout);
+        builder.setCancelable(true);
+
+        InputFilter filter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dEst, int dStart, int dEnd) {
+                for (int i = start; i < end; ++i)
+                {
+                    if (!Pattern.compile("[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@1234567890_.]*").matcher(String.valueOf(source.charAt(i))).matches())
+                    {
+                        return "";
+                    }
+                }
+
+                return null;
+            }
+        };
+
+        input.setFilters(new InputFilter[]{filter, new InputFilter.LengthFilter(50)});
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+
+
+        final AlertDialog dialog = builder.create();
+
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.show();
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String testName = input.getText().toString().trim();
+                testName = testName.replaceAll(" ", "");
+
+                if ((testName.length() > 0))
+                {
+                    if (Patterns.EMAIL_ADDRESS.matcher(testName).matches())
+                    {
+
+                        sendEmail(input.getText().toString().toLowerCase(), filepath);
+
+                        dialog.dismiss();
+                    }
+                    else
+                    {
+                        Toast.makeText(getContext(), "Enter valid mail ID", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+
+                    Toast.makeText(getContext(), "Enter valid mail ID", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+    }
+
+
+    /**
+     *
+     *
+     *
+     */
+
+
+
+
+
 
     void AlertDialoger(String filePath){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());

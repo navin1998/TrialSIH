@@ -32,6 +32,29 @@
             app:civ_border_color="@color/colorAccent"
             />
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_toRightOf="@+id/cardView_commodityImageView"
+            android:gravity="end"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="99"
+                android:textColor="#FFF"
+                android:id="@+id/cardView_count"
+                android:layout_gravity="end"
+                android:textSize="10sp"
+                android:padding="3dp"
+                android:background="@drawable/background_offline_text"
+                />
+
+        </LinearLayout>
+
+
         <TextView
             android:id="@+id/cardView_commodityName"
             android:layout_alignParentTop="true"

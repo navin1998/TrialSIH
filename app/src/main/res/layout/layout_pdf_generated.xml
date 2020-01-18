@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_book_appointment_dialog"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        >
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="PDF generated successfully"
+            android:textColor="#272626"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            />
+
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Choose any option from mentioned below"
+            android:textColor="#272626"
+            android:textSize="16sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            />
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            >
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#FFF"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                />
+
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:padding="20dp"
+            >
+
+<!--            <Button-->
+<!--                android:id="@+id/btn_cancel"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="cancel"-->
+<!--                android:background="@drawable/background_appointment_btn"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:textColor="#6D8EF1"-->
+<!--                android:paddingTop="10dp"-->
+<!--                android:paddingBottom="10dp"-->
+<!--                android:paddingLeft="25dp"-->
+<!--                android:paddingRight="25dp"-->
+<!--                android:layout_marginRight="5dp"-->
+<!--                />-->
+
+            <Button
+                android:id="@+id/btn_preview"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="preview"
+                android:background="@drawable/background_appointment_btn"
+                android:layout_gravity="center_vertical"
+                android:textColor="#6D8EF1"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                />
+
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="send"
+                android:background="@drawable/background_appointment_btn"
+                android:layout_gravity="center_vertical"
+                android:textColor="#6D8EF1"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:layout_marginLeft="5dp"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>
