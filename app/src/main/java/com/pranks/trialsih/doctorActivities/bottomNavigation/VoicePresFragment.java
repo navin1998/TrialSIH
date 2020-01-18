@@ -110,7 +110,7 @@ public class VoicePresFragment extends Fragment {
         preSymptoms=neuraldb.getSymptoms();
         prePrescription=neuraldb.getMedicines();
         preDiagnose.add("diabetes");
-
+        preDiagnose.add("thyroid");
         nameofperson = voice.findViewById(R.id.patient_name_dis);
         date=voice.findViewById(R.id.patient_date_dis);
         symptomList=voice.findViewById(R.id.list_symptoms);
@@ -168,146 +168,206 @@ public class VoicePresFragment extends Fragment {
 
                 ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 if (matches != null) {
-                    String recordrvoice=matches.get(0);
+                    String recordstr = matches.get(0);
+                    String recordArr[] = recordstr.split("and");
+                    for (String recordrvoice : recordArr){
 
-                    if(recordrvoice.toLowerCase().trim().contains("delete")||recordrvoice.toLowerCase().trim().contains("deletes")
-                            ||recordrvoice.toLowerCase().trim().contains("remove")){
-                        String record=recordrvoice.toLowerCase().trim();
-                        int index=0;
-                        boolean great=true;
-                        for(int i=0;i<record.length();i++){
-                            if(record.charAt(i)>=48&&record.charAt(i)<=57){
-                                index+=Integer.parseInt(Character.toString(record.charAt(i)));
-                                great=false;
-                            }
-                        }
 
-                        if(great){
-                            index=IntegerReturner(record);
-                        }
-                        if(index!=0) {
-                            if ((record.contains("symptoms") || record.contains("symptom"))&&Symptoms.size()>=index) {
-                                Symptoms.remove(index - 1);
-                            }
-                            if ((record.contains("diagnose") || record.contains("diagnosis"))&&Diagnose.size()>=index) {
-                                Diagnose.remove(index - 1);
-                            }
-                            if ((record.contains("prescription") || record.contains("prescriptions"))&&Prescription.size()>=index) {
-                                Prescription.remove(index - 1);
-                            }
-                            if ((record.contains("advice") || record.contains("advices")||record.contains("advise")||record.contains("advises"))&&Advice.size()>=index) {
-                                Advice.remove(index - 1);
-                            }
-                        }
-                    }
-                    else if(recordrvoice.toLowerCase().trim().contains("rewrite")||recordrvoice.toLowerCase().trim().contains("replace")
-                            ||recordrvoice.toLowerCase().trim().contains("replaces")){
-                        String record=recordrvoice.toLowerCase().trim();
-                        int index=0;
-                        boolean great=true;
-                        for(int i=0;i<record.length();i++){
-                            if(record.charAt(i)>=48&&record.charAt(i)<=57){
-                                index+=Integer.parseInt(Character.toString(record.charAt(i)));
-                                great=false;
-                            }
-                        }
-                        if(great){
-                            index=IntegerReturner(record);
-                        }
-                        if(index!=0) {
-                            //Toast.makeText(getContext(), Integer.toString(index), Toast.LENGTH_SHORT).show();
-                            String names[] = recordrvoice.split("with");
-                            if (names.length >= 2) {
-                                if ((record.contains("symptoms") || record.contains("symptom"))&&Symptoms.size()>=index) {
-                                    Symptoms.set(index - 1, names[1]);
-                                }
-                                if ((record.contains("diagnose") || record.contains("diagnosis"))&&Diagnose.size()>=index) {
-                                    Diagnose.set(index - 1, names[1]);
-                                }
-                                if ((record.contains("prescription") || record.contains("prescriptions"))&&Prescription.size()>=index) {
-                                    Prescription.set(index - 1, names[1]);
-                                }
-                                if ((record.contains("advice") || record.contains("advices")||record.contains("advise")||record.contains("advises"))&&Advice.size()>=index) {
-                                    Advice.set(index - 1, names[1]);
+                        if (recordrvoice.toLowerCase().trim().contains("delete") || recordrvoice.toLowerCase().trim().contains("deletes")
+                                || recordrvoice.toLowerCase().trim().contains("remove")) {
+                            String record = recordrvoice.toLowerCase().trim();
+                            int index = 0;
+                            boolean great = true;
+                            for (int i = 0; i < record.length(); i++) {
+                                if (record.charAt(i) >= 48 && record.charAt(i) <= 57) {
+                                    index += Integer.parseInt(Character.toString(record.charAt(i)));
+                                    great = false;
                                 }
                             }
-                        }
-                    }
-                    else {
-                        boolean namebool = true, dignosebool = true, prescriptionbool = true, Advicebool = true;
-                        String nameString[]=recordrvoice.trim().toLowerCase().split(" ");
-                        for (String name1 : preNames) {
-                            boolean namecheck=false;
-                            for(String n1:nameString){
-                                if (n1.equals(name1)) {
-                                    nameofpat = recordrvoice;
-                                    namebool = false;
-                                    namecheck=true;
+
+                            if (great) {
+                                index = IntegerReturner(record);
+                            }
+                            if (index != 0) {
+                                if ((record.contains("symptoms") || record.contains("symptom")) && Symptoms.size() >= index) {
+                                    Symptoms.remove(index - 1);
+                                }
+                                if ((record.contains("diagnose") || record.contains("diagnosis")) && Diagnose.size() >= index) {
+                                    Diagnose.remove(index - 1);
+                                }
+                                if ((record.contains("prescription") || record.contains("prescriptions")) && Prescription.size() >= index) {
+                                    Prescription.remove(index - 1);
+                                }
+                                if ((record.contains("advice") || record.contains("advices") || record.contains("advise") || record.contains("advises")) && Advice.size() >= index) {
+                                    Advice.remove(index - 1);
+                                }
+                            }
+                        } else if (recordrvoice.toLowerCase().trim().contains("rewrite") || recordrvoice.toLowerCase().trim().contains("replace")
+                                || recordrvoice.toLowerCase().trim().contains("replaces")) {
+                            String record = recordrvoice.toLowerCase().trim();
+                            int index = 0;
+                            boolean great = true;
+                            for (int i = 0; i < record.length(); i++) {
+                                if (record.charAt(i) >= 48 && record.charAt(i) <= 57) {
+                                    index += Integer.parseInt(Character.toString(record.charAt(i)));
+                                    great = false;
+                                }
+                            }
+                            if (great) {
+                                index = IntegerReturner(record);
+                            }
+                            if (index != 0) {
+                                //Toast.makeText(getContext(), Integer.toString(index), Toast.LENGTH_SHORT).show();
+                                String names[] = recordrvoice.split("with");
+                                if (names.length >= 2) {
+                                    if ((record.contains("symptoms") || record.contains("symptom")) && Symptoms.size() >= index) {
+                                        Symptoms.set(index - 1, names[1]);
+                                    }
+                                    if ((record.contains("diagnose") || record.contains("diagnosis")) && Diagnose.size() >= index) {
+                                        Diagnose.set(index - 1, names[1]);
+                                    }
+                                    if ((record.contains("prescription") || record.contains("prescriptions")) && Prescription.size() >= index) {
+                                        Prescription.set(index - 1, names[1]);
+                                    }
+                                    if ((record.contains("advice") || record.contains("advices") || record.contains("advise") || record.contains("advises")) && Advice.size() >= index) {
+                                        Advice.set(index - 1, names[1]);
+                                    }
+                                }
+                            }
+                        } else if (recordrvoice.toLowerCase().trim().contains("add")) {
+                            String recordSub = recordrvoice.toLowerCase().trim();
+                            int start=recordSub.indexOf("add")+4;
+                            int end=recordSub.indexOf("to");
+                            String record=recordSub.substring(start,end);
+                            Toast.makeText(getContext(),record ,Toast.LENGTH_SHORT).show();
+                            if ((recordSub.contains("symptoms") || recordSub.contains("symptom"))) {
+                                Symptoms.add(record);
+                            }
+                            if ((recordSub.contains("diagnose") || recordSub.contains("diagnosis"))) {
+                                Diagnose.add(record);
+                            }
+                            if ((recordSub.contains("prescription") || recordSub.contains("prescriptions"))) {
+                                Prescription.add(record);
+                            }
+                            if ((recordSub.contains("advice") || recordSub.contains("advices") || recordSub.contains("advise") || recordSub.contains("advises"))) {
+                                Advice.add(record);
+                            }
+                            UpdateData();
+
+                        } else {
+                            boolean namebool = true, dignosebool = true, prescriptionbool = true, Advicebool = true;
+                            String nameString[] = recordrvoice.trim().toLowerCase().split(" ");
+                            for (String name1 : preNames) {
+                                boolean namecheck = false;
+                                for (String n1 : nameString) {
+                                    if (n1.equals(name1)) {
+                                        boolean required = false, required1 = true;
+                                        String numberInvoice = "";
+                                        int indexofage = 0;
+                                        for (int j = 0; j < recordrvoice.length(); j++) {
+                                            if (recordrvoice.charAt(j) >= 48 && recordrvoice.charAt(j) <= 57) {
+                                                numberInvoice += recordrvoice.charAt(j);
+                                                required = true;
+                                                if (required1)
+                                                    indexofage = j;
+                                                required1 = false;
+                                            }
+                                        }
+                                        if (required) {
+                                            nameofpat = "";
+                                            for (int j = 0; j < indexofage - 1; j++) {
+                                                nameofpat += recordrvoice.charAt(j);
+                                            }
+                                            age = "";
+                                            for (int j = indexofage; j < recordrvoice.length(); j++) {
+                                                age += recordrvoice.charAt(j);
+                                            }
+                                        } else {
+                                            nameofpat = recordrvoice;
+                                        }
+
+                                        namebool = false;
+                                        namecheck = true;
+                                        break;
+                                    }
+                                }
+                                if (namecheck)
                                     break;
+
+                            }
+                            if (namebool) {
+                                for (String symptom1 : preSymptoms) {
+                                    if ((recordrvoice.trim().toLowerCase()).contains(symptom1)) {
+                                        Symptoms.add(recordrvoice);
+                                        dignosebool = false;
+                                        break;
+                                    }
                                 }
                             }
-                            if (namecheck)
-                                break;
+                            if (namebool && dignosebool) {
+                                for (String diagnose1 : preDiagnose) {
+                                    if ((recordrvoice.trim().toLowerCase()).contains(diagnose1)) {
+                                        Diagnose.add(recordrvoice);
+                                        prescriptionbool = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (namebool && dignosebool && prescriptionbool) {
+                                for (String prescri1 : prePrescription) {
+                                    if ((recordrvoice.trim().toLowerCase()).contains(prescri1)) {
+                                        String arr[] = recordrvoice.split(" ");
+                                        String outputStr = prescri1 + " ";
+                                        for (int i = 0; i < arr.length; i++) {
+                                            if (arr[i].contains("mg")) {
+                                                outputStr = outputStr + arr[i - 1] + "mg ";
+                                            }
+                                            if (arr[i].contains("once")) {
+                                                outputStr = outputStr + "X 1";
+                                            } else if (arr[i].contains("twice")) {
+                                                outputStr = outputStr + "X 2";
+                                            } else if (arr[i].contains("thrice")) {
+                                                outputStr = outputStr + "X 3";
+                                            }
+                                        }
+
+                                        Prescription.add(outputStr);
+                                        Advicebool = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            boolean agebool = true, sexbool = true;
+                            if (namebool && recordrvoice.toLowerCase().trim().contains("years") || recordrvoice.toLowerCase().trim().contains("year")) {
+                                if (recordrvoice.toLowerCase().contains("male") || recordrvoice.toLowerCase().contains("female")) {
+                                    String gender1[] = recordrvoice.split(" ");
+                                    if (gender1.length >= 3) {
+                                        String age1 = gender1[0] + gender1[1];
+                                        age = age1 + " / " + gender1[2];
+                                    }
+                                } else {
+                                    age = recordrvoice;
+                                }
+                                agebool = false;
+                            }
+                            if (namebool && recordrvoice.toLowerCase().trim().equals("male") || recordrvoice.toLowerCase().trim().equals("mail")) {
+                                sex = " / male";
+                                sexbool = false;
+                            }
+                            if (namebool && recordrvoice.toLowerCase().trim().equals("female") || recordrvoice.toLowerCase().trim().equals("femail")) {
+                                sex = " / female";
+                                sexbool = false;
+                            }
+                            if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool) {
+                                sendMessage(recordrvoice);
+                            }
+//                        if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool && recordrvoice.length() < 15)
+//                            Toast.makeText(getContext(), "Not match with any field Please speak again your currently spoken text is:  " +
+//                                    recordrvoice, Toast.LENGTH_SHORT).show();
 
                         }
-                        if (namebool) {
-                            for (String symptom1 : preSymptoms) {
-                                if ((recordrvoice.trim().toLowerCase()).contains(symptom1)) {
-                                    Symptoms.add(recordrvoice);
-                                    dignosebool = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (namebool && dignosebool) {
-                            for (String diagnose1 : preDiagnose) {
-                                if ((recordrvoice.trim().toLowerCase()).contains(diagnose1)) {
-                                    Diagnose.add(recordrvoice);
-                                    prescriptionbool = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (namebool && dignosebool && prescriptionbool) {
-                            for (String prescri1 : prePrescription) {
-                                if ((recordrvoice.trim().toLowerCase()).contains(prescri1)) {
-                                    Prescription.add(recordrvoice);
-                                    Advicebool = false;
-                                    break;
-                                }
-                            }
-                        }
-                        boolean agebool = true, sexbool = true;
-                        if (recordrvoice.toLowerCase().trim().contains("years") || recordrvoice.toLowerCase().trim().contains("year")) {
-                            if(recordrvoice.toLowerCase().contains("male")||recordrvoice.toLowerCase().contains("female")) {
-                                String gender1[]=recordrvoice.split(" ");
-                                if(gender1.length>=3) {
-                                    String age1 = gender1[0] + gender1[1];
-                                    age = age1 + " / " + gender1[2];
-                                }
-                            }
-                            else{
-                                age=recordrvoice;
-                            }
-                            agebool = false;
-                        }
-                        if (recordrvoice.toLowerCase().trim().equals("male") || recordrvoice.toLowerCase().trim().equals("mail")) {
-                                sex = "/male";
-                            sexbool = false;
-                        }
-                        if (recordrvoice.toLowerCase().trim().equals("female")||recordrvoice.toLowerCase().trim().equals("femail")) {
-                                sex = "/female";
-                            sexbool = false;
-                        }
-                        if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool && recordrvoice.length() >= 15) {
-                            sendMessage(recordrvoice);
-                        }
-                        if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool && recordrvoice.length() < 15)
-                            Toast.makeText(getContext(), "Not match with any field Please speak again your currently spoken text is:  " +
-                                    recordrvoice, Toast.LENGTH_SHORT).show();
-
-                    }
-                    Toast.makeText(getContext(), recordrvoice, Toast.LENGTH_SHORT).show();
+                }
+                    Toast.makeText(getContext(), recordstr, Toast.LENGTH_SHORT).show();
                     UpdateData();
                 }
             }
@@ -472,8 +532,23 @@ public class VoicePresFragment extends Fragment {
         if (aiResponse != null) {
             // process aiResponse here
             String botReply = aiResponse.getResult().getFulfillment().getSpeech();
-            if(botReply.equals("Advice")||botReply.contains("Advice")){
+            if(botReply.equals("advice")){
                 Advice.add(msg);
+                UpdateData();
+                //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
+            }
+            if(botReply.equals("diagnosis")){
+                Diagnose.add(msg);
+                UpdateData();
+                //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
+            }
+            if(botReply.equals("symptom")){
+                Symptoms.add(msg);
+                UpdateData();
+                //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
+            }
+            if(botReply.equals("prescription")){
+                Prescription.add(msg);
                 UpdateData();
                 //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
             }
