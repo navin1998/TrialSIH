@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -84,7 +86,7 @@ public class editable_voice_pres extends Fragment {
     ListViewAdapter adaptersymp,adapterdiag,adapterprescri,adapteradvice;
     private PdfPCell cell;
     private String textAnswer;
-    Image bgImage1;
+    Image bgImage1,bgImage2;
     private String path;
     private File dir;
     private File file;
@@ -237,6 +239,12 @@ public class editable_voice_pres extends Fragment {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] bitmapdata = stream.toByteArray();
+
+            Drawable myImage = getActivity().getResources().getDrawable(R.drawable.doctorlogo);
+            Bitmap bitmap1 = ((BitmapDrawable) myImage).getBitmap();
+            ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
+            bitmap1.compress(Bitmap.CompressFormat.PNG, 100, stream1);
+            byte[] bitmapdata1 = stream1.toByteArray();
             try {
                 bgImage1 = Image.getInstance(bitmapdata);
                 bgImage1.setAbsolutePosition(330f, 642f);
@@ -352,6 +360,9 @@ public class editable_voice_pres extends Fragment {
                 cell.setColspan(3);
                 cell.addElement(ftable);
                 table.addCell(cell);
+                bgImage2 = Image.getInstance(bitmapdata1);
+                bgImage2.setAbsolutePosition(330f, 642f);
+                cell.addElement(bgImage2);
                 doc.add(table);
                 doc.close();
 //                File imagePath = new File(Environment.getExternalStorageDirectory(), "PdfFiles");

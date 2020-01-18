@@ -233,6 +233,10 @@ public class VoicePresFragment extends Fragment {
                             }
                         }
                     }
+
+                    else if(recordrvoice.toLowerCase().trim().contains("add")){
+
+                    }
                     else {
                         boolean namebool = true, dignosebool = true, prescriptionbool = true, Advicebool = true;
                         String nameString[]=recordrvoice.trim().toLowerCase().split(" ");
@@ -240,7 +244,32 @@ public class VoicePresFragment extends Fragment {
                             boolean namecheck=false;
                             for(String n1:nameString){
                                 if (n1.equals(name1)) {
-                                    nameofpat = recordrvoice;
+                                    boolean required=false,required1=true;
+                                    String numberInvoice="";
+                                    int indexofage=0;
+                                    for(int j=0;j<recordrvoice.length();j++){
+                                        if(recordrvoice.charAt(j)>=48&&recordrvoice.charAt(j)<=57){
+                                            numberInvoice+=recordrvoice.charAt(j);
+                                            required=true;
+                                            if(required1)
+                                                indexofage=j;
+                                            required1=false;
+                                        }
+                                    }
+                                    if(required){
+                                        nameofpat="";
+                                        for(int j=0;j<indexofage-1;j++){
+                                            nameofpat+=recordrvoice.charAt(j);
+                                        }
+                                        age="";
+                                        for(int j=indexofage;j<recordrvoice.length();j++){
+                                            age+=recordrvoice.charAt(j);
+                                        }
+                                    }
+                                    else{
+                                        nameofpat = recordrvoice;
+                                    }
+
                                     namebool = false;
                                     namecheck=true;
                                     break;
@@ -278,7 +307,7 @@ public class VoicePresFragment extends Fragment {
                             }
                         }
                         boolean agebool = true, sexbool = true;
-                        if (recordrvoice.toLowerCase().trim().contains("years") || recordrvoice.toLowerCase().trim().contains("year")) {
+                        if (namebool&&recordrvoice.toLowerCase().trim().contains("years") || recordrvoice.toLowerCase().trim().contains("year")) {
                             if(recordrvoice.toLowerCase().contains("male")||recordrvoice.toLowerCase().contains("female")) {
                                 String gender1[]=recordrvoice.split(" ");
                                 if(gender1.length>=3) {
@@ -291,20 +320,20 @@ public class VoicePresFragment extends Fragment {
                             }
                             agebool = false;
                         }
-                        if (recordrvoice.toLowerCase().trim().equals("male") || recordrvoice.toLowerCase().trim().equals("mail")) {
-                                sex = "/male";
+                        if (namebool&&recordrvoice.toLowerCase().trim().equals("male") || recordrvoice.toLowerCase().trim().equals("mail")) {
+                                sex = " / male";
                             sexbool = false;
                         }
-                        if (recordrvoice.toLowerCase().trim().equals("female")||recordrvoice.toLowerCase().trim().equals("femail")) {
-                                sex = "/female";
+                        if (namebool&&recordrvoice.toLowerCase().trim().equals("female")||recordrvoice.toLowerCase().trim().equals("femail")) {
+                                sex = " / female";
                             sexbool = false;
                         }
-                        if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool && recordrvoice.length() >= 15) {
+                        if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool ) {
                             sendMessage(recordrvoice);
                         }
-                        if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool && recordrvoice.length() < 15)
-                            Toast.makeText(getContext(), "Not match with any field Please speak again your currently spoken text is:  " +
-                                    recordrvoice, Toast.LENGTH_SHORT).show();
+//                        if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool && recordrvoice.length() < 15)
+//                            Toast.makeText(getContext(), "Not match with any field Please speak again your currently spoken text is:  " +
+//                                    recordrvoice, Toast.LENGTH_SHORT).show();
 
                     }
                     Toast.makeText(getContext(), recordrvoice, Toast.LENGTH_SHORT).show();
@@ -472,8 +501,23 @@ public class VoicePresFragment extends Fragment {
         if (aiResponse != null) {
             // process aiResponse here
             String botReply = aiResponse.getResult().getFulfillment().getSpeech();
-            if(botReply.equals("Advice")||botReply.contains("Advice")){
+            if(botReply.equals("advice")){
                 Advice.add(msg);
+                UpdateData();
+                //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
+            }
+            if(botReply.equals("diagnosis")){
+                Diagnose.add(msg);
+                UpdateData();
+                //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
+            }
+            if(botReply.equals("symptom")){
+                Symptoms.add(msg);
+                UpdateData();
+                //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
+            }
+            if(botReply.equals("prescription")){
+                Prescription.add(msg);
                 UpdateData();
                 //Toast.makeText(getContext(), botReply, Toast.LENGTH_SHORT).show();
             }
