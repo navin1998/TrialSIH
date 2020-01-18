@@ -235,6 +235,24 @@ public class VoicePresFragment extends Fragment {
                                 }
                             }
                         } else if (recordrvoice.toLowerCase().trim().contains("add")) {
+                            String recordSub = recordrvoice.toLowerCase().trim();
+                            int start=recordSub.indexOf("add")+4;
+                            int end=recordSub.indexOf("to");
+                            String record=recordSub.substring(start,end);
+                            Toast.makeText(getContext(),record ,Toast.LENGTH_SHORT).show();
+                            if ((recordSub.contains("symptoms") || recordSub.contains("symptom"))) {
+                                Symptoms.add(record);
+                            }
+                            if ((recordSub.contains("diagnose") || recordSub.contains("diagnosis"))) {
+                                Diagnose.add(record);
+                            }
+                            if ((recordSub.contains("prescription") || recordSub.contains("prescriptions"))) {
+                                Prescription.add(record);
+                            }
+                            if ((recordSub.contains("advice") || recordSub.contains("advices") || recordSub.contains("advise") || recordSub.contains("advises"))) {
+                                Advice.add(record);
+                            }
+                            UpdateData();
 
                         } else {
                             boolean namebool = true, dignosebool = true, prescriptionbool = true, Advicebool = true;
