@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/loginvector"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="190dp"
         />
 
     <LinearLayout
@@ -103,6 +103,7 @@
 
 
             <LinearLayout
+                android:id="@+id/layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -136,6 +137,27 @@
                     />
 
             </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#272626"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
+                />
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="By signing up to our app, you are agreeing to our\n'Terms and Conditions'"
+                android:textAlignment="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                />
 
         </LinearLayout>
 
