@@ -82,9 +82,9 @@ public class VoicePresFragment extends Fragment {
     private ListView[] listViewArr;
 
     ArrayList<String> preNames;
-    ArrayList<String> preSymptoms=new ArrayList<>();
-    ArrayList<String> preDiagnose=new ArrayList<>();
-    ArrayList<String> prePrescription=new ArrayList<>();
+    ArrayList<String> preSymptoms;
+    ArrayList<String> preDiagnose;
+    ArrayList<String> prePrescription;
     ArrayList<String> preAdvice=new ArrayList<>();
 
     // Android client
@@ -110,6 +110,8 @@ public class VoicePresFragment extends Fragment {
 
         neuraldb = new NeuralNetworkDBHelper(getContext());
         preNames = neuraldb.getNames();
+        preSymptoms=neuraldb.getSymptoms();
+        prePrescription=neuraldb.getMedicines();
 
         nameofperson = voice.findViewById(R.id.patient_name_dis);
         date=voice.findViewById(R.id.patient_date_dis);

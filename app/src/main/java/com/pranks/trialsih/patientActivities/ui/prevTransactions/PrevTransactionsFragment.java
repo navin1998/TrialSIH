@@ -7,12 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,9 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.pranks.trialsih.R;
 import com.pranks.trialsih.patientActivities.PatientDashboardActivity;
-import com.pranks.trialsih.patientAdapters.PatientHistoryAdapter;
 import com.pranks.trialsih.patientAdapters.PatientTransactionHistoryAdapter;
-import com.pranks.trialsih.patientsClasses.PatientHistory;
 import com.pranks.trialsih.patientsClasses.PatientTransactionHistory;
 
 import java.util.ArrayList;
