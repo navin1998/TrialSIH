@@ -300,7 +300,24 @@ public class VoicePresFragment extends Fragment {
                         if (namebool && dignosebool && prescriptionbool) {
                             for (String prescri1 : prePrescription) {
                                 if ((recordrvoice.trim().toLowerCase()).contains(prescri1)) {
-                                    Prescription.add(recordrvoice);
+                                    String arr[]=recordrvoice.split(" ");
+                                    String outputStr=prescri1+" ";
+                                    for(String a:arr){
+                                        if(a.contains("mg")){
+                                            outputStr=outputStr+a+" ";
+                                        }
+                                        if(a.contains("once") || a.contains("one") || a.contains("1")){
+                                            outputStr=outputStr+"X 1";
+                                        }
+                                        else if(a.contains("twice") || a.contains("two") || a.contains("2")){
+                                            outputStr=outputStr+"X 2";
+                                        }
+                                        else if(a.contains("thrice") || a.contains("three") || a.contains("3")){
+                                            outputStr=outputStr+"X 3";
+                                        }
+                                    }
+
+                                    Prescription.add(outputStr);
                                     Advicebool = false;
                                     break;
                                 }
