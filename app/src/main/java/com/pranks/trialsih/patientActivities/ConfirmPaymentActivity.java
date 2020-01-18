@@ -287,6 +287,8 @@ public class ConfirmPaymentActivity extends AppCompatActivity {
                 //Code to handle successful transaction here.
                 Toast.makeText(mContext, "Transaction successful", Toast.LENGTH_SHORT).show();
 
+                APPOINTMENT_DOCTOR_FEE_STATUS = "paid";
+                APPOINTMENT_PATIENT_FEE_STATUS = "paid";
 
                 payButton.setVisibility(View.GONE);
 
