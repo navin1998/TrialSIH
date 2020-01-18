@@ -112,7 +112,7 @@ public class ChatFragment extends Fragment {
 
 
     private void initChatbot() {
-        final AIConfiguration config = new AIConfiguration(BuildConfig.ClientAccessToken,
+        final AIConfiguration config = new AIConfiguration(BuildConfig.ClientAccessToken1,
                 AIConfiguration.SupportedLanguages.English,
                 AIConfiguration.RecognitionEngine.System);
         aiDataService = new AIDataService(getContext(), config);

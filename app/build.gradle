@@ -18,14 +18,18 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', "ClientAccessToken", CLIENT_ACCESS_TOKEN
+            buildConfigField 'String', "ClientAccessToken1", CLIENT_ACCESS_TOKEN1
             resValue 'string', "ClientAccessToken", CLIENT_ACCESS_TOKEN
+            resValue 'string', "ClientAccessToken1", CLIENT_ACCESS_TOKEN1
         }
 
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField 'String', "ClientAccessToken", CLIENT_ACCESS_TOKEN
+            buildConfigField 'String', "ClientAccessToken1", CLIENT_ACCESS_TOKEN1
             resValue 'string', "ClientAccessToken", CLIENT_ACCESS_TOKEN
+            resValue 'string', "ClientAccessToken1", CLIENT_ACCESS_TOKEN1
         }
     }
 
