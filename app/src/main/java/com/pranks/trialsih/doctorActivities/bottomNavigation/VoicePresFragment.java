@@ -326,7 +326,7 @@ public class VoicePresFragment extends Fragment {
                                                 outputStr = outputStr + "X 1";
                                             } else if (arr[i].contains("twice")) {
                                                 outputStr = outputStr + "X 2";
-                                            } else if (arr[i].contains("thrice")) {
+                                            } else if (arr[i].contains("price")) {
                                                 outputStr = outputStr + "X 3";
                                             }
                                         }
