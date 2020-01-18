@@ -83,7 +83,7 @@ public class VoicePresFragment extends Fragment {
 
     ArrayList<String> preNames;
     ArrayList<String> preSymptoms;
-    ArrayList<String> preDiagnose;
+    ArrayList<String> preDiagnose=new ArrayList<>();
     ArrayList<String> prePrescription;
     ArrayList<String> preAdvice=new ArrayList<>();
 
@@ -103,15 +103,13 @@ public class VoicePresFragment extends Fragment {
         voice = inflater.inflate(R.layout.doctor_fragment_voice_pres, container, false);
 
         ((DoctorDashboardActivity) getActivity()).getSupportActionBar().setTitle("Voice Pres");
-        preDiagnose.add("paracetamol");
-        preSymptoms.add("paracetamol");
-        prePrescription.add("paracetamol");
         initChatbot();
 
         neuraldb = new NeuralNetworkDBHelper(getContext());
         preNames = neuraldb.getNames();
         preSymptoms=neuraldb.getSymptoms();
         prePrescription=neuraldb.getMedicines();
+        preDiagnose.add("diabetes");
 
         nameofperson = voice.findViewById(R.id.patient_name_dis);
         date=voice.findViewById(R.id.patient_date_dis);
@@ -281,15 +279,24 @@ public class VoicePresFragment extends Fragment {
                         }
                         boolean agebool = true, sexbool = true;
                         if (recordrvoice.toLowerCase().trim().contains("years") || recordrvoice.toLowerCase().trim().contains("year")) {
-                            age = recordrvoice;
+                            if(recordrvoice.toLowerCase().contains("male")||recordrvoice.toLowerCase().contains("female")) {
+                                String gender1[]=recordrvoice.split(" ");
+                                if(gender1.length>=3) {
+                                    String age1 = gender1[0] + gender1[1];
+                                    age = age1 + " / " + gender1[2];
+                                }
+                            }
+                            else{
+                                age=recordrvoice;
+                            }
                             agebool = false;
                         }
-                        if (recordrvoice.toLowerCase().trim().contains("male") || recordrvoice.toLowerCase().trim().contains("mail")) {
-                            sex = "/male";
+                        if (recordrvoice.toLowerCase().trim().equals("male") || recordrvoice.toLowerCase().trim().equals("mail")) {
+                                sex = "/male";
                             sexbool = false;
                         }
-                        if (recordrvoice.toLowerCase().trim().contains("female")) {
-                            sex = "/female";
+                        if (recordrvoice.toLowerCase().trim().equals("female")||recordrvoice.toLowerCase().trim().equals("femail")) {
+                                sex = "/female";
                             sexbool = false;
                         }
                         if (namebool && dignosebool && prescriptionbool && Advicebool && agebool && sexbool && recordrvoice.length() >= 15) {
@@ -400,7 +407,10 @@ public class VoicePresFragment extends Fragment {
                 android.R.layout.simple_list_item_1, Prescription));
         AdviceList.setAdapter(new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_list_item_1, Advice));
-        agesex.setText(age+sex);
+        if(age.contains("male")||age.contains("female"))
+            agesex.setText(age);
+        else
+            agesex.setText(age+sex);
     }
 
     public int IntegerReturner(String record){
