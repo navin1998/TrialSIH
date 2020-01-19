@@ -155,6 +155,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             new NeuralNetworks().execute();
             new NeuralNetworksForMedicine().execute();
             new NeuralNetworksForSymptoms().execute();
+            new NeuralNetworksForDiagnosis().execute();
         }
 
 
@@ -180,7 +181,8 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             ArrayList<String> l = dbHelper.getNames();
             ArrayList<String> l2 = dbHelper.getMedicines();
             ArrayList<String> l3 = dbHelper.getSymptoms();
-            Toast.makeText(mContext, "Name Size: " + l.size() + "\nMedicine Size: " + l2.size() + "\nSymptom Size: " + l3.size(), Toast.LENGTH_LONG).show();
+            ArrayList<String> l4 = dbHelper.getDiagnosis();
+            Toast.makeText(mContext, "Name Size: " + l.size() + "\nMedicine Size: " + l2.size() + "\nSymptom Size: " + l3.size() + "\nDiagnosis Size: " + l4.size(), Toast.LENGTH_LONG).show();
 
 
             /**
@@ -2133,6 +2135,132 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                         nameList.add(e.text().toLowerCase());
 
                         dbHelper.addSymptoms(e.text().toLowerCase());
+                    }
+
+                }
+
+
+            }
+            catch (Exception e) {
+
+                errorFound = true;
+                error = e.getMessage();
+
+            }
+
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            dialog.dismiss();
+
+            if (!errorFound)
+            {
+                saveLocalDatabasePref(true);
+            }
+            else
+            {
+                saveLocalDatabasePref(false);
+            }
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     *
+     *
+     * asynchronous class for saving diagnosis to local database... (below)
+     *
+     *
+     */
+    // asynchronous class for saving diagnosis to local database...
+    public class NeuralNetworksForDiagnosis extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog dialog;
+
+        boolean errorFound;
+        String error;
+
+        String baseUrl = "https://www.cdc.gov/diseasesconditions/az/";
+
+        String[] alphabet = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+
+        ArrayList<String> urls = new ArrayList<>();
+
+        String diagnosisString = "";
+
+        ArrayList<String> nameList = new ArrayList<>();
+
+        NeuralNetworkDBHelper dbHelper = new NeuralNetworkDBHelper(mContext);
+
+        Elements e2;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            /**
+             * create the dialog...
+             *
+             */
+
+            dialog = new ProgressDialog(mContext);
+            dialog.setTitle("Contacting server");
+            dialog.setMessage("This is one time process, please wait...");
+            dialog.setCancelable(false);
+            dialog.show();
+
+
+            for (String a : alphabet)
+            {
+                urls.add(baseUrl + a + ".html");
+            }
+
+
+            /**
+             *
+             *
+             * end here...
+             *
+             */
+
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            try {
+
+
+                Document doc;
+                for (String newUrl : urls)
+                {
+
+                    doc = Jsoup.connect(newUrl).get();
+                    e2 = doc.select("div.row div.az-content ul.unstyled-list li a[href]");
+                    for (Element e : e2)
+                    {
+                        diagnosisString += e.text().toLowerCase() + "\n";
+                        nameList.add(e.text().toLowerCase());
+
+                        dbHelper.addDiagnosis(e.text().toLowerCase());
                     }
 
                 }
