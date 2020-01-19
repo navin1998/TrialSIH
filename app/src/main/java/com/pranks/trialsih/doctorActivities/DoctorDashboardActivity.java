@@ -27,6 +27,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -180,6 +181,48 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             ArrayList<String> l2 = dbHelper.getMedicines();
             ArrayList<String> l3 = dbHelper.getSymptoms();
             Toast.makeText(mContext, "Name Size: " + l.size() + "\nMedicine Size: " + l2.size() + "\nSymptom Size: " + l3.size(), Toast.LENGTH_LONG).show();
+
+
+            /**
+             *
+             * Log cat the arrays...
+             */
+
+
+//            String medicineNameString = "";
+//
+//            String[] alphabet = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+//
+//            ArrayList<String> temp = new ArrayList<>();
+//
+//            for (String a : alphabet)
+//            {
+//                for (String s : l3)
+//                {
+//                    if (s.charAt(0) == a.charAt(0))
+//                    {
+//                        medicineNameString += "\"" + s + "\", ";
+//                    }
+//                }
+//
+//                Log.d("MedicineNamesWith" + a.toUpperCase(), medicineNameString);
+//                medicineNameString = "";
+//
+//            }
+//
+//            Toast.makeText(mContext, "Size: " + temp.size(), Toast.LENGTH_LONG).show();
+
+
+
+
+            /**
+             *
+             *
+             *
+             */
+
+
+
         }
 
 
