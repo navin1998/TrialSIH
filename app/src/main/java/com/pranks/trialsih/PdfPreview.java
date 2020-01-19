@@ -215,18 +215,18 @@ public class PdfPreview extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onBackPressed() {
-        if (canPressBack)
-        {
-            deleteFolder();
-            super.onBackPressed();
-        }
-        else
-        {
-            Snackbar.make(getWindow().getDecorView().getRootView(), "This operation is only allowed after you send this mail", Snackbar.LENGTH_LONG).show();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if (canPressBack)
+//        {
+//            deleteFolder();
+//            super.onBackPressed();
+//        }
+//        else
+//        {
+//            Snackbar.make(getWindow().getDecorView().getRootView(), "This operation is only allowed after you send this mail", Snackbar.LENGTH_LONG).show();
+//        }
+//    }
 
 
     @Override
