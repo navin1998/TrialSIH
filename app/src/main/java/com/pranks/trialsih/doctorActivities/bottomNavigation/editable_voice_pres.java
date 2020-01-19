@@ -845,6 +845,9 @@ public class editable_voice_pres extends Fragment {
 
                 // add sign here...
 
+
+                /*
+
                 PdfPTable ptSign = new PdfPTable(1);
                 ptSign.setWidthPercentage(100);
                 fl = new float[]{100};
@@ -864,6 +867,40 @@ public class editable_voice_pres extends Fragment {
                 signImage.setAbsolutePosition(0f, 0f);
                 cell.addElement(signImage);
                 cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                ptSign.addCell(cell);
+
+
+                */
+
+
+
+                PdfPTable ptSign = new PdfPTable(3);
+                ptSign.setWidthPercentage(100);
+                fl = new float[]{25,30, 45};
+                ptSign.setWidths(fl);
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                //set drawable in cell
+                stream = new ByteArrayOutputStream();
+                signBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] bitmapdata = stream.toByteArray();
+
+                signImage = Image.getInstance(bitmapdata);
+                signImage.setAbsolutePosition(330f, 642f);
+                cell.addElement(signImage);
+                cell.addElement(new Paragraph("Doctor's signature"));
+                ptSign.addCell(cell);
+
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(new Paragraph("   "));
+                cell.addElement(new Paragraph("   "));
+                ptSign.addCell(cell);
+
+                cell = new PdfPCell(new Paragraph("   "));
+                cell.setBorder(Rectangle.NO_BORDER);
                 ptSign.addCell(cell);
 
 
